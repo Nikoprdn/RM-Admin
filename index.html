@@ -1,1 +1,779 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radio Monaco — Administration</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --monaco-red: #E4032E;
+    --monaco-dark: #37333E;
+    --monaco-black: #1a1518;
+    --monaco-grey: #f2f2f4;
+  }
 
+  * { font-family: 'Barlow', sans-serif; }
+  h1,h2,h3,.title,.subtitle { font-family: 'Barlow Condensed', sans-serif; }
+
+  body { background: var(--monaco-grey); min-height: 100vh; }
+
+  /* ─── NAVBAR ─── */
+  .navbar { background: var(--monaco-black) !important; border-bottom: 3px solid var(--monaco-red); }
+  .navbar-brand .logo-text { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.5rem; color: #fff; letter-spacing: 0.05em; }
+  .navbar-brand .logo-text span { color: var(--monaco-red); }
+  .navbar-badge { background: var(--monaco-red); color: white; font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.08em; vertical-align: middle; margin-left: 8px; text-transform: uppercase; }
+
+  /* ─── TABS ─── */
+  .main-tabs { background: var(--monaco-dark); }
+  .main-tabs .tabs ul { border-bottom: none; }
+  .main-tabs .tabs li a {
+    color: rgba(255,255,255,0.55); border-bottom: 3px solid transparent;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase; padding: 1rem 1.5rem;
+    transition: all 0.2s;
+  }
+  .main-tabs .tabs li a:hover { color: rgba(255,255,255,0.85); border-bottom-color: rgba(255,255,255,0.3); }
+  .main-tabs .tabs li.is-active a { color: #fff; border-bottom-color: var(--monaco-red); }
+  .main-tabs .tabs li a i { margin-right: 6px; }
+
+  /* ─── WEEK NAV ─── */
+  .week-nav { background: white; border-bottom: 1px solid #e8e8e8; }
+  .week-label { font-family: 'Barlow Condensed', sans-serif; font-size: 1.15rem; font-weight: 700; color: var(--monaco-dark); letter-spacing: 0.04em; }
+  .btn-nav { border: 2px solid var(--monaco-dark); color: var(--monaco-dark); background: transparent; border-radius: 4px; padding: 4px 14px; cursor: pointer; font-weight: 600; transition: all 0.15s; }
+  .btn-nav:hover { background: var(--monaco-dark); color: white; }
+  .btn-today { border: 2px solid var(--monaco-red); color: var(--monaco-red); background: transparent; border-radius: 4px; padding: 4px 14px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: all 0.15s; }
+  .btn-today:hover { background: var(--monaco-red); color: white; }
+
+  /* ─── GRILLE TABLE ─── */
+  .grille-wrapper { overflow-x: auto; }
+  .grille-table { border-collapse: collapse; width: 100%; min-width: 900px; font-size: 0.82rem; }
+  .grille-table th {
+    background: var(--monaco-dark); color: white;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.85rem;
+    padding: 10px 8px; text-align: center; border: 1px solid #555; white-space: nowrap;
+  }
+  .grille-table th.day-today { background: var(--monaco-red); }
+  .grille-table th.col-hour { background: #222; min-width: 68px; }
+  .grille-table td { border: 1px solid #ddd; padding: 0; height: 38px; min-width: 120px; position: relative; }
+  .grille-table td.hour-cell { background: #f0f0f2; text-align: center; font-weight: 700; color: var(--monaco-dark); font-size: 0.8rem; padding: 4px; font-family: 'Barlow Condensed', sans-serif; white-space: nowrap; }
+  .grille-table td.slot-cell { cursor: pointer; transition: background 0.1s; }
+  .grille-table td.slot-cell:hover { background: #f0f0f8; }
+  .grille-table td.slot-cell.filled { cursor: pointer; padding: 2px; }
+  .slot-tag {
+    display: flex; align-items: center; height: 100%; width: 100%;
+    padding: 3px 6px; border-radius: 3px; gap: 5px;
+    color: white; font-weight: 600; overflow: hidden;
+  }
+  .slot-tag .slot-initials { font-size: 0.72rem; background: rgba(0,0,0,0.25); border-radius: 3px; padding: 1px 5px; white-space: nowrap; flex-shrink: 0; }
+  .slot-tag .slot-title { font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .grille-table tr.row-odd td.slot-cell { background: #fafafa; }
+  .grille-table tr.row-odd td.slot-cell:hover { background: #f0f0f8; }
+
+  /* ─── PRESENCE CALENDAR ─── */
+  .presence-table { border-collapse: collapse; width: 100%; font-size: 0.8rem; }
+  .presence-table th { background: var(--monaco-dark); color: white; padding: 8px 5px; text-align: center; border: 1px solid #555; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.05em; font-size: 0.82rem; }
+  .presence-table th.col-name { text-align: left; padding-left: 12px; min-width: 160px; }
+  .presence-table td { border: 1px solid #ddd; text-align: center; padding: 0; height: 36px; min-width: 34px; }
+  .presence-table td.name-cell { text-align: left; padding: 4px 10px; background: #f8f8f8; font-weight: 600; color: var(--monaco-dark); font-size: 0.82rem; white-space: nowrap; }
+  .presence-table td.name-cell .role-badge { display: inline-block; font-size: 0.62rem; padding: 1px 5px; border-radius: 2px; margin-left: 6px; font-weight: 700; letter-spacing: 0.04em; vertical-align: middle; }
+  .presence-table td.day-cell { cursor: pointer; transition: background 0.12s; }
+  .presence-table td.day-cell:hover { filter: brightness(0.92); }
+  .presence-table td.day-weekend { background: #f5f5f5; }
+  .presence-table td.day-today-col { outline: 2px solid var(--monaco-red); outline-offset: -2px; }
+  .status-present { background: #d4edda; }
+  .status-absent  { background: #e2e2e2; }
+  .status-conge   { background: #fff3cd; }
+  .status-icon    { font-size: 0.85rem; line-height: 36px; }
+
+  /* ─── HEURES ─── */
+  .person-hours-card { background: white; border-radius: 6px; border: 1px solid #e8e8e8; overflow: hidden; margin-bottom: 14px; }
+  .person-hours-card .card-head { display: flex; align-items: center; padding: 12px 16px; gap: 10px; border-bottom: 1px solid #eee; }
+  .person-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 0.85rem; font-family: 'Barlow Condensed', sans-serif; flex-shrink: 0; }
+  .person-hours-card .card-body { padding: 12px 16px; }
+  .hours-bar-bg { background: #eee; border-radius: 10px; height: 10px; overflow: hidden; margin: 6px 0; }
+  .hours-bar-fill { height: 100%; border-radius: 10px; transition: width 0.4s ease; }
+  .hours-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-top: 10px; }
+  .day-hours-box { background: #f5f5f5; border-radius: 4px; text-align: center; padding: 5px 2px; font-size: 0.75rem; }
+  .day-hours-box .dh-day { font-weight: 700; color: var(--monaco-dark); font-family: 'Barlow Condensed', sans-serif; font-size: 0.8rem; }
+  .day-hours-box .dh-val { color: var(--monaco-red); font-weight: 600; }
+
+  /* ─── MODAL ─── */
+  .modal-card-head { background: var(--monaco-dark); }
+  .modal-card-title { color: white; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.3rem; letter-spacing: 0.04em; }
+  .modal-card-foot { justify-content: flex-end; gap: 8px; }
+  .select select:focus, .input:focus { border-color: var(--monaco-red); box-shadow: 0 0 0 2px rgba(228,3,46,0.15); }
+  .btn-delete-slot { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600; margin-right: auto; }
+  .btn-delete-slot:hover { background: #c82333; }
+
+  /* ─── LEGEND ─── */
+  .legend-row { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.8rem; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+
+  /* ─── STAFF SIDEBAR ─── */
+  .staff-sidebar { background: white; border-radius: 6px; border: 1px solid #e0e0e0; }
+  .staff-sidebar-title { background: var(--monaco-dark); color: white; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; padding: 10px 14px; border-radius: 5px 5px 0 0; font-size: 1rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .staff-item { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-bottom: 1px solid #f0f0f0; font-size: 0.82rem; }
+  .staff-item:last-child { border-bottom: none; }
+  .staff-color-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ─── SECTION HEADERS ─── */
+  .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; color: var(--monaco-dark); font-size: 1.4rem; letter-spacing: 0.04em; text-transform: uppercase; border-left: 4px solid var(--monaco-red); padding-left: 10px; }
+
+  /* ─── PRESENCE LEGEND ─── */
+  .pres-legend { display: flex; gap: 16px; flex-wrap: wrap; }
+  .pres-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 500; }
+  .pres-legend-dot { width: 16px; height: 16px; border-radius: 3px; }
+
+  .tab-content { display: none; }
+  .tab-content.is-active { display: block; }
+
+  .tag.is-animation { background: #dbeafe; color: #1d4ed8; }
+  .tag.is-journaliste { background: #fce7f3; color: #9d174d; }
+  .tag.is-coordination { background: #d1fae5; color: #065f46; }
+
+  /* scroll shadow for grille */
+  .grille-wrapper { box-shadow: inset -8px 0 8px -8px rgba(0,0,0,0.08); }
+
+  /* stats bar at top of heures */
+  .stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 12px; }
+  .stat-card { background: white; border-radius: 6px; border: 1px solid #e8e8e8; padding: 14px 16px; text-align: center; }
+  .stat-card .stat-num { font-family: 'Barlow Condensed', sans-serif; font-size: 2rem; font-weight: 800; color: var(--monaco-red); }
+  .stat-card .stat-label { font-size: 0.78rem; color: #888; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+
+<!-- ─── NAVBAR ─── -->
+<nav class="navbar is-fixed-top" role="navigation">
+  <div class="navbar-brand" style="padding: 0 16px; align-items: center; gap: 12px;">
+    <span class="logo-text">RADIO <span>MONACO</span></span>
+    <span class="navbar-badge">Admin</span>
+  </div>
+  <div class="navbar-end" style="padding-right: 16px; align-items: center; display:flex;">
+    <span style="color: rgba(255,255,255,0.45); font-size: 0.8rem;" id="current-date-nav"></span>
+  </div>
+</nav>
+
+<div style="padding-top: 52px;">
+
+<!-- ─── MAIN TABS ─── -->
+<div class="main-tabs">
+  <div class="tabs is-boxed" style="margin:0; padding: 0 16px;">
+    <ul>
+      <li class="is-active" data-tab="grille"><a><i class="fas fa-th"></i> Grille Antenne</a></li>
+      <li data-tab="presences"><a><i class="fas fa-calendar-alt"></i> Présences & Congés</a></li>
+      <li data-tab="heures"><a><i class="fas fa-clock"></i> Compteur Heures</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     TAB 1 — GRILLE ANTENNE
+═════════════════════════════════════════════ -->
+<div id="tab-grille" class="tab-content is-active">
+  <div class="week-nav" style="padding: 10px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+    <button class="btn-nav" id="prev-week"><i class="fas fa-chevron-left"></i></button>
+    <span class="week-label" id="week-label"></span>
+    <button class="btn-nav" id="next-week"><i class="fas fa-chevron-right"></i></button>
+    <button class="btn-today" id="goto-today">Aujourd'hui</button>
+    <div style="margin-left: auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+      <span style="font-size:0.78rem; color:#888;">Double-clic sur une case pour ajouter une émission</span>
+    </div>
+  </div>
+
+  <div class="columns" style="margin: 0; padding: 12px 16px; gap: 12px;">
+    <!-- Grille -->
+    <div class="column" style="padding: 0;">
+      <div class="grille-wrapper" style="border-radius: 6px; border: 1px solid #ddd; background: white;">
+        <table class="grille-table" id="grille-table">
+          <thead id="grille-thead"></thead>
+          <tbody id="grille-tbody"></tbody>
+        </table>
+      </div>
+      <!-- Legend -->
+      <div style="background: white; border: 1px solid #ddd; border-radius: 6px; margin-top: 10px; padding: 10px 14px;">
+        <div style="font-size: 0.75rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">Animateurs & Journalistes</div>
+        <div class="legend-row" id="grille-legend"></div>
+      </div>
+    </div>
+    <!-- Sidebar staff -->
+    <div class="column is-2" style="padding: 0; min-width: 175px; max-width: 210px;">
+      <div class="staff-sidebar">
+        <div class="staff-sidebar-title"><i class="fas fa-users"></i> &nbsp;Personnel</div>
+        <div id="staff-list-sidebar"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     TAB 2 — PRÉSENCES & CONGÉS
+═════════════════════════════════════════════ -->
+<div id="tab-presences" class="tab-content">
+  <div class="week-nav" style="padding: 10px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+    <button class="btn-nav" id="prev-month"><i class="fas fa-chevron-left"></i></button>
+    <span class="week-label" id="month-label"></span>
+    <button class="btn-nav" id="next-month"><i class="fas fa-chevron-right"></i></button>
+    <button class="btn-today" id="goto-month-today">Ce mois</button>
+    <div class="pres-legend" style="margin-left: auto;">
+      <div class="pres-legend-item"><div class="pres-legend-dot status-present"></div> Présent</div>
+      <div class="pres-legend-item"><div class="pres-legend-dot status-absent"></div> Absent</div>
+      <div class="pres-legend-item"><div class="pres-legend-dot status-conge"></div> Congé</div>
+      <div class="pres-legend-item"><div class="pres-legend-dot" style="background:#f0f0f0; border: 1px solid #ddd;"></div> Non renseigné</div>
+    </div>
+  </div>
+  <div style="padding: 12px 16px;">
+    <div style="background: white; border-radius: 6px; border: 1px solid #ddd; overflow-x: auto;">
+      <table class="presence-table" id="presence-table">
+        <thead id="presence-thead"></thead>
+        <tbody id="presence-tbody"></tbody>
+      </table>
+    </div>
+    <p style="font-size: 0.78rem; color: #999; margin-top: 8px;"><i class="fas fa-info-circle"></i> Cliquez sur une case pour changer le statut : Présent → Absent → Congé → (effacer)</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     TAB 3 — COMPTEUR HEURES
+═════════════════════════════════════════════ -->
+<div id="tab-heures" class="tab-content">
+  <div class="week-nav" style="padding: 10px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+    <button class="btn-nav" id="prev-week-h"><i class="fas fa-chevron-left"></i></button>
+    <span class="week-label" id="week-label-h"></span>
+    <button class="btn-nav" id="next-week-h"><i class="fas fa-chevron-right"></i></button>
+    <button class="btn-today" id="goto-today-h">Semaine actuelle</button>
+  </div>
+  <div style="padding: 12px 16px;">
+    <div class="stats-bar" id="stats-bar" style="margin-bottom: 16px;"></div>
+    <div class="section-title" style="margin-bottom: 14px;">Heures par personne — Antenne</div>
+    <div id="hours-cards"></div>
+  </div>
+</div>
+
+</div><!-- end padding-top -->
+
+<!-- ════════════════════════════════════════════
+     MODAL — Ajouter / Éditer émission
+═════════════════════════════════════════════ -->
+<div class="modal" id="slot-modal">
+  <div class="modal-background" id="modal-bg"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title" id="modal-title-text">Nouvelle émission</p>
+      <button class="delete" id="modal-close" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <div class="field">
+        <label class="label">Intervenant</label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select id="modal-staff">
+              <option value="">— Choisir un animateur / journaliste —</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Titre de l'émission</label>
+        <div class="control">
+          <input class="input" type="text" id="modal-title" placeholder="Ex: Monaco Matin, Le Journal…">
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Durée</label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select id="modal-duration">
+              <option value="1">1 heure</option>
+              <option value="2">2 heures</option>
+              <option value="3">3 heures</option>
+              <option value="4">4 heures</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="notification is-light is-info" style="padding: 8px 12px; font-size: 0.82rem;" id="modal-info"></div>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="btn-delete-slot" id="modal-delete" style="display:none;"><i class="fas fa-trash"></i> Supprimer</button>
+      <button class="button" id="modal-cancel">Annuler</button>
+      <button class="button is-danger" id="modal-save" style="background: var(--monaco-red); border-color: var(--monaco-red);"><i class="fas fa-check"></i> &nbsp;Enregistrer</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  DATA
+// ════════════════════════════════════════════════════════════════
+const STAFF = [
+  { id: 1, name: "Léo Barraban",           role: "animation",    color: "#3b82f6", initials: "LB" },
+  { id: 2, name: "Giulia Testaverde",       role: "animation",    color: "#8b5cf6", initials: "GT" },
+  { id: 3, name: "Anaïs Person",            role: "animation",    color: "#f97316", initials: "AP" },
+  { id: 4, name: "Charly Nestor",           role: "animation",    color: "#06b6d4", initials: "CN" },
+  { id: 5, name: "Eric Embriaco",           role: "animation",    color: "#d97706", initials: "EE" },
+  { id: 6, name: "Marie Marquet",           role: "journaliste",  color: "#e4032e", initials: "MM" },
+  { id: 7, name: "Jean Christophe Sanchez", role: "journaliste",  color: "#16a34a", initials: "JCS" },
+  { id: 8, name: "Pampa",                   role: "coordination", color: "#6b7280", initials: "PA" },
+  { id: 9, name: "Dominique Freulon",       role: "coordination", color: "#78716c", initials: "DF" },
+];
+
+const ON_AIR_STAFF = STAFF.filter(s => s.role !== "coordination");
+const HOURS = Array.from({length: 19}, (_,i) => i + 5); // 5h → 23h
+const DAYS_SHORT = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+const DAYS_FULL  = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+const MONTHS = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+const ROLES_LABELS = { animation: "Animation", journaliste: "Journaliste", coordination: "Coordination" };
+const ROLES_COLORS = { animation: "#dbeafe", journaliste: "#fce7f3", coordination: "#d1fae5" };
+const ROLES_TEXT   = { animation: "#1d4ed8", journaliste: "#9d174d", coordination: "#065f46" };
+
+// ─── STATE ───
+let currentWeekMonday = getMonday(new Date());
+let currentMonth = new Date();
+let currentWeekMondayH = getMonday(new Date());
+
+// ─── STORAGE ───
+function loadGrid() { try { return JSON.parse(localStorage.getItem("rm_grid") || "{}"); } catch { return {}; } }
+function saveGrid(d) { localStorage.setItem("rm_grid", JSON.stringify(d)); }
+function loadPresence() { try { return JSON.parse(localStorage.getItem("rm_presence") || "{}"); } catch { return {}; } }
+function savePresence(d) { localStorage.setItem("rm_presence", JSON.stringify(d)); }
+
+// ─── UTILS ───
+function getMonday(d) {
+  const dt = new Date(d); const day = dt.getDay();
+  const diff = (day === 0) ? -6 : 1 - day;
+  dt.setDate(dt.getDate() + diff);
+  dt.setHours(0,0,0,0);
+  return dt;
+}
+function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
+function fmtDate(d) { return d.toISOString().slice(0,10); }
+function fmtDisplay(d) { return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`; }
+function isToday(d) { return fmtDate(d) === fmtDate(new Date()); }
+function staffById(id) { return STAFF.find(s => s.id == id); }
+
+// ════════════════════════════════════════════════════════════════
+//  NAVBAR DATE
+// ════════════════════════════════════════════════════════════════
+function initNavDate() {
+  const now = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  document.getElementById('current-date-nav').textContent = now.toLocaleDateString('fr-FR', opts);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  TABS
+// ════════════════════════════════════════════════════════════════
+document.querySelectorAll('.main-tabs .tabs li').forEach(li => {
+  li.addEventListener('click', () => {
+    document.querySelectorAll('.main-tabs .tabs li').forEach(x => x.classList.remove('is-active'));
+    document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('is-active'));
+    li.classList.add('is-active');
+    const tabId = 'tab-' + li.dataset.tab;
+    document.getElementById(tabId).classList.add('is-active');
+    if (li.dataset.tab === 'heures') renderHoursTab();
+  });
+});
+
+// ════════════════════════════════════════════════════════════════
+//  GRILLE ANTENNE
+// ════════════════════════════════════════════════════════════════
+let modalCtx = {}; // { dayIndex, hour }
+
+function renderGrille() {
+  const grid = loadGrid();
+  const monday = currentWeekMonday;
+  const days = Array.from({length:7}, (_,i) => addDays(monday, i));
+
+  // Week label
+  document.getElementById('week-label').textContent =
+    `Semaine du ${fmtDisplay(days[0])} au ${fmtDisplay(days[6])} ${days[6].getFullYear()}`;
+
+  // THEAD
+  const thead = document.getElementById('grille-thead');
+  thead.innerHTML = '';
+  const tr = document.createElement('tr');
+  const thH = document.createElement('th'); thH.className = 'col-hour'; thH.textContent = 'Heure'; tr.appendChild(thH);
+  days.forEach((d, i) => {
+    const th = document.createElement('th');
+    if (isToday(d)) th.classList.add('day-today');
+    th.innerHTML = `<div>${DAYS_FULL[i]}</div><div style="font-weight:400;font-size:0.8rem;opacity:0.8;">${fmtDisplay(d)}</div>`;
+    tr.appendChild(th);
+  });
+  thead.appendChild(tr);
+
+  // TBODY
+  const tbody = document.getElementById('grille-tbody');
+  tbody.innerHTML = '';
+  HOURS.forEach((h, ri) => {
+    const tr2 = document.createElement('tr');
+    if (ri % 2 === 1) tr2.classList.add('row-odd');
+    // Hour cell
+    const tdH = document.createElement('td');
+    tdH.className = 'hour-cell';
+    tdH.textContent = `${String(h).padStart(2,'0')}:00`;
+    tr2.appendChild(tdH);
+    // Day cells
+    days.forEach((d, di) => {
+      const key = `${fmtDate(d)}_${h}`;
+      const slot = grid[key];
+      const td = document.createElement('td');
+      td.className = 'slot-cell';
+      if (slot) {
+        td.classList.add('filled');
+        const st = staffById(slot.staffId);
+        if (st) {
+          const tag = document.createElement('div');
+          tag.className = 'slot-tag';
+          tag.style.background = st.color;
+          tag.innerHTML = `<span class="slot-initials">${st.initials}</span><span class="slot-title">${slot.title || st.name}</span>`;
+          td.appendChild(tag);
+        }
+      }
+      td.addEventListener('dblclick', () => openSlotModal(d, h, slot));
+      // Single click on filled cell also opens modal
+      if (slot) td.addEventListener('click', () => openSlotModal(d, h, slot));
+      tr2.appendChild(td);
+    });
+    tbody.appendChild(tr2);
+  });
+
+  // Legend
+  renderGridLegend();
+  renderStaffSidebar();
+}
+
+function renderGridLegend() {
+  const el = document.getElementById('grille-legend');
+  el.innerHTML = '';
+  ON_AIR_STAFF.forEach(s => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<div class="legend-dot" style="background:${s.color};"></div><span>${s.name}</span>`;
+    el.appendChild(item);
+  });
+}
+
+function renderStaffSidebar() {
+  const el = document.getElementById('staff-list-sidebar');
+  el.innerHTML = '';
+  const groups = { animation: [], journaliste: [], coordination: [] };
+  STAFF.forEach(s => groups[s.role].push(s));
+  const order = ['animation', 'journaliste', 'coordination'];
+  order.forEach(role => {
+    const grpHead = document.createElement('div');
+    grpHead.style.cssText = 'font-size:0.68rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:8px 12px 3px;color:#999;';
+    grpHead.textContent = ROLES_LABELS[role];
+    el.appendChild(grpHead);
+    groups[role].forEach(s => {
+      const item = document.createElement('div');
+      item.className = 'staff-item';
+      const dot = s.role !== 'coordination' ? `<div class="staff-color-dot" style="background:${s.color};"></div>` : `<div class="staff-color-dot" style="background:#ccc;"></div>`;
+      item.innerHTML = `${dot}<span>${s.name}</span>`;
+      el.appendChild(item);
+    });
+  });
+}
+
+// ─── MODAL ───
+function openSlotModal(date, hour, existing) {
+  const modal = document.getElementById('slot-modal');
+  const titleEl = document.getElementById('modal-title-text');
+  const staffSel = document.getElementById('modal-staff');
+  const titleInput = document.getElementById('modal-title');
+  const durSel = document.getElementById('modal-duration');
+  const deleteBtn = document.getElementById('modal-delete');
+  const infoEl = document.getElementById('modal-info');
+
+  modalCtx = { date, hour, existing };
+
+  titleEl.textContent = existing ? 'Modifier l\'émission' : 'Nouvelle émission';
+  infoEl.textContent = `${DAYS_FULL[date.getDay() === 0 ? 6 : date.getDay()-1]} ${fmtDisplay(date)} à ${String(hour).padStart(2,'0')}:00`;
+
+  // Populate staff select
+  staffSel.innerHTML = '<option value="">— Choisir —</option>';
+  ON_AIR_STAFF.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id;
+    opt.textContent = `${s.name} (${ROLES_LABELS[s.role]})`;
+    if (existing && existing.staffId == s.id) opt.selected = true;
+    staffSel.appendChild(opt);
+  });
+  titleInput.value = existing ? (existing.title || '') : '';
+  durSel.value = existing ? (existing.duration || 1) : 1;
+  deleteBtn.style.display = existing ? 'inline-flex' : 'none';
+
+  modal.classList.add('is-active');
+  titleInput.focus();
+}
+
+function closeModal() { document.getElementById('slot-modal').classList.remove('is-active'); }
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+document.getElementById('modal-bg').addEventListener('click', closeModal);
+
+document.getElementById('modal-save').addEventListener('click', () => {
+  const staffId = parseInt(document.getElementById('modal-staff').value);
+  const title = document.getElementById('modal-title').value.trim();
+  const duration = parseInt(document.getElementById('modal-duration').value);
+  if (!staffId) { document.getElementById('modal-staff').focus(); return; }
+
+  const grid = loadGrid();
+  const { date, hour } = modalCtx;
+  // Fill duration slots
+  for (let i = 0; i < duration; i++) {
+    const h = hour + i;
+    if (h > 23) break;
+    const key = `${fmtDate(date)}_${h}`;
+    grid[key] = { staffId, title: title || staffById(staffId).name, duration };
+  }
+  saveGrid(grid);
+  closeModal();
+  renderGrille();
+});
+
+document.getElementById('modal-delete').addEventListener('click', () => {
+  const grid = loadGrid();
+  const { date, hour, existing } = modalCtx;
+  // Delete the slot (and adjacent same-slot slots if duration > 1)
+  const dur = existing ? (existing.duration || 1) : 1;
+  for (let i = 0; i < dur; i++) {
+    const h = hour + i;
+    delete grid[`${fmtDate(date)}_${h}`];
+  }
+  // Also try to find the start of a multi-hour block
+  for (let i = 1; i < 4; i++) {
+    const prevH = hour - i;
+    if (prevH < 5) break;
+    const prevKey = `${fmtDate(date)}_${prevH}`;
+    const prevSlot = grid[prevKey];
+    if (prevSlot && prevSlot.staffId === existing.staffId && prevSlot.title === existing.title) {
+      delete grid[prevKey];
+    } else break;
+  }
+  saveGrid(grid);
+  closeModal();
+  renderGrille();
+});
+
+// Enter key on title → save
+document.getElementById('modal-title').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('modal-save').click(); });
+
+// ─── WEEK NAV ───
+document.getElementById('prev-week').addEventListener('click', () => { currentWeekMonday = addDays(currentWeekMonday, -7); renderGrille(); });
+document.getElementById('next-week').addEventListener('click', () => { currentWeekMonday = addDays(currentWeekMonday, 7); renderGrille(); });
+document.getElementById('goto-today').addEventListener('click', () => { currentWeekMonday = getMonday(new Date()); renderGrille(); });
+
+// ════════════════════════════════════════════════════════════════
+//  PRÉSENCES & CONGÉS
+// ════════════════════════════════════════════════════════════════
+const STATUS_CYCLE = [null, 'present', 'absent', 'conge'];
+const STATUS_ICONS = { present: '✔', absent: '✖', conge: '⛱' };
+const STATUS_TITLES = { present: 'Présent', absent: 'Absent', conge: 'Congé' };
+
+function renderPresence() {
+  const pres = loadPresence();
+  const y = currentMonth.getFullYear();
+  const m = currentMonth.getMonth();
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const today = new Date();
+
+  // Month label
+  document.getElementById('month-label').textContent = `${MONTHS[m]} ${y}`;
+
+  // THEAD
+  const thead = document.getElementById('presence-thead');
+  thead.innerHTML = '';
+  const tr = document.createElement('tr');
+  const thN = document.createElement('th'); thN.className = 'col-name'; thN.textContent = 'Personnel'; tr.appendChild(thN);
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dt = new Date(y, m, d);
+    const wd = dt.getDay(); // 0=Sun,6=Sat
+    const th = document.createElement('th');
+    const isWE = wd === 0 || wd === 6;
+    if (isWE) th.style.background = '#2a2733';
+    th.style.minWidth = '34px';
+    th.innerHTML = `<div>${d}</div><div style="font-size:0.65rem;opacity:0.6;">${["Di","Lu","Ma","Me","Je","Ve","Sa"][wd]}</div>`;
+    tr.appendChild(th);
+  }
+  thead.appendChild(tr);
+
+  // TBODY
+  const tbody = document.getElementById('presence-tbody');
+  tbody.innerHTML = '';
+  STAFF.forEach(s => {
+    const tr2 = document.createElement('tr');
+    // Name cell
+    const tdName = document.createElement('td');
+    tdName.className = 'name-cell';
+    const roleLabel = ROLES_LABELS[s.role];
+    tdName.innerHTML = `${s.name}<span class="role-badge" style="background:${ROLES_COLORS[s.role]};color:${ROLES_TEXT[s.role]};">${roleLabel}</span>`;
+    tr2.appendChild(tdName);
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dt = new Date(y, m, d);
+      const wd = dt.getDay();
+      const isWE = wd === 0 || wd === 6;
+      const isTodayDay = (dt.getFullYear() === today.getFullYear() && dt.getMonth() === today.getMonth() && dt.getDate() === today.getDate());
+
+      const presKey = `${y}-${String(m+1).padStart(2,'0')}`;
+      const dayKey = `${s.id}_${d}`;
+      const status = pres[presKey] ? pres[presKey][dayKey] : null;
+
+      const td = document.createElement('td');
+      td.className = 'day-cell';
+      if (isWE) { td.classList.add('day-weekend'); }
+      if (isTodayDay) td.classList.add('day-today-col');
+      if (status) {
+        td.classList.add(`status-${status}`);
+        const icon = document.createElement('div');
+        icon.className = 'status-icon';
+        icon.title = STATUS_TITLES[status];
+        icon.textContent = STATUS_ICONS[status];
+        td.appendChild(icon);
+      }
+
+      td.addEventListener('click', () => {
+        const pData = loadPresence();
+        const pk = `${y}-${String(m+1).padStart(2,'0')}`;
+        if (!pData[pk]) pData[pk] = {};
+        const cur = pData[pk][dayKey] || null;
+        const idx = STATUS_CYCLE.indexOf(cur);
+        const next = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
+        if (next === null) delete pData[pk][dayKey];
+        else pData[pk][dayKey] = next;
+        savePresence(pData);
+        renderPresence();
+      });
+      tr2.appendChild(td);
+    }
+    tbody.appendChild(tr2);
+  });
+}
+
+document.getElementById('prev-month').addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth()-1); renderPresence(); });
+document.getElementById('next-month').addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth()+1); renderPresence(); });
+document.getElementById('goto-month-today').addEventListener('click', () => { currentMonth = new Date(); renderPresence(); });
+
+// ════════════════════════════════════════════════════════════════
+//  COMPTEUR HEURES
+// ════════════════════════════════════════════════════════════════
+const TARGET_HOURS = 35; // heures hebdo cible
+
+function renderHoursTab() {
+  const grid = loadGrid();
+  const monday = currentWeekMondayH;
+  const days = Array.from({length:7}, (_,i) => addDays(monday, i));
+
+  document.getElementById('week-label-h').textContent =
+    `Semaine du ${fmtDisplay(days[0])} au ${fmtDisplay(days[6])} ${days[6].getFullYear()}`;
+
+  // Calculate hours per person per day
+  const personHours = {}; // { staffId: { total, byDay: [0..6] } }
+  ON_AIR_STAFF.forEach(s => { personHours[s.id] = { total: 0, byDay: Array(7).fill(0) }; });
+
+  let totalHoursWeek = 0;
+  days.forEach((d, di) => {
+    HOURS.forEach(h => {
+      const key = `${fmtDate(d)}_${h}`;
+      const slot = grid[key];
+      if (slot && personHours[slot.staffId]) {
+        personHours[slot.staffId].total++;
+        personHours[slot.staffId].byDay[di]++;
+        totalHoursWeek++;
+      }
+    });
+  });
+
+  // Stats bar
+  const statsBar = document.getElementById('stats-bar');
+  statsBar.innerHTML = '';
+  const totalPersons = ON_AIR_STAFF.length;
+  const assignedPersons = ON_AIR_STAFF.filter(s => personHours[s.id].total > 0).length;
+  const stats = [
+    { num: totalHoursWeek, label: "Heures antenne totales" },
+    { num: assignedPersons, label: "Personnes programmées" },
+    { num: (totalHoursWeek / 7).toFixed(1), label: "Heures / jour (moy.)" },
+    { num: ON_AIR_STAFF.reduce((max, s) => Math.max(max, personHours[s.id].total), 0), label: "Max heures (1 personne)" },
+  ];
+  stats.forEach(st => {
+    const card = document.createElement('div');
+    card.className = 'stat-card';
+    card.innerHTML = `<div class="stat-num">${st.num}</div><div class="stat-label">${st.label}</div>`;
+    statsBar.appendChild(card);
+  });
+
+  // Person cards
+  const cardsEl = document.getElementById('hours-cards');
+  cardsEl.innerHTML = '';
+  ON_AIR_STAFF.forEach(s => {
+    const ph = personHours[s.id];
+    const pct = Math.min(100, (ph.total / TARGET_HOURS) * 100);
+    const card = document.createElement('div');
+    card.className = 'person-hours-card';
+
+    const showNameList = [];
+    days.forEach((d, di) => {
+      HOURS.forEach(h => {
+        const key = `${fmtDate(d)}_${h}`;
+        const slot = grid[key];
+        if (slot && slot.staffId == s.id && slot.title && !showNameList.includes(slot.title)) {
+          showNameList.push(slot.title);
+        }
+      });
+    });
+
+    const dayBoxes = days.map((d, di) => {
+      const h = ph.byDay[di];
+      const isWE = [0,6].includes(d.getDay());
+      return `<div class="day-hours-box" style="${isWE ? 'background:#f8f5ff;' : ''}">
+        <div class="dh-day">${DAYS_SHORT[di]}</div>
+        <div class="dh-val">${h > 0 ? h+'h' : '—'}</div>
+      </div>`;
+    }).join('');
+
+    card.innerHTML = `
+      <div class="card-head">
+        <div class="person-avatar" style="background:${s.color};">${s.initials}</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:0.92rem;color:var(--monaco-dark);">${s.name}</div>
+          <div style="font-size:0.75rem;color:#999;">${ROLES_LABELS[s.role]}${showNameList.length ? ' — ' + showNameList.slice(0,3).join(', ') : ''}</div>
+        </div>
+        <div style="text-align:right;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:${ph.total > 0 ? s.color : '#ccc'};">${ph.total}h</span>
+          <div style="font-size:0.72rem;color:#bbb;">/ ${TARGET_HOURS}h cible</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#999;margin-bottom:4px;">
+          <span>Progression hebdomadaire</span><span>${Math.round(pct)}%</span>
+        </div>
+        <div class="hours-bar-bg">
+          <div class="hours-bar-fill" style="width:${pct}%;background:${s.color};"></div>
+        </div>
+        <div class="hours-grid">${dayBoxes}</div>
+      </div>`;
+    cardsEl.appendChild(card);
+  });
+}
+
+document.getElementById('prev-week-h').addEventListener('click', () => { currentWeekMondayH = addDays(currentWeekMondayH, -7); renderHoursTab(); });
+document.getElementById('next-week-h').addEventListener('click', () => { currentWeekMondayH = addDays(currentWeekMondayH, 7); renderHoursTab(); });
+document.getElementById('goto-today-h').addEventListener('click', () => { currentWeekMondayH = getMonday(new Date()); renderHoursTab(); });
+
+// ════════════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════════════
+initNavDate();
+renderGrille();
+renderPresence();
+</script>
+</body>
+</html>
