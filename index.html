@@ -4,233 +4,250 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Radio Monaco — Back Office</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0c0f;--bg2:#111318;--bg3:#1a1d24;--bg4:#22262f;
-  --red:#e8192c;--red2:#ff2d40;--red-dim:rgba(232,25,44,0.12);
-  --gold:#c9a84c;--gold-dim:rgba(201,168,76,0.12);
-  --text:#f0f0f0;--text2:#9aa0b4;--text3:#555e72;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
-  --r:8px;--r2:12px;
+  --rm:#e8192c;--rm2:#c9101f;--rm-light:#fef0f1;--rm-mid:rgba(232,25,44,.08);
+  --bg:#f5f6f8;--white:#ffffff;
+  --text:#1a1c20;--text2:#5a6070;--text3:#9ba3b4;
+  --border:#e4e7ed;--border2:#d0d5df;
+  --r:6px;--r2:10px;
+  --shadow:0 1px 4px rgba(0,0,0,.07),0 0 0 1px rgba(0,0,0,.04);
+  --shadow2:0 4px 16px rgba(0,0,0,.10),0 0 0 1px rgba(0,0,0,.04);
 }
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;overflow:hidden;font-size:14px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;overflow:hidden;font-size:13px;line-height:1.5}
 
-/* SIDEBAR */
-aside{width:230px;min-width:230px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column}
-.sb-logo{padding:18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.sb-mark{width:34px;height:34px;background:var(--red);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0}
-.sb-name{font-size:13px;font-weight:600;line-height:1.2}
-.sb-sub{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
-.sb-sec{padding:14px 14px 4px;font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3)}
-.nav{display:flex;align-items:center;gap:9px;padding:8px 10px;margin:1px 6px;border-radius:var(--r);cursor:pointer;color:var(--text2);font-size:13px;border:none;background:none;width:calc(100% - 12px);text-align:left;transition:all .15s;font-family:'DM Sans',sans-serif}
-.nav svg{width:15px;height:15px;flex-shrink:0;opacity:.65}
-.nav:hover{background:var(--bg3);color:var(--text)}
-.nav.on{background:var(--red-dim);color:var(--red2);font-weight:500}
-.nav.on svg{opacity:1}
+/* ── SIDEBAR ── */
+aside{width:220px;min-width:220px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;box-shadow:2px 0 8px rgba(0,0,0,.04)}
+
+.sb-logo{padding:16px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sb-mark{width:32px;height:32px;background:var(--rm);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0;letter-spacing:.3px}
+.sb-texts{display:flex;flex-direction:column}
+.sb-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.2;letter-spacing:-.2px}
+.sb-sub{font-size:10px;color:var(--text3);font-weight:500;letter-spacing:.6px;text-transform:uppercase}
+
+.sb-sec{padding:16px 12px 5px;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3)}
+
+.nav{display:flex;align-items:center;gap:8px;padding:8px 10px;margin:1px 6px;border-radius:var(--r);cursor:pointer;color:var(--text2);font-size:12.5px;font-weight:500;border:none;background:none;width:calc(100% - 12px);text-align:left;transition:all .12s;font-family:'Inter',sans-serif}
+.nav-ic{width:16px;height:16px;flex-shrink:0;opacity:.5}
+.nav:hover{background:var(--bg);color:var(--text)}
+.nav.on{background:var(--rm-light);color:var(--rm);font-weight:600}
+.nav.on .nav-ic{opacity:1}
+
 .sb-bot{margin-top:auto;padding:12px;border-top:1px solid var(--border)}
-.live-pill{display:flex;align-items:center;gap:7px;padding:8px 10px;background:var(--red-dim);border:1px solid rgba(232,25,44,.2);border-radius:var(--r)}
-.live-dot{width:7px;height:7px;border-radius:50%;background:var(--red);animation:blink 1.4s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
-.live-label{font-size:11px;color:var(--text2)}
-.live-show{font-size:11px;font-weight:600;color:var(--text)}
-.live-clock{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)}
+.onair{background:var(--rm);border-radius:var(--r);padding:9px 10px;display:flex;align-items:center;gap:7px}
+.oa-dot{width:7px;height:7px;border-radius:50%;background:#fff;animation:pulse 1.4s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.oa-wrap{flex:1;min-width:0}
+.oa-lbl{font-size:9px;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:1px;text-transform:uppercase}
+.oa-show{font-size:11px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oa-clk{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);flex-shrink:0}
 
-/* MAIN */
+/* ── TOPBAR ── */
 main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.topbar{height:52px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:12px;flex-shrink:0}
-.page-ttl{font-size:15px;font-weight:600}
-.topbar-r{margin-left:auto;display:flex;align-items:center;gap:8px}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .15s}
-.btn-p{background:var(--red);color:#fff}
-.btn-p:hover{background:var(--red2)}
-.btn-g{background:transparent;color:var(--text2);border:1px solid var(--border2)}
-.btn-g:hover{background:var(--bg3);color:var(--text)}
-.btn-warn{background:rgba(240,160,30,.12);color:#f0a01e;border:1px solid rgba(240,160,30,.25)}
-.btn-warn:hover{background:rgba(240,160,30,.2)}
+.topbar{height:52px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;flex-shrink:0}
+.pttl{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.tbr{margin-left:auto;display:flex;align-items:center;gap:7px}
 
-/* CONTENT */
-.content{flex:1;overflow-y:auto;padding:22px}
-.content::-webkit-scrollbar{width:3px}
-.content::-webkit-scrollbar-thumb{background:var(--bg4)}
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all .12s;line-height:1}
+.btn-p{background:var(--rm);color:#fff}
+.btn-p:hover{background:var(--rm2)}
+.btn-g{background:var(--white);color:var(--text2);border:1px solid var(--border2)}
+.btn-g:hover{background:var(--bg);color:var(--text);border-color:var(--border2)}
+.btn-w{background:#fff7ed;color:#b45309;border:1px solid #fed7aa}
+.btn-w:hover{background:#ffedd5}
+.btn-sm{padding:5px 10px;font-size:11px}
 
-/* PANELS */
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:20px}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
 .panel{display:none}.panel.on{display:block}
 
-/* TABS */
-.tabs{display:flex;gap:2px;background:var(--bg3);border-radius:var(--r);padding:3px;margin-bottom:18px;width:fit-content}
-.tab{padding:6px 13px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);border:none;background:none;font-family:'DM Sans',sans-serif;transition:all .15s}
-.tab.on{background:var(--bg2);color:var(--text)}
+/* ── TABS ── */
+.tabs{display:flex;gap:1px;border-bottom:2px solid var(--border);margin-bottom:18px}
+.tab{padding:8px 14px;font-size:12.5px;font-weight:500;cursor:pointer;color:var(--text2);border:none;background:none;font-family:'Inter',sans-serif;transition:all .12s;border-bottom:2px solid transparent;margin-bottom:-2px}
+.tab.on{color:var(--rm);font-weight:600;border-bottom-color:var(--rm)}
+.tab:hover:not(.on){color:var(--text)}
 
-/* STAT CARDS */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
-.sc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px}
-.sc-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:6px}
-.sc-val{font-size:22px;font-weight:600;font-family:'DM Mono',monospace}
-.sc-sub{font-size:11px;color:var(--text3);margin-top:4px}
+/* ── STAT CARDS ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.sc{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;box-shadow:var(--shadow)}
+.sc-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:5px}
+.sc-val{font-size:22px;font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace;letter-spacing:-.5px}
+.sc-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.sc-val.danger{color:var(--rm)}
 
-/* CARD */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
-.ch{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.ch-t{font-size:13px;font-weight:600}
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px}
+.ch{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#fafbfc}
+.ch-t{font-size:13px;font-weight:600;color:var(--text)}
 
-/* TABLE */
+/* ── TABLE ── */
+.tw{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
-th{padding:9px 14px;text-align:left;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;background:var(--bg3);border-bottom:1px solid var(--border)}
-td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2)}
+th{padding:9px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;background:#fafbfc;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--text2);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(255,255,255,.018)}
+tr:hover td{background:#fafbfc}
+.td-strong{color:var(--text);font-weight:600}
 
-/* CHIPS */
-.chip{display:inline-block;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600}
-.ch-g{background:rgba(76,175,110,.14);color:#5ecf86;border:1px solid rgba(76,175,110,.25)}
-.ch-r{background:rgba(232,25,44,.12);color:#ff5566;border:1px solid rgba(232,25,44,.25)}
-.ch-o{background:rgba(240,160,30,.12);color:#f0a01e;border:1px solid rgba(240,160,30,.25)}
-.ch-b{background:rgba(80,140,240,.12);color:#7eb4f5;border:1px solid rgba(80,140,240,.25)}
-.ch-gray{background:var(--bg4);color:var(--text2);border:1px solid var(--border2)}
-.ch-gold{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(201,168,76,.25)}
+/* ── CHIPS ── */
+.chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.2px}
+.ch-g{background:#ecfdf5;color:#059669;border:1px solid #a7f3d0}
+.ch-r{background:var(--rm-light);color:var(--rm);border:1px solid #fca5a5}
+.ch-o{background:#fff7ed;color:#b45309;border:1px solid #fed7aa}
+.ch-b{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+.ch-gray{background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb}
 
-/* PROGRESS */
-.pb{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:5px}
+/* ── PROGRESS ── */
+.pb{height:5px;background:#f3f4f6;border-radius:3px;overflow:hidden}
 .pf{height:100%;border-radius:3px;transition:width .4s}
-.pf-red{background:var(--red)}
-.pf-green{background:#4caf6e}
-.pf-gold{background:var(--gold)}
-.pf-blue{background:#508cf0}
+.pf-r{background:var(--rm)}
+.pf-g{background:#059669}
+.pf-o{background:#d97706}
+.pf-b{background:#2563eb}
 
-/* FORM */
-.fg{margin-bottom:13px}
-.fl{display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
-.fc{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:8px 11px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s}
-.fc:focus{border-color:var(--red)}
-.fc option{background:var(--bg3)}
-textarea.fc{resize:vertical;min-height:70px}
+/* ── FORM ── */
+.fg{margin-bottom:12px}
+.fl{display:block;font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}
+.fc{width:100%;background:var(--white);border:1.5px solid var(--border2);border-radius:var(--r);padding:8px 10px;color:var(--text);font-size:12.5px;font-family:'Inter',sans-serif;outline:none;transition:border-color .12s}
+.fc:focus{border-color:var(--rm)}
+.fc option{background:var(--white)}
+textarea.fc{resize:vertical;min-height:64px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 
-/* GRID */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+/* ── CAMPAGNE CARD ── */
+.ccard{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);transition:border-color .15s}
+.ccard:hover{border-color:var(--border2)}
+.cc-top{display:flex;align-items:flex-start;gap:11px;margin-bottom:10px}
+.cc-ico{width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;letter-spacing:-.3px}
+.cc-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+.cc-meta{font-size:11px;color:var(--text3)}
+.cc-right{margin-left:auto;text-align:right;flex-shrink:0}
+.cc-amt{font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text)}
+.cc-per{font-size:10px;color:var(--text3);margin-top:1px}
+.cc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.cc-pct{font-size:11px;color:var(--text3)}
+.cc-spots{font-size:11px;color:var(--text3)}
 
-/* MODAL OVERLAY */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center}
-.overlay.show{display:flex}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r2);width:520px;max-width:96vw;max-height:88vh;overflow-y:auto;padding:22px}
-.modal-ttl{font-size:15px;font-weight:600;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
-.modal-close{cursor:pointer;color:var(--text3);font-size:18px;background:none;border:none;color:var(--text3);line-height:1}
-.modal-close:hover{color:var(--text)}
+/* ── ANOMALIE ── */
+.arow{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);transition:background .1s}
+.arow:last-child{border-bottom:none}
+.arow:hover{background:#fafbfc}
+.a-ic{width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.a-open{background:var(--rm-light);color:var(--rm)}
+.a-enc{background:#fff7ed;color:#b45309}
+.a-res{background:#ecfdf5;color:#059669}
 
-/* ANOMALIE */
-.anom-row{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer}
-.anom-row:last-child{border-bottom:none}
-.anom-row:hover{background:rgba(255,255,255,.018)}
-.anom-ico{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px}
-.anom-open{background:rgba(232,25,44,.15);color:var(--red2)}
-.anom-enc{background:rgba(240,160,30,.15);color:#f0a01e}
-.anom-res{background:rgba(76,175,110,.15);color:#5ecf86}
-
-/* CAMPAGNE CARD */
-.ccamp{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:15px 16px;margin-bottom:9px;transition:border-color .15s;cursor:pointer}
-.ccamp:hover{border-color:var(--border2)}
-.ccamp-top{display:flex;align-items:center;gap:11px;margin-bottom:10px}
-.ccamp-logo{width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
-.ccamp-name{font-size:13px;font-weight:600;color:var(--text)}
-.ccamp-meta{font-size:11px;color:var(--text3);margin-top:1px}
-.ccamp-r{margin-left:auto;text-align:right}
-.ccamp-amt{font-size:14px;font-weight:600;font-family:'DM Mono',monospace}
-.ccamp-period{font-size:10px;color:var(--text3);margin-top:2px}
-.ccamp-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
-.ccamp-prog{font-size:11px;color:var(--text3)}
-.prog-pct{font-weight:600;color:var(--text);font-family:'DM Mono',monospace}
-
-/* GRILLE */
+/* ── GRILLE ANTENNE ── */
 .grille-wrap{overflow-x:auto}
-.grille-wrap::-webkit-scrollbar{height:3px}
-.grille-wrap::-webkit-scrollbar-thumb{background:var(--bg4)}
-.grille{border-collapse:collapse;min-width:820px;width:100%}
-.grille th{padding:8px 6px;font-size:10px;font-weight:600;color:var(--text3);text-align:center;background:var(--bg3);border:1px solid var(--border);letter-spacing:.5px}
-.grille th:first-child{text-align:left;padding-left:12px;width:110px}
-.grille td{border:1px solid var(--border);height:44px;vertical-align:middle;padding:3px}
-.grille td:first-child{padding:8px 12px;font-size:11px;font-weight:600;color:var(--text2);background:var(--bg3);white-space:nowrap}
-.em-cell{border-radius:5px;height:100%;width:100%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:pointer;transition:filter .15s;padding:2px 4px;text-align:center;line-height:1.2}
-.em-cell:hover{filter:brightness(1.25)}
-.em-red{background:rgba(232,25,44,.22);color:#ff7080;border:1px solid rgba(232,25,44,.3)}
-.em-gold{background:rgba(201,168,76,.18);color:var(--gold);border:1px solid rgba(201,168,76,.28)}
-.em-blue{background:rgba(80,140,240,.16);color:#7eb4f5;border:1px solid rgba(80,140,240,.26)}
-.em-green{background:rgba(76,175,110,.16);color:#5ecf86;border:1px solid rgba(76,175,110,.26)}
-.em-purple{background:rgba(160,100,240,.16);color:#c080f5;border:1px solid rgba(160,100,240,.26)}
-.em-empty{cursor:pointer;opacity:0;transition:opacity .2s}
-.grille td:hover .em-empty{opacity:1;background:rgba(255,255,255,.04);border:1px dashed var(--border2);color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center}
+.grille-wrap::-webkit-scrollbar{height:4px}
+.grille-wrap::-webkit-scrollbar-thumb{background:var(--border2)}
+.grille{border-collapse:collapse;width:100%;min-width:700px}
+.grille th{padding:8px 6px;font-size:10px;font-weight:700;color:var(--text3);text-align:center;background:#fafbfc;border:1px solid var(--border);letter-spacing:.5px}
+.grille th:first-child{text-align:left;padding-left:14px;width:110px}
+.grille td{border:1px solid var(--border);height:48px;vertical-align:middle;padding:3px}
+.grille td:first-child{padding:8px 14px;font-size:11px;font-weight:700;color:var(--text2);background:#fafbfc;white-space:nowrap}
+.em{border-radius:5px;height:100%;width:100%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:pointer;padding:3px 4px;text-align:center;line-height:1.3;transition:filter .12s}
+.em:hover{filter:brightness(.95)}
+.em-r{background:var(--rm-light);color:var(--rm);border:1px solid #fca5a5}
+.em-g{background:#ecfdf5;color:#059669;border:1px solid #a7f3d0}
+.em-b{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+.em-o{background:#fff7ed;color:#b45309;border:1px solid #fed7aa}
+.em-p{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
+.em-empty{cursor:pointer;border:1.5px dashed transparent;border-radius:5px;height:calc(100% - 4px);width:calc(100% - 4px);margin:2px;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:16px;transition:all .15s}
+.grille td:hover .em-empty{border-color:var(--border2);color:var(--border2)}
 
-/* ANIM CARD */
-.anim-pill{display:inline-flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:5px 10px;font-size:12px;cursor:pointer;transition:all .15s}
-.anim-pill:hover{border-color:var(--red);color:var(--text)}
-.anim-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+/* ── ANIM PILL ── */
+.apill{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11.5px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .12s;font-family:'Inter',sans-serif}
+.apill:hover{border-color:var(--border2);color:var(--text)}
+.aav{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;color:#fff;flex-shrink:0}
 
-/* SECTION TITLE */
-.stitle{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px;margin-top:2px}
+/* ── GRILLE TYPE CARD ── */
+.gtcard{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow);transition:border-color .15s;cursor:pointer}
+.gtcard:hover{border-color:var(--rm);box-shadow:0 0 0 3px var(--rm-mid)}
+.gtcard .ch{border-bottom:1px solid var(--border)}
+
+/* ── MODAL ── */
+.ov{display:none;position:fixed;inset:0;background:rgba(15,17,22,.45);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.ov.show{display:flex}
+.modal{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);width:500px;max-width:95vw;max-height:90vh;overflow-y:auto;padding:22px;box-shadow:var(--shadow2)}
+.modal-ttl{font-size:15px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.mc{cursor:pointer;color:var(--text3);font-size:20px;background:none;border:none;line-height:1;padding:0}
+.mc:hover{color:var(--text)}
+
+.stitle{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px}
+
+/* ── EMPTY STATE ── */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;color:var(--text3);gap:8px}
+.empty-ic{font-size:28px;opacity:.4}
+.empty-t{font-size:13px;font-weight:600;color:var(--text2)}
+.empty-s{font-size:12px;color:var(--text3)}
+
+/* SEPARATOR */
+.sep{height:1px;background:var(--border);margin:12px 0}
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
+<!-- ══ SIDEBAR ══ -->
 <aside>
   <div class="sb-logo">
     <div class="sb-mark">RM</div>
-    <div>
-      <div class="sb-name">Radio Monaco</div>
-      <div class="sb-sub">Back Office</div>
+    <div class="sb-texts">
+      <span class="sb-name">Radio Monaco</span>
+      <span class="sb-sub">Back Office</span>
     </div>
   </div>
 
   <div class="sb-sec">Modules</div>
 
   <button class="nav on" id="nav-comm" onclick="goto('comm')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="12"/></svg>
+    <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
     Gestion Commerciale
   </button>
 
   <button class="nav" id="nav-ant" onclick="goto('ant')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>
+    <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>
     Grille Antenne
   </button>
 
   <div class="sb-bot">
-    <div class="live-pill">
-      <div class="live-dot"></div>
-      <div>
-        <div class="live-label">ON AIR</div>
-        <div class="live-show">Morning — Léo & Giulia</div>
+    <div class="onair">
+      <div class="oa-dot"></div>
+      <div class="oa-wrap">
+        <div class="oa-lbl">On Air</div>
+        <div class="oa-show">Morning — Léo & Giulia</div>
       </div>
-      <div class="live-clock" id="clk">—</div>
+      <div class="oa-clk" id="clk">—</div>
     </div>
   </div>
 </aside>
 
-<!-- MAIN -->
+<!-- ══ MAIN ══ -->
 <main>
   <div class="topbar">
-    <span class="page-ttl" id="pttl">Gestion Commerciale</span>
-    <div class="topbar-r" id="topbar-actions">
-      <button class="btn btn-p" onclick="openModal('modal-annonceur')">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Annonceur
-      </button>
-      <button class="btn btn-g" onclick="openModal('modal-campagne')">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Campagne
-      </button>
+    <span class="pttl" id="pttl">Gestion Commerciale</span>
+    <div class="tbr" id="tbr">
+      <button class="btn btn-g btn-sm" onclick="openModal('modal-ann')">+ Annonceur</button>
+      <button class="btn btn-p btn-sm" onclick="openModal('modal-camp')">+ Campagne</button>
     </div>
   </div>
 
   <div class="content">
 
-    <!-- ══════════ PANEL COMMERCIAL ══════════ -->
+    <!-- ══════ COMMERCIAL ══════ -->
     <div class="panel on" id="panel-comm">
 
       <div class="stats">
-        <div class="sc"><div class="sc-lbl">Annonceurs actifs</div><div class="sc-val">9</div></div>
-        <div class="sc"><div class="sc-lbl">Campagnes en cours</div><div class="sc-val">4</div></div>
-        <div class="sc"><div class="sc-lbl">Spots ce mois</div><div class="sc-val">624</div></div>
-        <div class="sc"><div class="sc-lbl">Anomalies ouvertes</div><div class="sc-val" style="color:var(--red2)">2</div></div>
+        <div class="sc"><div class="sc-lbl">Annonceurs</div><div class="sc-val" id="nb-ann">0</div><div class="sc-sub">Enregistrés</div></div>
+        <div class="sc"><div class="sc-lbl">Campagnes actives</div><div class="sc-val">0</div><div class="sc-sub">En cours</div></div>
+        <div class="sc"><div class="sc-lbl">Spots ce mois</div><div class="sc-val">—</div><div class="sc-sub">Diffusés</div></div>
+        <div class="sc"><div class="sc-lbl">Anomalies</div><div class="sc-val danger" id="nb-anom">0</div><div class="sc-sub">Ouvertes</div></div>
       </div>
 
       <div class="tabs">
@@ -239,237 +256,88 @@ textarea.fc{resize:vertical;min-height:70px}
         <button class="tab" onclick="stab(this,'tc-anom')">Anomalies</button>
       </div>
 
-      <!-- TAB ANNONCEURS -->
+      <!-- ANNONCEURS -->
       <div id="tc-ann">
         <div class="card">
-          <div class="grille-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Annonceur</th>
-                  <th>Adresse</th>
-                  <th>Contact</th>
-                  <th>Tél / Email</th>
-                  <th>Campagnes</th>
-                  <th>Statut</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="ann-tbody">
-                <tr>
-                  <td style="color:var(--text);font-weight:600">Monte-Carlo SBM</td>
-                  <td>Place du Casino, Monaco</td>
-                  <td>Pierre Durand</td>
-                  <td>p.durand@sbm.mc</td>
-                  <td style="font-family:'DM Mono',monospace">3</td>
-                  <td><span class="chip ch-gold">Premium</span></td>
-                  <td><button class="btn btn-g" style="padding:4px 9px;font-size:11px" onclick="openModal('modal-annonceur')">Éditer</button></td>
-                </tr>
-                <tr>
-                  <td style="color:var(--text);font-weight:600">Luxury Monaco</td>
-                  <td>Avenue de la Costa, Monaco</td>
-                  <td>Isabelle Morel</td>
-                  <td>imorel@luxmc.com</td>
-                  <td style="font-family:'DM Mono',monospace">1</td>
-                  <td><span class="chip ch-gold">Premium</span></td>
-                  <td><button class="btn btn-g" style="padding:4px 9px;font-size:11px" onclick="openModal('modal-annonceur')">Éditer</button></td>
-                </tr>
-                <tr>
-                  <td style="color:var(--text);font-weight:600">Automobile Club Monaco</td>
-                  <td>23 Bd Albert 1er, Monaco</td>
-                  <td>René Blanc</td>
-                  <td>rblanc@acm.mc</td>
-                  <td style="font-family:'DM Mono',monospace">1</td>
-                  <td><span class="chip ch-g">Actif</span></td>
-                  <td><button class="btn btn-g" style="padding:4px 9px;font-size:11px" onclick="openModal('modal-annonceur')">Éditer</button></td>
-                </tr>
-                <tr>
-                  <td style="color:var(--text);font-weight:600">Fairmont The Bay</td>
-                  <td>12 Avenue des Spélugues</td>
-                  <td>Carla Fermi</td>
-                  <td>c.fermi@fairmont.mc</td>
-                  <td style="font-family:'DM Mono',monospace">1</td>
-                  <td><span class="chip ch-b">Nouveau</span></td>
-                  <td><button class="btn btn-g" style="padding:4px 9px;font-size:11px" onclick="openModal('modal-annonceur')">Éditer</button></td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="ch">
+            <span class="ch-t">Base annonceurs</span>
+            <button class="btn btn-p btn-sm" onclick="openModal('modal-ann')">+ Ajouter</button>
+          </div>
+          <div id="ann-table-wrap">
+            <div class="empty">
+              <div class="empty-ic">🏢</div>
+              <div class="empty-t">Aucun annonceur</div>
+              <div class="empty-s">Cliquez sur "Ajouter" pour enregistrer votre premier annonceur.</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- TAB CAMPAGNES -->
+      <!-- CAMPAGNES -->
       <div id="tc-camp" style="display:none">
-
-        <div class="ccamp">
-          <div class="ccamp-top">
-            <div class="ccamp-logo" style="background:rgba(232,25,44,.15);color:#ff5566">SBM</div>
-            <div>
-              <div class="ccamp-name">Monte-Carlo SBM — Été 2026</div>
-              <div class="ccamp-meta">30s · 6×/jour · Lun–Dim · Météo + Info Trafic · <span class="chip ch-g" style="font-size:9px">Active</span></div>
-            </div>
-            <div class="ccamp-r">
-              <div class="ccamp-amt">18 500 €</div>
-              <div class="ccamp-period">Mai – Juin 2026</div>
-            </div>
-            <button class="btn btn-warn" style="margin-left:8px;font-size:11px" onclick="openModal('modal-anom');setCampAnom('SBM Été 2026')">⚠ Anomalie</button>
-          </div>
-          <div class="pb"><div class="pf pf-red" style="width:62%"></div></div>
-          <div class="ccamp-foot">
-            <span class="ccamp-prog">Progression : <span class="prog-pct">62%</span> · Fin le 30 juin</span>
-            <span style="font-size:11px;color:var(--text3)">112 / 180 spots diffusés</span>
-          </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <span class="stitle" style="margin:0">Campagnes sponsor</span>
+          <button class="btn btn-p btn-sm" onclick="openModal('modal-camp')">+ Nouvelle campagne</button>
         </div>
-
-        <div class="ccamp">
-          <div class="ccamp-top">
-            <div class="ccamp-logo" style="background:rgba(201,168,76,.15);color:var(--gold)">LX</div>
-            <div>
-              <div class="ccamp-name">Luxury Monaco — Horlogerie</div>
-              <div class="ccamp-meta">20s · 4×/jour · Lun–Ven · Morning + Charly Family · <span class="chip ch-g" style="font-size:9px">Active</span></div>
-            </div>
-            <div class="ccamp-r">
-              <div class="ccamp-amt">24 000 €</div>
-              <div class="ccamp-period">Avr – Juil 2026</div>
-            </div>
-            <button class="btn btn-warn" style="margin-left:8px;font-size:11px" onclick="openModal('modal-anom');setCampAnom('Luxury Monaco Horlogerie')">⚠ Anomalie</button>
-          </div>
-          <div class="pb"><div class="pf pf-gold" style="width:45%"></div></div>
-          <div class="ccamp-foot">
-            <span class="ccamp-prog">Progression : <span class="prog-pct">45%</span> · Fin le 15 juillet</span>
-            <span style="font-size:11px;color:var(--text3)">108 / 240 spots diffusés</span>
-          </div>
-        </div>
-
-        <div class="ccamp">
-          <div class="ccamp-top">
-            <div class="ccamp-logo" style="background:rgba(80,140,240,.15);color:#7eb4f5">ACM</div>
-            <div>
-              <div class="ccamp-name">Automobile Club Monaco — Grand Prix</div>
-              <div class="ccamp-meta">15s · 8×/jour · Lun–Dim · Info Trafic · <span class="chip ch-r" style="font-size:9px">Urgent</span></div>
-            </div>
-            <div class="ccamp-r">
-              <div class="ccamp-amt">9 200 €</div>
-              <div class="ccamp-period">Mai 2026</div>
-            </div>
-            <button class="btn btn-warn" style="margin-left:8px;font-size:11px" onclick="openModal('modal-anom');setCampAnom('ACM Grand Prix')">⚠ Anomalie</button>
-          </div>
-          <div class="pb"><div class="pf pf-green" style="width:88%"></div></div>
-          <div class="ccamp-foot">
-            <span class="ccamp-prog">Progression : <span class="prog-pct">88%</span> · Fin le 2 juin</span>
-            <span style="font-size:11px;color:var(--text3)">211 / 240 spots diffusés</span>
-          </div>
-        </div>
-
-        <div class="ccamp">
-          <div class="ccamp-top">
-            <div class="ccamp-logo" style="background:rgba(76,175,110,.15);color:#5ecf86">FH</div>
-            <div>
-              <div class="ccamp-name">Fairmont Hotel — Été à Monaco</div>
-              <div class="ccamp-meta">30s · 3×/jour · Ven–Dim · Émission Weekend · <span class="chip ch-o" style="font-size:9px">Planifiée</span></div>
-            </div>
-            <div class="ccamp-r">
-              <div class="ccamp-amt">12 000 €</div>
-              <div class="ccamp-period">Juin – Août 2026</div>
-            </div>
-            <button class="btn btn-warn" style="margin-left:8px;font-size:11px" onclick="openModal('modal-anom');setCampAnom('Fairmont Hotel Été')">⚠ Anomalie</button>
-          </div>
-          <div class="pb"><div class="pf pf-blue" style="width:0%"></div></div>
-          <div class="ccamp-foot">
-            <span class="ccamp-prog">Démarrage : <span class="prog-pct">1er juin</span></span>
-            <span style="font-size:11px;color:var(--text3)">0 / 108 spots</span>
+        <div id="camp-list">
+          <div class="empty">
+            <div class="empty-ic">📢</div>
+            <div class="empty-t">Aucune campagne</div>
+            <div class="empty-s">Ajoutez d'abord un annonceur, puis créez votre première campagne.</div>
           </div>
         </div>
       </div>
 
-      <!-- TAB ANOMALIES -->
+      <!-- ANOMALIES -->
       <div id="tc-anom" style="display:none">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <span class="stitle" style="margin:0">Déclarations d'anomalies</span>
-          <button class="btn btn-warn" onclick="openModal('modal-anom')">+ Déclarer une anomalie</button>
+          <span class="stitle" style="margin:0">Anomalies déclarées</span>
+          <button class="btn btn-w btn-sm" onclick="openModal('modal-anom')">⚠ Déclarer une anomalie</button>
         </div>
         <div class="card" id="anom-list">
-          <div class="anom-row">
-            <div class="anom-ico anom-open">!</div>
-            <div style="flex:1">
-              <div style="font-size:13px;font-weight:600;color:var(--text)">Spot manquant — ACM Grand Prix</div>
-              <div style="font-size:11px;color:var(--text3);margin-top:2px">Spot du 24/05 à 07:15 non diffusé — Déclaré le 25/05 par T. Martin</div>
-            </div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-              <span class="chip ch-r">Ouverte</span>
-              <span style="font-size:10px;color:var(--text3)">25/05/2026</span>
-            </div>
-          </div>
-          <div class="anom-row">
-            <div class="anom-ico anom-open">!</div>
-            <div style="flex:1">
-              <div style="font-size:13px;font-weight:600;color:var(--text)">Mauvaise version spot — SBM Été 2026</div>
-              <div style="font-size:11px;color:var(--text3);margin-top:2px">Ancienne version du fichier audio diffusée le 22/05 à 12:00</div>
-            </div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-              <span class="chip ch-r">Ouverte</span>
-              <span style="font-size:10px;color:var(--text3)">22/05/2026</span>
-            </div>
-          </div>
-          <div class="anom-row">
-            <div class="anom-ico anom-enc">~</div>
-            <div style="flex:1">
-              <div style="font-size:13px;font-weight:600;color:var(--text)">Décalage horaire — Luxury Monaco</div>
-              <div style="font-size:11px;color:var(--text3);margin-top:2px">Spot diffusé 5 min hors créneau contractuel le 18/05</div>
-            </div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-              <span class="chip ch-o">En cours</span>
-              <span style="font-size:10px;color:var(--text3)">18/05/2026</span>
-            </div>
-          </div>
-          <div class="anom-row">
-            <div class="anom-ico anom-res">✓</div>
-            <div style="flex:1">
-              <div style="font-size:13px;font-weight:600;color:var(--text)">Durée incorrecte — ACM (résolu)</div>
-              <div style="font-size:11px;color:var(--text3);margin-top:2px">Spot de 15s diffusé en 12s. Remplacé et rediffusé le 10/05.</div>
-            </div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-              <span class="chip ch-g">Résolue</span>
-              <span style="font-size:10px;color:var(--text3)">10/05/2026</span>
-            </div>
+          <div class="empty">
+            <div class="empty-ic">✅</div>
+            <div class="empty-t">Aucune anomalie</div>
+            <div class="empty-s">Tout fonctionne correctement.</div>
           </div>
         </div>
       </div>
+    </div>
 
-    </div><!-- /panel-comm -->
 
-
-    <!-- ══════════ PANEL ANTENNE ══════════ -->
+    <!-- ══════ GRILLE ANTENNE ══════ -->
     <div class="panel" id="panel-ant">
-
       <div class="tabs">
         <button class="tab on" onclick="stab(this,'ta-grille')">Grille hebdo</button>
         <button class="tab" onclick="stab(this,'ta-type')">Grilles type</button>
         <button class="tab" onclick="stab(this,'ta-anim')">Animateurs</button>
       </div>
 
-      <!-- TAB GRILLE HEBDO -->
+      <!-- GRILLE HEBDO -->
       <div id="ta-grille">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <span class="stitle" style="margin:0">Semaine 22 · 26 mai – 1er juin 2026</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:var(--text)">Semaine 22</div>
+            <div style="font-size:11px;color:var(--text3)">26 mai – 1er juin 2026</div>
+          </div>
           <div style="display:flex;gap:7px">
-            <button class="btn btn-g" style="font-size:11px">← Préc.</button>
-            <button class="btn btn-g" style="font-size:11px">Suiv. →</button>
-            <button class="btn btn-g" style="font-size:11px" onclick="openModal('modal-appliquer')">Appliquer grille type</button>
-            <button class="btn btn-p" style="font-size:11px" onclick="openModal('modal-slot')">+ Ajouter émission</button>
+            <button class="btn btn-g btn-sm">← Préc.</button>
+            <button class="btn btn-g btn-sm">Suiv. →</button>
+            <button class="btn btn-g btn-sm" onclick="openModal('modal-apply')">Appliquer grille type</button>
+            <button class="btn btn-p btn-sm" onclick="openModal('modal-slot')">+ Émission</button>
           </div>
         </div>
 
-        <!-- LÉGENDE -->
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
-          <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)"><span style="width:10px;height:10px;border-radius:2px;background:rgba(232,25,44,.22);display:inline-block"></span>Morning</span>
-          <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)"><span style="width:10px;height:10px;border-radius:2px;background:rgba(201,168,76,.18);display:inline-block"></span>Charly Family</span>
-          <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)"><span style="width:10px;height:10px;border-radius:2px;background:rgba(80,140,240,.16);display:inline-block"></span>Programme musical</span>
-          <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)"><span style="width:10px;height:10px;border-radius:2px;background:rgba(76,175,110,.16);display:inline-block"></span>Journal / Info</span>
-          <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)"><span style="width:10px;height:10px;border-radius:2px;background:rgba(160,100,240,.16);display:inline-block"></span>Soirée / Nuit</span>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
+          <span style="font-size:11px;font-weight:600;color:var(--text3)">Légende :</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:2px;background:var(--rm-light);border:1px solid #fca5a5;display:inline-block"></span>Morning</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:2px;background:#fff7ed;border:1px solid #fed7aa;display:inline-block"></span>Charly Family</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:2px;background:#eff6ff;border:1px solid #bfdbfe;display:inline-block"></span>Programme musical</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:2px;background:#ecfdf5;border:1px solid #a7f3d0;display:inline-block"></span>Info / Journal</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:2px;background:#f5f3ff;border:1px solid #ddd6fe;display:inline-block"></span>Soirée</span>
         </div>
 
-        <div class="card">
+        <div class="card" style="margin:0">
           <div class="grille-wrap">
             <table class="grille">
               <thead>
@@ -480,74 +348,74 @@ textarea.fc{resize:vertical;min-height:70px}
               </thead>
               <tbody>
                 <tr>
-                  <td>05:00–07:00</td>
-                  <td><div class="em-cell em-purple">Monaco Réveil</div></td>
-                  <td><div class="em-cell em-purple">Monaco Réveil</div></td>
-                  <td><div class="em-cell em-purple">Monaco Réveil</div></td>
-                  <td><div class="em-cell em-purple">Monaco Réveil</div></td>
-                  <td><div class="em-cell em-purple">Monaco Réveil</div></td>
-                  <td><div class="em-cell em-blue">Autoradio</div></td>
-                  <td><div class="em-cell em-blue">Autoradio</div></td>
+                  <td>05:00 – 07:00</td>
+                  <td><div class="em em-b">Réveil Monaco</div></td>
+                  <td><div class="em em-b">Réveil Monaco</div></td>
+                  <td><div class="em em-b">Réveil Monaco</div></td>
+                  <td><div class="em em-b">Réveil Monaco</div></td>
+                  <td><div class="em em-b">Réveil Monaco</div></td>
+                  <td><div class="em em-b">Autoradio</div></td>
+                  <td><div class="em em-b">Autoradio</div></td>
                 </tr>
                 <tr>
-                  <td>07:00–10:00</td>
-                  <td><div class="em-cell em-red" onclick="openModal('modal-slot')">Morning<br><span style="font-size:8px;opacity:.7">Léo · Giulia · Marie</span></div></td>
-                  <td><div class="em-cell em-red" onclick="openModal('modal-slot')">Morning<br><span style="font-size:8px;opacity:.7">Léo · Giulia · Marie</span></div></td>
-                  <td><div class="em-cell em-red" onclick="openModal('modal-slot')">Morning<br><span style="font-size:8px;opacity:.7">Léo · Giulia · Marie</span></div></td>
-                  <td><div class="em-cell em-red" onclick="openModal('modal-slot')">Morning<br><span style="font-size:8px;opacity:.7">Léo · Giulia · Marie</span></div></td>
-                  <td><div class="em-cell em-red" onclick="openModal('modal-slot')">Morning<br><span style="font-size:8px;opacity:.7">Léo · Giulia · Marie</span></div></td>
-                  <td><div class="em-cell em-blue">Weekend Matin<br><span style="font-size:8px;opacity:.7">Anaïs</span></div></td>
-                  <td><div class="em-cell em-blue">Weekend Matin<br><span style="font-size:8px;opacity:.7">Anaïs</span></div></td>
+                  <td>07:00 – 10:00</td>
+                  <td><div class="em em-r" onclick="openModal('modal-slot')">Morning<br><span style="font-size:8px;opacity:.75">Léo · Giulia · Marie</span></div></td>
+                  <td><div class="em em-r" onclick="openModal('modal-slot')">Morning<br><span style="font-size:8px;opacity:.75">Léo · Giulia · Marie</span></div></td>
+                  <td><div class="em em-r" onclick="openModal('modal-slot')">Morning<br><span style="font-size:8px;opacity:.75">Léo · Giulia · Marie</span></div></td>
+                  <td><div class="em em-r" onclick="openModal('modal-slot')">Morning<br><span style="font-size:8px;opacity:.75">Léo · Giulia · Marie</span></div></td>
+                  <td><div class="em em-r" onclick="openModal('modal-slot')">Morning<br><span style="font-size:8px;opacity:.75">Léo · Giulia · Marie</span></div></td>
+                  <td><div class="em em-b" onclick="openModal('modal-slot')">Week-end Matin<br><span style="font-size:8px;opacity:.75">Anaïs</span></div></td>
+                  <td><div class="em em-b" onclick="openModal('modal-slot')">Week-end Matin<br><span style="font-size:8px;opacity:.75">Anaïs</span></div></td>
                 </tr>
                 <tr>
-                  <td>10:00–12:00</td>
-                  <td><div class="em-cell em-gold" onclick="openModal('modal-slot')">Charly Family<br><span style="font-size:8px;opacity:.7">Éric · Charly · Anaïs · JC</span></div></td>
-                  <td><div class="em-cell em-gold" onclick="openModal('modal-slot')">Charly Family<br><span style="font-size:8px;opacity:.7">Éric · Charly · Anaïs · JC</span></div></td>
-                  <td><div class="em-cell em-gold" onclick="openModal('modal-slot')">Charly Family<br><span style="font-size:8px;opacity:.7">Éric · Charly · Anaïs · JC</span></div></td>
-                  <td><div class="em-cell em-gold" onclick="openModal('modal-slot')">Charly Family<br><span style="font-size:8px;opacity:.7">Éric · Charly · Anaïs · JC</span></div></td>
-                  <td><div class="em-cell em-gold" onclick="openModal('modal-slot')">Charly Family<br><span style="font-size:8px;opacity:.7">Éric · Charly · Anaïs · JC</span></div></td>
-                  <td><div class="em-cell em-gold">Mix Week-end<br><span style="font-size:8px;opacity:.7">Charly</span></div></td>
-                  <td><div class="em-cell em-gold">Mix Week-end<br><span style="font-size:8px;opacity:.7">Charly</span></div></td>
+                  <td>10:00 – 12:00</td>
+                  <td><div class="em em-o" onclick="openModal('modal-slot')">Charly Family<br><span style="font-size:8px;opacity:.75">Éric · Charly · Anaïs · JC</span></div></td>
+                  <td><div class="em em-o" onclick="openModal('modal-slot')">Charly Family<br><span style="font-size:8px;opacity:.75">Éric · Charly · Anaïs · JC</span></div></td>
+                  <td><div class="em em-o" onclick="openModal('modal-slot')">Charly Family<br><span style="font-size:8px;opacity:.75">Éric · Charly · Anaïs · JC</span></div></td>
+                  <td><div class="em em-o" onclick="openModal('modal-slot')">Charly Family<br><span style="font-size:8px;opacity:.75">Éric · Charly · Anaïs · JC</span></div></td>
+                  <td><div class="em em-o" onclick="openModal('modal-slot')">Charly Family<br><span style="font-size:8px;opacity:.75">Éric · Charly · Anaïs · JC</span></div></td>
+                  <td><div class="em em-o" onclick="openModal('modal-slot')">Best Of<br><span style="font-size:8px;opacity:.75">Charly</span></div></td>
+                  <td><div class="em em-o" onclick="openModal('modal-slot')">Best Of<br><span style="font-size:8px;opacity:.75">Charly</span></div></td>
                 </tr>
                 <tr>
-                  <td>12:00–14:00</td>
-                  <td><div class="em-cell em-green">Journal Midi<br><span style="font-size:8px;opacity:.7">Giulia</span></div></td>
-                  <td><div class="em-cell em-green">Journal Midi<br><span style="font-size:8px;opacity:.7">Giulia</span></div></td>
-                  <td><div class="em-cell em-green">Journal Midi<br><span style="font-size:8px;opacity:.7">Giulia</span></div></td>
-                  <td><div class="em-cell em-green">Journal Midi<br><span style="font-size:8px;opacity:.7">Giulia</span></div></td>
-                  <td><div class="em-cell em-green">Journal Midi<br><span style="font-size:8px;opacity:.7">Giulia</span></div></td>
-                  <td><div class="em-cell em-blue">Monaco Lounge</div></td>
-                  <td><div class="em-cell em-blue">Monaco Lounge</div></td>
+                  <td>12:00 – 14:00</td>
+                  <td><div class="em em-g">Info Midi<br><span style="font-size:8px;opacity:.75">Giulia</span></div></td>
+                  <td><div class="em em-g">Info Midi<br><span style="font-size:8px;opacity:.75">Giulia</span></div></td>
+                  <td><div class="em em-g">Info Midi<br><span style="font-size:8px;opacity:.75">Giulia</span></div></td>
+                  <td><div class="em em-g">Info Midi<br><span style="font-size:8px;opacity:.75">Giulia</span></div></td>
+                  <td><div class="em em-g">Info Midi<br><span style="font-size:8px;opacity:.75">Giulia</span></div></td>
+                  <td><div class="em em-b">Monaco Lounge</div></td>
+                  <td><div class="em em-b">Monaco Lounge</div></td>
                 </tr>
                 <tr>
-                  <td>14:00–16:00</td>
-                  <td><div class="em-cell em-blue">Après-Midi FM<br><span style="font-size:8px;opacity:.7">Marie</span></div></td>
-                  <td><div class="em-cell em-blue">Après-Midi FM<br><span style="font-size:8px;opacity:.7">Marie</span></div></td>
-                  <td><div class="em-cell em-blue">Après-Midi FM<br><span style="font-size:8px;opacity:.7">Marie</span></div></td>
-                  <td><div class="em-cell em-blue">Après-Midi FM<br><span style="font-size:8px;opacity:.7">Marie</span></div></td>
-                  <td><div class="em-cell em-blue">Après-Midi FM<br><span style="font-size:8px;opacity:.7">Marie</span></div></td>
-                  <td><div class="em-cell em-gold">Grand Prix Mix<br><span style="font-size:8px;opacity:.7">Éric</span></div></td>
-                  <td><div class="em-cell em-green">Côte d'Azur<br><span style="font-size:8px;opacity:.7">Jean Christophe</span></div></td>
+                  <td>14:00 – 16:00</td>
+                  <td><div class="em em-b">Après-Midi FM<br><span style="font-size:8px;opacity:.75">Marie</span></div></td>
+                  <td><div class="em em-b">Après-Midi FM<br><span style="font-size:8px;opacity:.75">Marie</span></div></td>
+                  <td><div class="em em-b">Après-Midi FM<br><span style="font-size:8px;opacity:.75">Marie</span></div></td>
+                  <td><div class="em em-b">Après-Midi FM<br><span style="font-size:8px;opacity:.75">Marie</span></div></td>
+                  <td><div class="em em-b">Après-Midi FM<br><span style="font-size:8px;opacity:.75">Marie</span></div></td>
+                  <td><div class="em em-b">Monaco Mix<br><span style="font-size:8px;opacity:.75">Éric</span></div></td>
+                  <td><div class="em em-b">Monaco Mix<br><span style="font-size:8px;opacity:.75">Jean Christophe</span></div></td>
                 </tr>
                 <tr>
-                  <td>16:00–20:00</td>
-                  <td><div class="em-cell em-red">Monaco Drive<br><span style="font-size:8px;opacity:.7">Léo</span></div></td>
-                  <td><div class="em-cell em-red">Monaco Drive<br><span style="font-size:8px;opacity:.7">Léo</span></div></td>
-                  <td><div class="em-cell em-red">Monaco Drive<br><span style="font-size:8px;opacity:.7">Léo</span></div></td>
-                  <td><div class="em-cell em-red">Monaco Drive<br><span style="font-size:8px;opacity:.7">Léo</span></div></td>
-                  <td><div class="em-cell em-red">Monaco Drive<br><span style="font-size:8px;opacity:.7">Léo</span></div></td>
-                  <td><div class="em-cell em-gold">Sunset Mix<br><span style="font-size:8px;opacity:.7">Éric</span></div></td>
-                  <td><div class="em-cell em-gold">Sunset Mix<br><span style="font-size:8px;opacity:.7">Éric</span></div></td>
+                  <td>16:00 – 20:00</td>
+                  <td><div class="em em-r">Monaco Drive<br><span style="font-size:8px;opacity:.75">Léo</span></div></td>
+                  <td><div class="em em-r">Monaco Drive<br><span style="font-size:8px;opacity:.75">Léo</span></div></td>
+                  <td><div class="em em-r">Monaco Drive<br><span style="font-size:8px;opacity:.75">Léo</span></div></td>
+                  <td><div class="em em-r">Monaco Drive<br><span style="font-size:8px;opacity:.75">Léo</span></div></td>
+                  <td><div class="em em-r">Monaco Drive<br><span style="font-size:8px;opacity:.75">Léo</span></div></td>
+                  <td><div class="em em-o">Sunset<br><span style="font-size:8px;opacity:.75">Éric</span></div></td>
+                  <td><div class="em em-o">Sunset<br><span style="font-size:8px;opacity:.75">Éric</span></div></td>
                 </tr>
                 <tr>
-                  <td>20:00–00:00</td>
-                  <td><div class="em-cell em-purple">Soirée Monaco<br><span style="font-size:8px;opacity:.7">Jean Christophe</span></div></td>
-                  <td><div class="em-cell em-purple">Soirée Monaco<br><span style="font-size:8px;opacity:.7">Jean Christophe</span></div></td>
-                  <td><div class="em-cell em-purple">Soirée Monaco<br><span style="font-size:8px;opacity:.7">Jean Christophe</span></div></td>
-                  <td><div class="em-cell em-purple">Soirée Monaco<br><span style="font-size:8px;opacity:.7">Jean Christophe</span></div></td>
-                  <td><div class="em-cell em-purple">Soirée Monaco<br><span style="font-size:8px;opacity:.7">Jean Christophe</span></div></td>
-                  <td><div class="em-cell em-purple">Monte-Carlo Night<br><span style="font-size:8px;opacity:.7">Anaïs</span></div></td>
-                  <td><div class="em-cell em-purple">Monte-Carlo Night<br><span style="font-size:8px;opacity:.7">Anaïs</span></div></td>
+                  <td>20:00 – 00:00</td>
+                  <td><div class="em em-p">Soirée Monaco<br><span style="font-size:8px;opacity:.75">Jean Christophe</span></div></td>
+                  <td><div class="em em-p">Soirée Monaco<br><span style="font-size:8px;opacity:.75">Jean Christophe</span></div></td>
+                  <td><div class="em em-p">Soirée Monaco<br><span style="font-size:8px;opacity:.75">Jean Christophe</span></div></td>
+                  <td><div class="em em-p">Soirée Monaco<br><span style="font-size:8px;opacity:.75">Jean Christophe</span></div></td>
+                  <td><div class="em em-p">Soirée Monaco<br><span style="font-size:8px;opacity:.75">Jean Christophe</span></div></td>
+                  <td><div class="em em-p">Nuit Monaco<br><span style="font-size:8px;opacity:.75">Anaïs</span></div></td>
+                  <td><div class="em em-p">Nuit Monaco<br><span style="font-size:8px;opacity:.75">Anaïs</span></div></td>
                 </tr>
               </tbody>
             </table>
@@ -555,220 +423,175 @@ textarea.fc{resize:vertical;min-height:70px}
         </div>
       </div>
 
-      <!-- TAB GRILLES TYPE -->
+      <!-- GRILLES TYPE -->
       <div id="ta-type" style="display:none">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
           <span class="stitle" style="margin:0">Modèles de grille</span>
-          <button class="btn btn-p" onclick="openModal('modal-newtype')">+ Nouvelle grille type</button>
+          <button class="btn btn-p btn-sm" onclick="openModal('modal-newgt')">+ Nouvelle grille type</button>
         </div>
-        <div class="g2">
-          <div class="card" style="cursor:pointer" onclick="openModal('modal-appliquer')">
-            <div class="ch"><span class="ch-t">Grille Standard Semaine</span><span class="chip ch-g">Défaut</span></div>
-            <div style="padding:14px 16px">
-              <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Morning · Charly Family · Journal · Après-Midi · Drive · Soirée</div>
-              <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Lun–Dim · 7 tranches · Dernière modif : 10/05/2026</div>
-              <button class="btn btn-p" style="font-size:11px;width:100%;justify-content:center" onclick="event.stopPropagation();openModal('modal-appliquer')">Appliquer sur une semaine</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+          <div class="card gtcard">
+            <div class="ch"><span class="ch-t">Grille Standard</span><span class="chip ch-g">Défaut</span></div>
+            <div style="padding:12px 14px">
+              <div style="font-size:11.5px;color:var(--text2);margin-bottom:8px;line-height:1.6">Morning · Charly Family<br>Info Midi · Après-Midi · Drive · Soirée</div>
+              <div style="font-size:10px;color:var(--text3);margin-bottom:10px">Lun–Dim · 7 tranches</div>
+              <button class="btn btn-p btn-sm" style="width:100%;justify-content:center" onclick="openModal('modal-apply')">Appliquer</button>
             </div>
           </div>
-          <div class="card" style="cursor:pointer">
-            <div class="ch"><span class="ch-t">Grille Été</span><span class="chip ch-gold">Saisonnier</span></div>
-            <div style="padding:14px 16px">
-              <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Morning · Charly Family · Lounge · Mix · Drive · Night</div>
-              <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Lun–Dim · 7 tranches · Créée le 01/04/2026</div>
-              <button class="btn btn-p" style="font-size:11px;width:100%;justify-content:center" onclick="event.stopPropagation();openModal('modal-appliquer')">Appliquer sur une semaine</button>
+          <div class="card gtcard">
+            <div class="ch"><span class="ch-t">Grille Été</span><span class="chip ch-o">Saisonnier</span></div>
+            <div style="padding:12px 14px">
+              <div style="font-size:11.5px;color:var(--text2);margin-bottom:8px;line-height:1.6">Morning · Charly Family<br>Lounge · Mix · Drive · Nuit</div>
+              <div style="font-size:10px;color:var(--text3);margin-bottom:10px">Lun–Dim · 7 tranches</div>
+              <button class="btn btn-p btn-sm" style="width:100%;justify-content:center" onclick="openModal('modal-apply')">Appliquer</button>
             </div>
           </div>
-          <div class="card" style="cursor:pointer">
-            <div class="ch"><span class="ch-t">Grille Grand Prix</span><span class="chip ch-r">Événement</span></div>
-            <div style="padding:14px 16px">
-              <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Morning spécial · ACM Mix · Journal · Grand Prix Live · Night</div>
-              <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Lun–Dim · 5 tranches · Créée le 15/04/2026</div>
-              <button class="btn btn-p" style="font-size:11px;width:100%;justify-content:center" onclick="event.stopPropagation();openModal('modal-appliquer')">Appliquer sur une semaine</button>
+          <div class="card gtcard" style="border:2px dashed var(--border);box-shadow:none;display:flex;align-items:center;justify-content:center;min-height:130px;cursor:pointer" onclick="openModal('modal-newgt')">
+            <div style="text-align:center;color:var(--text3)">
+              <div style="font-size:22px;margin-bottom:6px">+</div>
+              <div style="font-size:12px;font-weight:600">Nouvelle grille type</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- TAB ANIMATEURS -->
+      <!-- ANIMATEURS -->
       <div id="ta-anim" style="display:none">
         <div class="stitle">Équipe antenne</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
-          <div class="anim-pill"><div class="anim-av" style="background:#e8192c">GL</div>Giulia</div>
-          <div class="anim-pill"><div class="anim-av" style="background:#508cf0">LÉ</div>Léo</div>
-          <div class="anim-pill"><div class="anim-av" style="background:#c9a84c">ÉR</div>Éric</div>
-          <div class="anim-pill"><div class="anim-av" style="background:#a064f0">CH</div>Charly</div>
-          <div class="anim-pill"><div class="anim-av" style="background:#4caf6e">AN</div>Anaïs</div>
-          <div class="anim-pill"><div class="anim-av" style="background:#20aaa0">JC</div>Jean Christophe</div>
-          <div class="anim-pill"><div class="anim-av" style="background:#d05090">MA</div>Marie</div>
+          <div class="apill"><div class="aav" style="background:#e8192c">GL</div>Giulia</div>
+          <div class="apill"><div class="aav" style="background:#2563eb">LÉ</div>Léo</div>
+          <div class="apill"><div class="aav" style="background:#b45309">ÉR</div>Éric</div>
+          <div class="apill"><div class="aav" style="background:#7c3aed">CH</div>Charly</div>
+          <div class="apill"><div class="aav" style="background:#059669">AN</div>Anaïs</div>
+          <div class="apill"><div class="aav" style="background:#0891b2">JC</div>Jean Christophe</div>
+          <div class="apill"><div class="aav" style="background:#db2777">MA</div>Marie</div>
         </div>
 
         <div class="stitle">Affectation par émission</div>
         <div class="card">
-          <div class="grille-wrap">
+          <div class="tw">
             <table>
-              <thead><tr><th>Émission</th><th>Tranche</th><th>Fréquence</th><th>Animateurs</th><th></th></tr></thead>
+              <thead><tr><th>Émission</th><th>Tranche</th><th>Jours</th><th>Animateurs</th><th></th></tr></thead>
               <tbody>
                 <tr>
-                  <td style="color:var(--text);font-weight:600">Morning</td>
+                  <td class="td-strong">Morning</td>
                   <td>07:00–10:00</td>
                   <td>Lun–Ven</td>
-                  <td>
-                    <span class="anim-pill" style="font-size:11px;padding:3px 8px"><span class="anim-av" style="background:#e8192c;width:18px;height:18px;font-size:8px">GL</span>Giulia</span>
-                    <span class="anim-pill" style="font-size:11px;padding:3px 8px;margin-left:4px"><span class="anim-av" style="background:#508cf0;width:18px;height:18px;font-size:8px">LÉ</span>Léo</span>
-                    <span class="anim-pill" style="font-size:11px;padding:3px 8px;margin-left:4px"><span class="anim-av" style="background:#d05090;width:18px;height:18px;font-size:8px">MA</span>Marie</span>
+                  <td style="display:flex;gap:4px;flex-wrap:wrap;padding-top:9px">
+                    <span class="apill" style="font-size:10.5px;padding:3px 8px"><span class="aav" style="background:#e8192c;width:18px;height:18px;font-size:7.5px">GL</span>Giulia</span>
+                    <span class="apill" style="font-size:10.5px;padding:3px 8px"><span class="aav" style="background:#2563eb;width:18px;height:18px;font-size:7.5px">LÉ</span>Léo</span>
+                    <span class="apill" style="font-size:10.5px;padding:3px 8px"><span class="aav" style="background:#db2777;width:18px;height:18px;font-size:7.5px">MA</span>Marie</span>
                   </td>
-                  <td><button class="btn btn-g" style="padding:4px 9px;font-size:11px" onclick="openModal('modal-anim')">Modifier</button></td>
+                  <td><button class="btn btn-g btn-sm" onclick="openModal('modal-aff')">Modifier</button></td>
                 </tr>
                 <tr>
-                  <td style="color:var(--text);font-weight:600">Charly Family</td>
+                  <td class="td-strong">Charly Family</td>
                   <td>10:00–12:00</td>
                   <td>Lun–Ven</td>
-                  <td>
-                    <span class="anim-pill" style="font-size:11px;padding:3px 8px"><span class="anim-av" style="background:#c9a84c;width:18px;height:18px;font-size:8px">ÉR</span>Éric</span>
-                    <span class="anim-pill" style="font-size:11px;padding:3px 8px;margin-left:4px"><span class="anim-av" style="background:#a064f0;width:18px;height:18px;font-size:8px">CH</span>Charly</span>
-                    <span class="anim-pill" style="font-size:11px;padding:3px 8px;margin-left:4px"><span class="anim-av" style="background:#4caf6e;width:18px;height:18px;font-size:8px">AN</span>Anaïs</span>
-                    <span class="anim-pill" style="font-size:11px;padding:3px 8px;margin-left:4px"><span class="anim-av" style="background:#20aaa0;width:18px;height:18px;font-size:8px">JC</span>Jean Christophe</span>
+                  <td style="display:flex;gap:4px;flex-wrap:wrap;padding-top:9px">
+                    <span class="apill" style="font-size:10.5px;padding:3px 8px"><span class="aav" style="background:#b45309;width:18px;height:18px;font-size:7.5px">ÉR</span>Éric</span>
+                    <span class="apill" style="font-size:10.5px;padding:3px 8px"><span class="aav" style="background:#7c3aed;width:18px;height:18px;font-size:7.5px">CH</span>Charly</span>
+                    <span class="apill" style="font-size:10.5px;padding:3px 8px"><span class="aav" style="background:#059669;width:18px;height:18px;font-size:7.5px">AN</span>Anaïs</span>
+                    <span class="apill" style="font-size:10.5px;padding:3px 8px"><span class="aav" style="background:#0891b2;width:18px;height:18px;font-size:7.5px">JC</span>Jean Christophe</span>
                   </td>
-                  <td><button class="btn btn-g" style="padding:4px 9px;font-size:11px" onclick="openModal('modal-anim')">Modifier</button></td>
-                </tr>
-                <tr>
-                  <td style="color:var(--text);font-weight:600">Monaco Drive</td>
-                  <td>16:00–20:00</td>
-                  <td>Lun–Ven</td>
-                  <td>
-                    <span class="anim-pill" style="font-size:11px;padding:3px 8px"><span class="anim-av" style="background:#508cf0;width:18px;height:18px;font-size:8px">LÉ</span>Léo</span>
-                  </td>
-                  <td><button class="btn btn-g" style="padding:4px 9px;font-size:11px" onclick="openModal('modal-anim')">Modifier</button></td>
-                </tr>
-                <tr>
-                  <td style="color:var(--text);font-weight:600">Soirée Monaco</td>
-                  <td>20:00–00:00</td>
-                  <td>Lun–Ven</td>
-                  <td>
-                    <span class="anim-pill" style="font-size:11px;padding:3px 8px"><span class="anim-av" style="background:#20aaa0;width:18px;height:18px;font-size:8px">JC</span>Jean Christophe</span>
-                  </td>
-                  <td><button class="btn btn-g" style="padding:4px 9px;font-size:11px" onclick="openModal('modal-anim')">Modifier</button></td>
+                  <td><button class="btn btn-g btn-sm" onclick="openModal('modal-aff')">Modifier</button></td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
-
-        <div style="margin-top:16px">
-          <button class="btn btn-p" onclick="openModal('modal-anim')">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Affecter un animateur sur une tranche
-          </button>
+        <div style="margin-top:12px">
+          <button class="btn btn-p btn-sm" onclick="openModal('modal-aff')">+ Affecter un animateur</button>
         </div>
       </div>
-
-    </div><!-- /panel-ant -->
+    </div>
 
   </div><!-- /content -->
 </main>
 
 
-<!-- ══════════ MODALS ══════════ -->
+<!-- ══════ MODALS ══════ -->
 
-<!-- Modal annonceur -->
-<div class="overlay" id="modal-annonceur" onclick="closeIfBg(event,'modal-annonceur')">
+<!-- Annonceur -->
+<div class="ov" id="modal-ann" onclick="obg(event,'modal-ann')">
   <div class="modal">
-    <div class="modal-ttl">Ajouter / Modifier un annonceur
-      <button class="modal-close" onclick="closeModal('modal-annonceur')">✕</button>
+    <div class="modal-ttl">Ajouter un annonceur <button class="mc" onclick="closeModal('modal-ann')">×</button></div>
+    <div class="fg"><label class="fl">Nom de l'annonceur</label><input class="fc" id="ann-nom" type="text" placeholder="Ex: Monte-Carlo SBM"></div>
+    <div class="fg"><label class="fl">Adresse</label><input class="fc" id="ann-adr" type="text" placeholder="Place du Casino, Monaco"></div>
+    <div class="g2">
+      <div class="fg" style="margin:0"><label class="fl">Nom du contact</label><input class="fc" id="ann-contact" type="text" placeholder="Prénom Nom"></div>
+      <div class="fg" style="margin:0"><label class="fl">Téléphone</label><input class="fc" id="ann-tel" type="tel" placeholder="+377 93 00 00 00"></div>
     </div>
-    <div class="fg"><label class="fl">Nom de l'annonceur</label><input class="fc" type="text" placeholder="Ex: Monte-Carlo SBM"></div>
-    <div class="fg"><label class="fl">Adresse</label><input class="fc" type="text" placeholder="Place du Casino, Monaco"></div>
-    <div class="g2" style="gap:10px">
-      <div class="fg" style="margin:0"><label class="fl">Nom du contact</label><input class="fc" type="text" placeholder="Pierre Durand"></div>
-      <div class="fg" style="margin:0"><label class="fl">Téléphone</label><input class="fc" type="tel" placeholder="+377 93 00 00 00"></div>
-    </div>
-    <div class="fg"><label class="fl">Email</label><input class="fc" type="email" placeholder="contact@annonceur.mc"></div>
-    <div class="fg">
-      <label class="fl">Statut</label>
-      <select class="fc"><option>Actif</option><option>Premium</option><option>Nouveau</option><option>Inactif</option></select>
-    </div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
-      <button class="btn btn-g" onclick="closeModal('modal-annonceur')">Annuler</button>
-      <button class="btn btn-p" onclick="closeModal('modal-annonceur')">Enregistrer</button>
+    <div class="fg"><label class="fl">Email</label><input class="fc" id="ann-email" type="email" placeholder="contact@annonceur.mc"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+      <button class="btn btn-g btn-sm" onclick="closeModal('modal-ann')">Annuler</button>
+      <button class="btn btn-p btn-sm" onclick="saveAnn()">Enregistrer</button>
     </div>
   </div>
 </div>
 
-<!-- Modal campagne -->
-<div class="overlay" id="modal-campagne" onclick="closeIfBg(event,'modal-campagne')">
+<!-- Campagne -->
+<div class="ov" id="modal-camp" onclick="obg(event,'modal-camp')">
   <div class="modal">
-    <div class="modal-ttl">Créer une campagne sponsor
-      <button class="modal-close" onclick="closeModal('modal-campagne')">✕</button>
+    <div class="modal-ttl">Créer une campagne <button class="mc" onclick="closeModal('modal-camp')">×</button></div>
+    <div class="fg"><label class="fl">Annonceur</label>
+      <select class="fc" id="camp-ann"><option value="">— Sélectionner —</option></select>
     </div>
-    <div class="fg">
-      <label class="fl">Annonceur</label>
-      <select class="fc"><option>Monte-Carlo SBM</option><option>Luxury Monaco</option><option>Automobile Club Monaco</option><option>Fairmont Hotel</option></select>
+    <div class="fg"><label class="fl">Nom de la campagne</label><input class="fc" id="camp-nom" type="text" placeholder="Ex: SBM Été 2026"></div>
+    <div class="g2">
+      <div class="fg" style="margin:0"><label class="fl">Date de début</label><input class="fc" id="camp-start" type="date"></div>
+      <div class="fg" style="margin:0"><label class="fl">Date de fin</label><input class="fc" id="camp-end" type="date"></div>
     </div>
-    <div class="fg"><label class="fl">Nom de la campagne</label><input class="fc" type="text" placeholder="Ex: SBM Été 2026"></div>
-    <div class="g2" style="gap:10px">
-      <div class="fg" style="margin:0"><label class="fl">Date de début</label><input class="fc" type="date"></div>
-      <div class="fg" style="margin:0"><label class="fl">Date de fin</label><input class="fc" type="date"></div>
-    </div>
-    <div class="g2" style="gap:10px">
+    <div class="g2">
       <div class="fg" style="margin:0"><label class="fl">Durée du spot</label>
-        <select class="fc"><option>15s</option><option>20s</option><option selected>30s</option><option>60s</option></select>
+        <select class="fc" id="camp-dur"><option>15s</option><option>20s</option><option selected>30s</option><option>60s</option></select>
       </div>
-      <div class="fg" style="margin:0"><label class="fl">Nb de spots / jour</label><input class="fc" type="number" value="4" min="1"></div>
+      <div class="fg" style="margin:0"><label class="fl">Spots / jour</label><input class="fc" id="camp-nb" type="number" value="4" min="1"></div>
     </div>
-    <div class="fg">
-      <label class="fl">Jours de diffusion</label>
-      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:4px" id="jours-check">
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" checked> Lun</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" checked> Mar</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" checked> Mer</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" checked> Jeu</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" checked> Ven</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox"> Sam</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox"> Dim</label>
-      </div>
-    </div>
-    <div class="fg">
-      <label class="fl">Affectation horaire (plusieurs possibles)</label>
-      <div style="display:flex;flex-direction:column;gap:5px;margin-top:4px">
-        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" checked> 07:00 – 10:00 (Morning)</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox"> 10:00 – 12:00 (Charly Family)</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" checked> 12:00 – 14:00 (Journal Midi)</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox"> 16:00 – 20:00 (Monaco Drive)</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox"> 20:00 – 00:00 (Soirée Monaco)</label>
+    <div class="fg"><label class="fl">Jours de diffusion</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:5px">
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Lun</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Mar</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Mer</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Jeu</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Ven</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox"> Sam</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox"> Dim</label>
       </div>
     </div>
-    <div class="fg">
-      <label class="fl">Rendez-vous précis (optionnel)</label>
-      <select class="fc"><option value="">— Aucun —</option><option>Info Trafic (07:45, 08:45, 12:45…)</option><option>Météo (08:00, 13:00, 18:00…)</option><option>Ouverture d'émission Morning</option><option>Ouverture Charly Family</option></select>
+    <div class="fg"><label class="fl">Créneaux horaires (plusieurs possibles)</label>
+      <div style="display:flex;flex-direction:column;gap:5px;margin-top:5px">
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox" checked> 07:00–10:00 — Morning</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox"> 10:00–12:00 — Charly Family</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox"> 12:00–14:00 — Info Midi</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox"> 14:00–16:00 — Après-Midi FM</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox"> 16:00–20:00 — Monaco Drive</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox"> 20:00–00:00 — Soirée Monaco</label>
+      </div>
     </div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
-      <button class="btn btn-g" onclick="closeModal('modal-campagne')">Annuler</button>
-      <button class="btn btn-p" onclick="closeModal('modal-campagne')">Créer la campagne</button>
+    <div class="fg"><label class="fl">Rendez-vous précis (optionnel)</label>
+      <select class="fc"><option value="">— Aucun —</option><option>Info Trafic (07:45, 08:45, 12:45…)</option><option>Météo (08:00, 13:00, 18:00…)</option><option>Ouverture Morning</option><option>Ouverture Charly Family</option></select>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+      <button class="btn btn-g btn-sm" onclick="closeModal('modal-camp')">Annuler</button>
+      <button class="btn btn-p btn-sm" onclick="saveCamp()">Créer la campagne</button>
     </div>
   </div>
 </div>
 
-<!-- Modal anomalie -->
-<div class="overlay" id="modal-anom" onclick="closeIfBg(event,'modal-anom')">
+<!-- Anomalie -->
+<div class="ov" id="modal-anom" onclick="obg(event,'modal-anom')">
   <div class="modal">
-    <div class="modal-ttl">Déclarer une anomalie
-      <button class="modal-close" onclick="closeModal('modal-anom')">✕</button>
+    <div class="modal-ttl">Déclarer une anomalie <button class="mc" onclick="closeModal('modal-anom')">×</button></div>
+    <div class="fg"><label class="fl">Campagne concernée</label>
+      <select class="fc" id="anom-camp"><option value="">— Sélectionner —</option></select>
     </div>
-    <div class="fg">
-      <label class="fl">Campagne concernée</label>
-      <select class="fc" id="anom-camp-sel">
-        <option>Monte-Carlo SBM — Été 2026</option>
-        <option>Luxury Monaco — Horlogerie</option>
-        <option>ACM — Grand Prix</option>
-        <option>Fairmont Hotel — Été</option>
-      </select>
-    </div>
-    <div class="g2" style="gap:10px">
+    <div class="g2">
       <div class="fg" style="margin:0"><label class="fl">Date de l'incident</label><input class="fc" type="date"></div>
       <div class="fg" style="margin:0"><label class="fl">Heure</label><input class="fc" type="time"></div>
     </div>
-    <div class="fg">
-      <label class="fl">Type d'anomalie</label>
+    <div class="fg"><label class="fl">Type d'anomalie</label>
       <select class="fc">
         <option>Spot manquant — non diffusé</option>
         <option>Mauvaise version du spot</option>
@@ -778,149 +601,122 @@ textarea.fc{resize:vertical;min-height:70px}
         <option>Autre</option>
       </select>
     </div>
-    <div class="fg">
-      <label class="fl">Commentaire</label>
-      <textarea class="fc" placeholder="Décrivez l'anomalie constatée…"></textarea>
-    </div>
-    <div class="fg">
-      <label class="fl">Niveau de priorité</label>
+    <div class="fg"><label class="fl">Commentaire</label><textarea class="fc" placeholder="Décrivez l'anomalie constatée…"></textarea></div>
+    <div class="fg"><label class="fl">Priorité</label>
       <select class="fc"><option>Normal</option><option>Urgent</option><option>Critique</option></select>
     </div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
-      <button class="btn btn-g" onclick="closeModal('modal-anom')">Annuler</button>
-      <button class="btn btn-warn" onclick="closeModal('modal-anom')">Déclarer l'anomalie</button>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+      <button class="btn btn-g btn-sm" onclick="closeModal('modal-anom')">Annuler</button>
+      <button class="btn btn-w btn-sm" onclick="saveAnom()">Déclarer</button>
     </div>
   </div>
 </div>
 
-<!-- Modal slot grille -->
-<div class="overlay" id="modal-slot" onclick="closeIfBg(event,'modal-slot')">
+<!-- Slot grille -->
+<div class="ov" id="modal-slot" onclick="obg(event,'modal-slot')">
   <div class="modal">
-    <div class="modal-ttl">Ajouter / modifier un créneau
-      <button class="modal-close" onclick="closeModal('modal-slot')">✕</button>
-    </div>
-    <div class="g2" style="gap:10px">
+    <div class="modal-ttl">Ajouter / modifier un créneau <button class="mc" onclick="closeModal('modal-slot')">×</button></div>
+    <div class="g2">
       <div class="fg" style="margin:0"><label class="fl">Jour</label>
-        <select class="fc"><option>Lundi 26</option><option>Mardi 27</option><option>Mercredi 28</option><option>Jeudi 29</option><option>Vendredi 30</option><option>Samedi 31</option><option>Dimanche 1</option></select>
+        <select class="fc"><option>Lundi 26</option><option>Mardi 27</option><option>Mercredi 28</option><option>Jeudi 29</option><option>Vendredi 30</option><option>Samedi 31</option><option>Dimanche 01</option></select>
       </div>
-      <div class="fg" style="margin:0"><label class="fl">Tranche horaire</label>
-        <select class="fc">
-          <option>05:00–07:00</option><option selected>07:00–10:00</option><option>10:00–12:00</option>
-          <option>12:00–14:00</option><option>14:00–16:00</option><option>16:00–20:00</option><option>20:00–00:00</option>
-        </select>
+      <div class="fg" style="margin:0"><label class="fl">Tranche</label>
+        <select class="fc"><option>05:00–07:00</option><option selected>07:00–10:00</option><option>10:00–12:00</option><option>12:00–14:00</option><option>14:00–16:00</option><option>16:00–20:00</option><option>20:00–00:00</option></select>
       </div>
     </div>
-    <div class="fg">
-      <label class="fl">Émission</label>
-      <select class="fc">
-        <option>Morning</option><option>Charly Family</option><option>Monaco Drive</option>
-        <option>Soirée Monaco</option><option>Journal Midi</option><option>Monaco Réveil</option>
-        <option>Autoradio</option><option>Autre…</option>
-      </select>
+    <div class="fg"><label class="fl">Émission</label>
+      <select class="fc"><option>Morning</option><option>Charly Family</option><option>Info Midi</option><option>Après-Midi FM</option><option>Monaco Drive</option><option>Soirée Monaco</option><option>Réveil Monaco</option><option>Autoradio</option></select>
     </div>
-    <div class="fg">
-      <label class="fl">Animateur(s)</label>
-      <div style="display:flex;flex-direction:column;gap:5px;margin-top:4px">
-        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox"> <span class="anim-av" style="background:#e8192c;width:20px;height:20px;font-size:9px">GL</span> Giulia</label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" checked> <span class="anim-av" style="background:#508cf0;width:20px;height:20px;font-size:9px">LÉ</span> Léo</label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox"> <span class="anim-av" style="background:#c9a84c;width:20px;height:20px;font-size:9px">ÉR</span> Éric</label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox"> <span class="anim-av" style="background:#a064f0;width:20px;height:20px;font-size:9px">CH</span> Charly</label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox"> <span class="anim-av" style="background:#4caf6e;width:20px;height:20px;font-size:9px">AN</span> Anaïs</label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox"> <span class="anim-av" style="background:#20aaa0;width:20px;height:20px;font-size:9px">JC</span> Jean Christophe</label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox"> <span class="anim-av" style="background:#d05090;width:20px;height:20px;font-size:9px">MA</span> Marie</label>
+    <div class="fg"><label class="fl">Animateur(s)</label>
+      <div style="display:flex;flex-direction:column;gap:5px;margin-top:5px">
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px"><input type="checkbox"> <span class="aav" style="background:#e8192c;width:20px;height:20px;font-size:8px">GL</span> Giulia</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px"><input type="checkbox" checked> <span class="aav" style="background:#2563eb;width:20px;height:20px;font-size:8px">LÉ</span> Léo</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px"><input type="checkbox"> <span class="aav" style="background:#b45309;width:20px;height:20px;font-size:8px">ÉR</span> Éric</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px"><input type="checkbox"> <span class="aav" style="background:#7c3aed;width:20px;height:20px;font-size:8px">CH</span> Charly</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px"><input type="checkbox"> <span class="aav" style="background:#059669;width:20px;height:20px;font-size:8px">AN</span> Anaïs</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px"><input type="checkbox"> <span class="aav" style="background:#0891b2;width:20px;height:20px;font-size:8px">JC</span> Jean Christophe</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px"><input type="checkbox"> <span class="aav" style="background:#db2777;width:20px;height:20px;font-size:8px">MA</span> Marie</label>
       </div>
     </div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
-      <button class="btn btn-g" onclick="closeModal('modal-slot')">Annuler</button>
-      <button class="btn btn-p" onclick="closeModal('modal-slot')">Enregistrer</button>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+      <button class="btn btn-g btn-sm" onclick="closeModal('modal-slot')">Annuler</button>
+      <button class="btn btn-p btn-sm" onclick="closeModal('modal-slot')">Enregistrer</button>
     </div>
   </div>
 </div>
 
-<!-- Modal affecter animateur -->
-<div class="overlay" id="modal-anim" onclick="closeIfBg(event,'modal-anim')">
+<!-- Affecter animateur -->
+<div class="ov" id="modal-aff" onclick="obg(event,'modal-aff')">
   <div class="modal">
-    <div class="modal-ttl">Affecter un animateur
-      <button class="modal-close" onclick="closeModal('modal-anim')">✕</button>
+    <div class="modal-ttl">Affecter un animateur <button class="mc" onclick="closeModal('modal-aff')">×</button></div>
+    <div class="fg"><label class="fl">Animateur</label>
+      <select class="fc"><option>Giulia</option><option>Léo</option><option>Éric</option><option>Charly</option><option>Anaïs</option><option>Jean Christophe</option><option>Marie</option></select>
     </div>
-    <div class="fg">
-      <label class="fl">Animateur</label>
-      <select class="fc">
-        <option>Giulia</option><option>Léo</option><option>Éric</option><option>Charly</option>
-        <option>Anaïs</option><option>Jean Christophe</option><option>Marie</option>
-      </select>
+    <div class="fg"><label class="fl">Émission</label>
+      <select class="fc"><option>Morning — 07:00–10:00</option><option>Charly Family — 10:00–12:00</option><option>Info Midi — 12:00–14:00</option><option>Après-Midi FM — 14:00–16:00</option><option>Monaco Drive — 16:00–20:00</option><option>Soirée Monaco — 20:00–00:00</option></select>
     </div>
-    <div class="fg">
-      <label class="fl">Émission / Tranche</label>
-      <select class="fc">
-        <option>Morning — 07:00–10:00</option><option>Charly Family — 10:00–12:00</option>
-        <option>Journal Midi — 12:00–14:00</option><option>Après-Midi FM — 14:00–16:00</option>
-        <option>Monaco Drive — 16:00–20:00</option><option>Soirée Monaco — 20:00–00:00</option>
-      </select>
-    </div>
-    <div class="fg">
-      <label class="fl">Jours</label>
-      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:4px">
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" checked> Lun</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" checked> Mar</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" checked> Mer</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" checked> Jeu</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox" checked> Ven</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox"> Sam</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="checkbox"> Dim</label>
+    <div class="fg"><label class="fl">Jours</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:5px">
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Lun</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Mar</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Mer</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Jeu</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Ven</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox"> Sam</label>
+        <label style="font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox"> Dim</label>
       </div>
     </div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
-      <button class="btn btn-g" onclick="closeModal('modal-anim')">Annuler</button>
-      <button class="btn btn-p" onclick="closeModal('modal-anim')">Enregistrer</button>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+      <button class="btn btn-g btn-sm" onclick="closeModal('modal-aff')">Annuler</button>
+      <button class="btn btn-p btn-sm" onclick="closeModal('modal-aff')">Enregistrer</button>
     </div>
   </div>
 </div>
 
-<!-- Modal appliquer grille type -->
-<div class="overlay" id="modal-appliquer" onclick="closeIfBg(event,'modal-appliquer')">
+<!-- Appliquer grille type -->
+<div class="ov" id="modal-apply" onclick="obg(event,'modal-apply')">
   <div class="modal">
-    <div class="modal-ttl">Appliquer une grille type
-      <button class="modal-close" onclick="closeModal('modal-appliquer')">✕</button>
+    <div class="modal-ttl">Appliquer une grille type <button class="mc" onclick="closeModal('modal-apply')">×</button></div>
+    <div class="fg"><label class="fl">Grille type</label>
+      <select class="fc"><option>Grille Standard</option><option>Grille Été</option></select>
     </div>
-    <div class="fg">
-      <label class="fl">Grille type à appliquer</label>
-      <select class="fc"><option>Grille Standard Semaine</option><option>Grille Été</option><option>Grille Grand Prix</option></select>
-    </div>
-    <div class="g2" style="gap:10px">
+    <div class="g2">
       <div class="fg" style="margin:0"><label class="fl">Semaine du</label><input class="fc" type="date"></div>
       <div class="fg" style="margin:0"><label class="fl">Au</label><input class="fc" type="date"></div>
     </div>
-    <div style="background:var(--bg3);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--text3);margin-bottom:14px">
-      ⚠ L'application d'une grille type remplacera les émissions existantes sur la période sélectionnée.
+    <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:var(--r);padding:10px 12px;font-size:12px;color:#92400e;margin-bottom:14px">
+      ⚠ Cette action remplacera les émissions existantes sur la période sélectionnée.
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button class="btn btn-g" onclick="closeModal('modal-appliquer')">Annuler</button>
-      <button class="btn btn-p" onclick="closeModal('modal-appliquer')">Appliquer</button>
+      <button class="btn btn-g btn-sm" onclick="closeModal('modal-apply')">Annuler</button>
+      <button class="btn btn-p btn-sm" onclick="closeModal('modal-apply')">Appliquer</button>
     </div>
   </div>
 </div>
 
-<!-- Modal nouvelle grille type -->
-<div class="overlay" id="modal-newtype" onclick="closeIfBg(event,'modal-newtype')">
+<!-- Nouvelle grille type -->
+<div class="ov" id="modal-newgt" onclick="obg(event,'modal-newgt')">
   <div class="modal">
-    <div class="modal-ttl">Créer une grille type
-      <button class="modal-close" onclick="closeModal('modal-newtype')">✕</button>
-    </div>
-    <div class="fg"><label class="fl">Nom de la grille</label><input class="fc" type="text" placeholder="Ex: Grille Noël 2026"></div>
-    <div class="fg">
-      <label class="fl">Type</label>
+    <div class="modal-ttl">Nouvelle grille type <button class="mc" onclick="closeModal('modal-newgt')">×</button></div>
+    <div class="fg"><label class="fl">Nom</label><input class="fc" type="text" placeholder="Ex: Grille Noël 2026"></div>
+    <div class="fg"><label class="fl">Type</label>
       <select class="fc"><option>Standard</option><option>Saisonnier</option><option>Événement</option></select>
     </div>
-    <div class="fg"><label class="fl">Description</label><textarea class="fc" placeholder="Émissions incluses, contexte…"></textarea></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
-      <button class="btn btn-g" onclick="closeModal('modal-newtype')">Annuler</button>
-      <button class="btn btn-p" onclick="closeModal('modal-newtype')">Créer</button>
+    <div class="fg"><label class="fl">Description</label><textarea class="fc" placeholder="Décrivez les émissions incluses…"></textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+      <button class="btn btn-g btn-sm" onclick="closeModal('modal-newgt')">Annuler</button>
+      <button class="btn btn-p btn-sm" onclick="closeModal('modal-newgt')">Créer</button>
     </div>
   </div>
 </div>
 
 <script>
+/* ── DATA ── */
+let annonceurs=[];
+let campagnes=[];
+let anomalies=[];
+
+/* ── NAVIGATION ── */
 function goto(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.nav').forEach(n=>n.classList.remove('on'));
@@ -928,38 +724,177 @@ function goto(id){
   document.getElementById('nav-'+id).classList.add('on');
   const titles={comm:'Gestion Commerciale',ant:'Grille Antenne'};
   document.getElementById('pttl').textContent=titles[id];
-  const actions=document.getElementById('topbar-actions');
+  const tbr=document.getElementById('tbr');
   if(id==='comm'){
-    actions.innerHTML=`
-      <button class="btn btn-p" onclick="openModal('modal-annonceur')">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Annonceur</button>
-      <button class="btn btn-g" onclick="openModal('modal-campagne')">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Campagne</button>`;
+    tbr.innerHTML=`<button class="btn btn-g btn-sm" onclick="openModal('modal-ann')">+ Annonceur</button>
+    <button class="btn btn-p btn-sm" onclick="openModal('modal-camp')">+ Campagne</button>`;
   } else {
-    actions.innerHTML=`
-      <button class="btn btn-g" onclick="openModal('modal-appliquer')">Appliquer grille type</button>
-      <button class="btn btn-p" onclick="openModal('modal-slot')">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Ajouter émission</button>`;
+    tbr.innerHTML=`<button class="btn btn-g btn-sm" onclick="openModal('modal-apply')">Appliquer grille type</button>
+    <button class="btn btn-p btn-sm" onclick="openModal('modal-slot')">+ Émission</button>`;
   }
 }
+
 function stab(btn,tid){
   const panel=btn.closest('.panel');
   panel.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   btn.classList.add('on');
-  const prefix=tid.split('-')[0]+'-';
-  panel.querySelectorAll('[id^="'+prefix+'"]').forEach(el=>el.style.display='none');
+  const pfx=tid.split('-')[0]+'-';
+  panel.querySelectorAll('[id^="'+pfx+'"]').forEach(el=>{ if(el.id!==tid) el.style.display='none'; });
   document.getElementById(tid).style.display='block';
 }
-function openModal(id){document.getElementById(id).classList.add('show')}
-function closeModal(id){document.getElementById(id).classList.remove('show')}
-function closeIfBg(e,id){if(e.target===e.currentTarget)closeModal(id)}
-function setCampAnom(name){
-  const sel=document.getElementById('anom-camp-sel');
-  if(sel){for(let i=0;i<sel.options.length;i++){if(sel.options[i].text.includes(name.split(' ')[0])){sel.selectedIndex=i;break}}}
+
+/* ── MODALS ── */
+function openModal(id){
+  if(id==='modal-camp') populateCampAnn();
+  if(id==='modal-anom') populateAnomCamp();
+  document.getElementById(id).classList.add('show');
 }
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function obg(e,id){if(e.target===e.currentTarget)closeModal(id)}
+
+/* ── ANNONCEURS ── */
+function saveAnn(){
+  const nom=document.getElementById('ann-nom').value.trim();
+  if(!nom){alert('Veuillez saisir un nom.');return;}
+  annonceurs.push({
+    nom,
+    adr:document.getElementById('ann-adr').value.trim(),
+    contact:document.getElementById('ann-contact').value.trim(),
+    tel:document.getElementById('ann-tel').value.trim(),
+    email:document.getElementById('ann-email').value.trim(),
+  });
+  ['ann-nom','ann-adr','ann-contact','ann-tel','ann-email'].forEach(id=>document.getElementById(id).value='');
+  closeModal('modal-ann');
+  renderAnn();
+  renderStats();
+}
+
+function renderAnn(){
+  const wrap=document.getElementById('ann-table-wrap');
+  if(!annonceurs.length){
+    wrap.innerHTML='<div class="empty"><div class="empty-ic">🏢</div><div class="empty-t">Aucun annonceur</div><div class="empty-s">Cliquez sur "Ajouter" pour enregistrer votre premier annonceur.</div></div>';
+    return;
+  }
+  let rows=annonceurs.map((a,i)=>`
+    <tr>
+      <td class="td-strong">${e(a.nom)}</td>
+      <td>${e(a.adr)||'—'}</td>
+      <td>${e(a.contact)||'—'}</td>
+      <td>${e(a.tel)||'—'}<br><span style="font-size:11px;color:var(--text3)">${e(a.email)||''}</span></td>
+      <td><span class="chip ch-g">Actif</span></td>
+      <td><button class="btn btn-g btn-sm" onclick="delAnn(${i})">Supprimer</button></td>
+    </tr>`).join('');
+  wrap.innerHTML=`<div class="tw"><table><thead><tr><th>Annonceur</th><th>Adresse</th><th>Contact</th><th>Téléphone / Email</th><th>Statut</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function delAnn(i){annonceurs.splice(i,1);renderAnn();renderStats();}
+
+/* ── CAMPAGNES ── */
+function populateCampAnn(){
+  const sel=document.getElementById('camp-ann');
+  sel.innerHTML='<option value="">— Sélectionner —</option>'+annonceurs.map(a=>`<option>${e(a.nom)}</option>`).join('');
+}
+function populateAnomCamp(){
+  const sel=document.getElementById('anom-camp');
+  sel.innerHTML='<option value="">— Sélectionner —</option>'+campagnes.map(c=>`<option>${e(c.nom)}</option>`).join('');
+}
+
+function saveCamp(){
+  const ann=document.getElementById('camp-ann').value;
+  const nom=document.getElementById('camp-nom').value.trim();
+  if(!ann||!nom){alert('Veuillez sélectionner un annonceur et saisir un nom.');return;}
+  campagnes.push({
+    ann,nom,
+    start:document.getElementById('camp-start').value,
+    end:document.getElementById('camp-end').value,
+    dur:document.getElementById('camp-dur').value,
+    nb:document.getElementById('camp-nb').value,
+    spots:0,
+    total:parseInt(document.getElementById('camp-nb').value)*30
+  });
+  document.getElementById('camp-nom').value='';
+  closeModal('modal-camp');
+  renderCamp();
+  renderStats();
+}
+
+const colors=['#e8192c','#2563eb','#059669','#7c3aed','#b45309','#0891b2','#db2777'];
+function renderCamp(){
+  const wrap=document.getElementById('camp-list');
+  if(!campagnes.length){
+    wrap.innerHTML='<div class="empty"><div class="empty-ic">📢</div><div class="empty-t">Aucune campagne</div><div class="empty-s">Ajoutez d\'abord un annonceur, puis créez votre première campagne.</div></div>';
+    return;
+  }
+  wrap.innerHTML=campagnes.map((c,i)=>{
+    const col=colors[i%colors.length];
+    const pct=c.total>0?Math.round(c.spots/c.total*100):0;
+    const pfcls=pct>=80?'pf-g':pct>=40?'pf-o':'pf-r';
+    return `<div class="ccard">
+      <div class="cc-top">
+        <div class="cc-ico" style="background:${col}18;color:${col}">${c.ann.substring(0,3).toUpperCase()}</div>
+        <div>
+          <div class="cc-name">${e(c.nom)}</div>
+          <div class="cc-meta">${c.dur} · ${c.nb}×/jour · ${c.start||'—'} → ${c.end||'—'}</div>
+        </div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+          <span class="chip ch-g">Active</span>
+          <button class="btn btn-w btn-sm" onclick="openAnomForCamp(${i})">⚠ Anomalie</button>
+        </div>
+      </div>
+      <div class="pb"><div class="pf ${pfcls}" style="width:${pct}%"></div></div>
+      <div class="cc-foot">
+        <span class="cc-pct">Progression : <strong>${pct}%</strong></span>
+        <span class="cc-spots">${c.spots} / ${c.total} spots diffusés</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openAnomForCamp(i){
+  populateAnomCamp();
+  const sel=document.getElementById('anom-camp');
+  for(let o of sel.options){if(o.text===campagnes[i].nom){o.selected=true;break;}}
+  openModal('modal-anom');
+}
+
+/* ── ANOMALIES ── */
+function saveAnom(){
+  const camp=document.getElementById('anom-camp').value;
+  if(!camp){alert('Veuillez sélectionner une campagne.');return;}
+  anomalies.push({camp, date:new Date().toLocaleDateString('fr-FR'), status:'Ouverte'});
+  closeModal('modal-anom');
+  renderAnom();
+  renderStats();
+}
+function renderAnom(){
+  const wrap=document.getElementById('anom-list');
+  if(!anomalies.length){
+    wrap.innerHTML='<div class="empty"><div class="empty-ic">✅</div><div class="empty-t">Aucune anomalie</div><div class="empty-s">Tout fonctionne correctement.</div></div>';
+    return;
+  }
+  wrap.innerHTML=anomalies.map(a=>`
+    <div class="arow">
+      <div class="a-ic a-open">!</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:var(--text)">Anomalie — ${e(a.camp)}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Déclarée le ${a.date}</div>
+      </div>
+      <span class="chip ch-r">${a.status}</span>
+    </div>`).join('');
+}
+
+/* ── STATS ── */
+function renderStats(){
+  document.getElementById('nb-ann').textContent=annonceurs.length;
+  document.getElementById('nb-anom').textContent=anomalies.filter(a=>a.status==='Ouverte').length;
+}
+
+/* ── UTILS ── */
+function e(s){return s?(s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+
+/* ── CLOCK ── */
 function tick(){
-  const n=new Date();
-  const pad=v=>String(v).padStart(2,'0');
+  const n=new Date(),pad=v=>String(v).padStart(2,'0');
   document.getElementById('clk').textContent=pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
 }
 setInterval(tick,1000);tick();
