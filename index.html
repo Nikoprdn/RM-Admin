@@ -2,353 +2,363 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Radio Monaco — Back Office</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Share+Tech+Mono:wght@400;500&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --rm:#e8192c;--rm2:#c9101f;--rmbg:#fef0f1;--rmm:rgba(232,25,44,.1);
-  --bg:#f4f5f7;--wh:#fff;
-  --t1:#1a1c20;--t2:#5a6070;--t3:#9ba3b4;
-  --bd:#e4e7ed;--bd2:#cdd2dc;
-  --r:6px;--r2:10px;
-  --sh:0 1px 3px rgba(0,0,0,.06),0 0 0 1px rgba(0,0,0,.04);
-  --sh2:0 8px 24px rgba(0,0,0,.12),0 0 0 1px rgba(0,0,0,.05);
+  --red:#E4032E;--bg:#F2F3F5;--panel:#FFFFFF;--card:#FFFFFF;--border:#DDE1E9;--border2:#C8CDD9;
+  --text:#111318;--muted:#6B7280;--muted2:#9CA3AF;
+  --green:#16A34A;--yellow:#B45309;--orange:#C2410C;--blue:#1D4ED8;
 }
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);height:100vh;display:flex;overflow:hidden;font-size:13px}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);min-height:100vh;font-family:'Barlow',sans-serif;font-size:14px;}
 
-/* SIDEBAR */
-aside{width:216px;min-width:216px;background:var(--wh);border-right:1px solid var(--bd);display:flex;flex-direction:column}
-.sbl{padding:15px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:9px}
-.sbm{width:32px;height:32px;background:var(--rm);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#fff;flex-shrink:0}
-.sbn{font-size:13px;font-weight:700;line-height:1.2;letter-spacing:-.2px}
-.sbs{font-size:9.5px;color:var(--t3);font-weight:600;letter-spacing:.7px;text-transform:uppercase}
-.sbsec{padding:14px 12px 4px;font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3)}
-.nav{display:flex;align-items:center;gap:8px;padding:7px 10px;margin:1px 6px;border-radius:var(--r);cursor:pointer;color:var(--t2);font-size:12.5px;font-weight:500;border:none;background:none;width:calc(100% - 12px);text-align:left;transition:all .12s;font-family:'Inter',sans-serif}
-.nav svg{width:15px;height:15px;flex-shrink:0;opacity:.5;transition:opacity .12s}
-.nav:hover{background:var(--bg);color:var(--t1)}
-.nav.on{background:var(--rmbg);color:var(--rm);font-weight:600}
-.nav.on svg{opacity:1}
-.sbbot{margin-top:auto;padding:11px;border-top:1px solid var(--bd)}
-.oa{background:var(--rm);border-radius:var(--r);padding:9px 10px;display:flex;align-items:center;gap:7px}
-.oa-dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:blink 1.4s infinite;flex-shrink:0}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
-.oa-s{font-size:11px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
-.oa-c{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.65);flex-shrink:0}
+/* ── HEADER ── */
+.hdr{background:var(--red);height:72px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;padding:0 28px;gap:24px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(228,3,46,.35);}
+.hdr-left{display:flex;align-items:center;gap:14px;}
+.hdr-mark{width:38px;height:38px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;color:#fff;letter-spacing:.05em;}
+.hdr-sep{width:1px;height:34px;background:rgba(255,255,255,.25);}
+.hdr-title{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:.18em;color:rgba(255,255,255,.85);text-transform:uppercase;}
+.hdr-tabs{display:flex;align-items:stretch;height:100%;background:rgba(0,0,0,.15);}
+.tab-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:0 20px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:0;background:transparent;color:rgba(255,255,255,.55);cursor:pointer;transition:all .15s;border-bottom:3px solid transparent;}
+.tab-btn:hover{color:#fff;background:rgba(255,255,255,.1);}
+.tab-btn.active{background:rgba(255,255,255,.15);color:#fff;border-bottom-color:#fff;}
+.hdr-clock{font-family:'Share Tech Mono',monospace;font-size:26px;color:#fff;white-space:nowrap;}
 
-/* MAIN */
-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.topbar{height:50px;background:var(--wh);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 20px;gap:10px;flex-shrink:0}
-.pttl{font-size:14px;font-weight:700;letter-spacing:-.3px}
-.tbr{margin-left:auto;display:flex;gap:7px}
+/* ── LAYOUT ── */
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.wrap{max-width:1500px;margin:0 auto;padding:20px 24px 48px;display:flex;flex-direction:column;gap:16px;}
 
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all .12s;line-height:1}
-.btn-p{background:var(--rm);color:#fff}.btn-p:hover{background:var(--rm2)}
-.btn-g{background:var(--wh);color:var(--t2);border:1px solid var(--bd2)}.btn-g:hover{background:var(--bg);color:var(--t1)}
-.btn-d{background:#fff1f1;color:#b91c1c;border:1px solid #fecaca}.btn-d:hover{background:#ffe4e6}
-.btn-w{background:#fff7ed;color:#b45309;border:1px solid #fed7aa}.btn-w:hover{background:#ffedd5}
-.sm{padding:5px 10px;font-size:11.5px}
+/* ── CARDS ── */
+.sc{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.card-h{display:flex;align-items:center;gap:10px;padding:0 18px;height:46px;background:#F8F9FB;border-bottom:1px solid var(--border);}
+.card-t{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--text);}
 
-/* CONTENT */
-.content{flex:1;overflow-y:auto;padding:18px 20px}
-.content::-webkit-scrollbar{width:4px}.content::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
-.panel{display:none}.panel.on{display:block}
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:5px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border:none;transition:all .15s;}
+.btn-p{background:var(--red);color:#fff;}.btn-p:hover{background:#c9101f;}
+.btn-g{background:#fff;color:var(--muted);border:1px solid var(--border2);}.btn-g:hover{background:#F8F9FB;color:var(--text);border-color:#B0B7C3;}
+.btn-d{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;}.btn-d:hover{background:#FEE2E2;}
+.btn-w{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A;}.btn-w:hover{background:#FEF3C7;}
+.sm{padding:4px 10px;font-size:11px;}
 
-/* TABS */
-.tabs{display:flex;border-bottom:2px solid var(--bd);margin-bottom:16px}
-.tab{padding:7px 14px;font-size:12.5px;font-weight:500;cursor:pointer;color:var(--t2);border:none;background:none;font-family:'Inter',sans-serif;transition:all .12s;border-bottom:2px solid transparent;margin-bottom:-2px}
-.tab.on{color:var(--rm);font-weight:700;border-bottom-color:var(--rm)}
-.tab:hover:not(.on){color:var(--t1)}
+/* ── TABS secondaires ── */
+.stabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px;}
+.stab{padding:8px 16px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;color:var(--muted);border:none;background:none;transition:all .12s;border-bottom:2px solid transparent;margin-bottom:-1px;}
+.stab.on{color:var(--red);border-bottom-color:var(--red);}
+.stab:hover:not(.on){color:var(--text);}
 
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
-.sc{background:var(--wh);border:1px solid var(--bd);border-radius:var(--r2);padding:13px 15px;box-shadow:var(--sh)}
-.sc-l{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:4px}
-.sc-v{font-size:22px;font-weight:700;font-family:'JetBrains Mono',monospace}
-.sc-v.danger{color:var(--rm)}
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.sc-stat{background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.sc-l{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.sc-v{font-family:'Share Tech Mono',monospace;font-size:26px;font-weight:700;color:var(--text);line-height:1;}
+.sc-v.danger{color:var(--red);}
 
-/* CARD */
-.card{background:var(--wh);border:1px solid var(--bd);border-radius:var(--r2);box-shadow:var(--sh);overflow:hidden;margin-bottom:12px}
-.ch{padding:11px 15px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:#fafbfc}
-.ch-t{font-size:13px;font-weight:700}
+/* ── TABLE ── */
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{padding:8px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:#F8F9FB;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--muted);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#F8F9FB;}
+.tds{color:var(--text);font-weight:600;}
 
-/* TABLE */
-.tw{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
-th{padding:8px 13px;text-align:left;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;background:#fafbfc;border-bottom:1px solid var(--bd);white-space:nowrap}
-td{padding:10px 13px;border-bottom:1px solid var(--bd);font-size:12.5px;color:var(--t2);vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#fafbfc}
-.tds{color:var(--t1);font-weight:600}
+/* ── CHIPS ── */
+.chip{display:inline-block;padding:2px 9px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;}
+.cg{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;}
+.cr{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;}
+.co{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A;}
+.cb{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;}
+.cgr{background:#F3F4F6;color:var(--muted);border:1px solid #E5E7EB;}
 
-/* CHIP */
-.chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
-.cg{background:#ecfdf5;color:#059669;border:1px solid #a7f3d0}
-.cr{background:var(--rmbg);color:var(--rm);border:1px solid #fca5a5}
-.co{background:#fff7ed;color:#b45309;border:1px solid #fed7aa}
-.cb{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
-.cgr{background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb}
+/* ── PROGRESS ── */
+.pb{height:4px;background:#E5E7EB;border-radius:2px;overflow:hidden;}
+.pf{height:100%;border-radius:2px;}
+.pf-r{background:var(--red);}.pf-g{background:#16A34A;}.pf-o{background:#C2410C;}.pf-b{background:#1D4ED8;}
 
-/* PROGRESS */
-.pb{height:5px;background:#f3f4f6;border-radius:3px;overflow:hidden}
-.pf{height:100%;border-radius:3px}
-.pf-r{background:var(--rm)}.pf-g{background:#059669}.pf-o{background:#d97706}.pf-b{background:#2563eb}
+/* ── FORM ── */
+.fg{margin-bottom:12px;}
+.fl{display:block;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.fc{width:100%;background:#fff;border:1.5px solid var(--border2);border-radius:5px;padding:8px 10px;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border-color .12s;}
+.fc:focus{border-color:var(--red);}
+.fc option{background:#fff;}
+textarea.fc{resize:vertical;min-height:60px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
 
-/* FORM */
-.fg{margin-bottom:12px}
-.fl{display:block;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}
-.fc{width:100%;background:var(--wh);border:1.5px solid var(--bd2);border-radius:var(--r);padding:7px 10px;color:var(--t1);font-size:12.5px;font-family:'Inter',sans-serif;outline:none;transition:border-color .12s}
-.fc:focus{border-color:var(--rm)}
-textarea.fc{resize:vertical;min-height:60px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+/* ── CAMPAGNE CARD ── */
+.ccard{background:#fff;border:1px solid var(--border);border-radius:8px;padding:13px 15px;margin-bottom:8px;transition:border-color .15s;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.ccard:hover{border-color:var(--border2);}
+.cc-ic{width:34px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;flex-shrink:0;}
 
-/* CAMPAGNE CARD */
-.ccard{background:var(--wh);border:1px solid var(--bd);border-radius:var(--r2);padding:13px 15px;margin-bottom:9px;box-shadow:var(--sh)}
-.cc-ic{width:34px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
+/* ── ANOMALIE ── */
+.arow{display:flex;align-items:flex-start;gap:9px;padding:11px 15px;border-bottom:1px solid var(--border);}
+.arow:last-child{border-bottom:none;}
+.arow:hover{background:#F8F9FB;}
+.a-ic{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;flex-shrink:0;}
+.a-o{background:#FEF2F2;color:#DC2626;}
+.a-e{background:#FFFBEB;color:#92400E;}
+.a-r{background:#F0FDF4;color:#16A34A;}
 
-/* ANOMALIE */
-.arow{display:flex;align-items:flex-start;gap:9px;padding:11px 15px;border-bottom:1px solid var(--bd)}
-.arow:last-child{border-bottom:none}
-.arow:hover{background:#fafbfc}
-.a-ic{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
-.a-o{background:var(--rmbg);color:var(--rm)}
-.a-e{background:#fff7ed;color:#b45309}
-.a-r{background:#ecfdf5;color:#059669}
+/* ── GRILLE ── */
+.grille-wrap{overflow-x:auto;}
+.grille{border-collapse:collapse;width:100%;min-width:680px;}
+.grille thead th{padding:8px 5px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;background:#F8F9FB;border:1px solid var(--border);}
+.grille thead th:first-child{text-align:left;padding-left:14px;width:115px;}
+.grille td{border:1px solid var(--border);height:52px;vertical-align:middle;padding:3px;}
+.grille td.tranche-lbl{padding:8px 14px;font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;color:var(--muted);background:#F8F9FB;white-space:nowrap;}
+.em-cell{border-radius:5px;height:100%;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:3px 5px;text-align:center;line-height:1.3;position:relative;transition:filter .12s;}
+.em-cell:hover{filter:brightness(.95);}
+.em-cell .em-n{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;letter-spacing:.04em;}
+.em-cell .em-a{font-size:8px;opacity:.7;margin-top:1px;font-family:'Barlow',sans-serif;}
+.em-cell .em-rm{position:absolute;top:2px;right:3px;font-size:10px;opacity:0;cursor:pointer;font-weight:700;background:rgba(255,255,255,.8);border-radius:3px;width:14px;height:14px;display:flex;align-items:center;justify-content:center;transition:opacity .12s;color:#333;}
+.em-cell:hover .em-rm{opacity:1;}
+.em-add{border-radius:5px;height:100%;width:100%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px dashed transparent;color:transparent;font-size:18px;transition:all .15s;}
+.grille td:hover .em-add{border-color:#C8CDD9;color:#C8CDD9;}
 
-/* GRILLE HEBDO */
-.grille-wrap{overflow-x:auto}
-.grille{border-collapse:collapse;width:100%;min-width:680px}
-.grille thead th{padding:8px 5px;font-size:10px;font-weight:700;color:var(--t3);text-align:center;background:#fafbfc;border:1px solid var(--bd);letter-spacing:.5px}
-.grille thead th:first-child{text-align:left;padding-left:13px;width:115px}
-.grille td{border:1px solid var(--bd);height:54px;vertical-align:middle;padding:3px}
-.grille td.tranche-lbl{padding:8px 13px;font-size:11px;font-weight:700;color:var(--t2);background:#fafbfc;white-space:nowrap}
-.em-cell{border-radius:5px;height:100%;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:3px 5px;text-align:center;line-height:1.3;position:relative;transition:filter .12s}
-.em-cell:hover{filter:brightness(.93)}
-.em-cell .em-n{font-size:9px;font-weight:700}
-.em-cell .em-a{font-size:8px;opacity:.72;margin-top:1px}
-.em-cell .em-rm{position:absolute;top:2px;right:3px;font-size:10px;opacity:0;transition:opacity .15s;cursor:pointer;font-weight:700;background:rgba(255,255,255,.7);border-radius:3px;width:14px;height:14px;display:flex;align-items:center;justify-content:center;color:#333}
-.em-cell:hover .em-rm{opacity:1}
-.em-add{border-radius:5px;height:100%;width:100%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1.5px dashed transparent;color:transparent;font-size:18px;transition:all .15s}
-.grille td:hover .em-add{border-color:var(--bd2);color:var(--t3)}
+/* ── SWATCHES ── */
+.swatches{display:flex;gap:7px;margin-top:5px;flex-wrap:wrap;}
+.sw{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;}
+.sw.sel{border-color:#111318;transform:scale(1.2);}
 
-/* COLOR SWATCHES */
-.swatches{display:flex;gap:7px;margin-top:5px;flex-wrap:wrap}
-.sw{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
-.sw.sel{border-color:#1a1c20;transform:scale(1.15)}
+/* ── ANIM PILL ── */
+.apill{display:inline-flex;align-items:center;gap:5px;background:#F3F4F6;border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;color:var(--muted);}
+.aav{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:800;color:#fff;flex-shrink:0;}
 
-/* ANIM PILL */
-.apill{display:inline-flex;align-items:center;gap:5px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:3px 9px;font-size:11px;font-weight:500;color:var(--t2)}
-.aav{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:800;color:#fff;flex-shrink:0}
+/* ── EMISSION CATALOG ── */
+.emcard{background:#fff;border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin-bottom:7px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
 
-/* EMISSION CATALOG */
-.emcard{background:var(--wh);border:1px solid var(--bd);border-radius:var(--r2);padding:12px 14px;margin-bottom:8px;box-shadow:var(--sh);display:flex;align-items:center;gap:11px}
+/* ── LIVE BLOCKS ── */
+.na-block{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.na-block-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:4px solid var(--red);}
+.na-block-header{background:#F0F0F2;}
+.na-block-title-group{display:flex;align-items:baseline;gap:14px;}
+.na-block-name{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#111318;line-height:1;}
+.na-block-time{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--muted);}
+.na-planning-btn{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:7px 16px;border-radius:6px;border:1px solid #C8CDD9;background:#fff;color:var(--muted);cursor:pointer;transition:all .15s;}
+.na-planning-btn:hover{background:#F8F9FB;color:var(--text);border-color:#9CA3AF;}
+.na-body{background:#F8F9FB;display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
+.na-col{padding:18px 22px;border-right:1px solid #E5E7EB;}
+.na-col:last-child{border-right:none;}
+.na-col-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.na-col-label svg{width:13px;height:13px;}
+.na-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#111318;line-height:1.2;}
+.na-val.empty{font-size:13px;font-weight:500;color:#C8CDD9;font-family:'Barlow',sans-serif;}
+.na-meta{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5;}
+.na-edit-btn{margin-top:12px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:5px;border:1px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;transition:all .15s;}
+.na-edit-btn:hover{border-color:#9CA3AF;color:var(--text);}
+.rdv-pill{display:inline-flex;align-items:center;gap:4px;font-family:'Share Tech Mono',monospace;font-size:10px;padding:2px 8px;border-radius:12px;margin:2px;white-space:nowrap;}
+.rdv-trafic{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;}
+.rdv-meteo{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;}
 
-/* ═══ LIVE CARDS (trafic-tool.pages.dev style) ═══ */
-.live-card{background:var(--wh);border:1px solid var(--bd);border-radius:var(--r2);box-shadow:var(--sh);margin-bottom:14px;overflow:hidden}
-.live-header{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--rm)}
-.live-title{font-size:18px;font-weight:800;color:var(--t1);letter-spacing:-.3px;display:flex;align-items:baseline;gap:10px}
-.live-range{font-size:13px;font-weight:400;color:var(--t3);letter-spacing:0}
-.live-body{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:none}
-.live-col{padding:14px 18px;border-right:1px solid var(--bd)}
-.live-col:last-child{border-right:none}
-.live-col-title{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:10px}
-.live-col-title svg{width:13px;height:13px;flex-shrink:0}
-.live-val{font-size:13px;color:var(--t1);font-weight:500;min-height:28px}
-.live-empty{font-size:12px;color:var(--t3);font-style:italic}
-.live-rdv-pill{display:inline-flex;align-items:center;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;color:var(--t2);margin:2px}
-.live-rdv-pill.trafic{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
-.live-rdv-pill.meteo{background:#ecfdf5;color:#059669;border-color:#a7f3d0}
-.live-rdv-pill.emission{background:var(--rmbg);color:var(--rm);border-color:#fca5a5}
-.sync-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;background:#f0fdf4;color:#15803d;border:1px solid #86efac}
-.sync-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:#22c55e}
+/* ── PLANNING SEMAINE ── */
+.na-planning-wrap{background:#fff;padding:14px 24px;border-bottom:1px solid #E5E7EB;}
+.na-planning-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.na-plan-day{background:#F3F4F6;border-radius:8px;padding:10px 12px;border:1px solid transparent;}
+.na-plan-day.today{background:#FEF2F2;border-color:#FECACA;}
+.na-plan-day-name{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.na-plan-day.today .na-plan-day-name{color:var(--red);}
+.na-plan-person{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#111318;}
+.na-plan-person.empty{font-size:12px;font-weight:500;color:#C8CDD9;}
 
-/* SECTION TITLE */
-.stitle{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:9px}
+/* ── MODAL ── */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+.ov.show{display:flex;}
+.modal{background:#fff;border:1px solid var(--border);border-radius:10px;width:500px;max-width:96vw;max-height:90vh;overflow-y:auto;padding:22px;box-shadow:0 8px 40px rgba(0,0,0,.15);}
+.modal.wide{width:560px;}
+.mttl{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.mc{cursor:pointer;color:var(--muted);font-size:20px;background:none;border:none;line-height:1;padding:0;transition:color .1s;}
+.mc:hover{color:var(--text);}
 
-/* EMPTY */
-.empty{display:flex;flex-direction:column;align-items:center;padding:36px;color:var(--t3);gap:7px}
-.empty-ic{font-size:26px;opacity:.4}
-.empty-t{font-size:13px;font-weight:600;color:var(--t2)}
-.empty-s{font-size:11.5px;color:var(--t3);text-align:center}
+/* ── SECTION TITLE ── */
+.stitle{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:9px;}
 
-/* MODAL */
-.ov{display:none;position:fixed;inset:0;background:rgba(15,17,22,.4);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
-.ov.show{display:flex}
-.modal{background:var(--wh);border:1px solid var(--bd);border-radius:var(--r2);width:480px;max-width:96vw;max-height:90vh;overflow-y:auto;padding:20px;box-shadow:var(--sh2)}
-.modal.wide{width:560px}
-.mttl{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:15px;display:flex;align-items:center;justify-content:space-between}
-.mc{cursor:pointer;color:var(--t3);font-size:20px;background:none;border:none;line-height:1;padding:0}
-.mc:hover{color:var(--t1)}
+/* ── EMPTY ── */
+.empty{display:flex;flex-direction:column;align-items:center;padding:36px;color:var(--muted);gap:7px;}
+.empty-ic{font-size:24px;opacity:.4;}
+.empty-t{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.05em;color:var(--muted);}
+.empty-s{font-size:12px;color:var(--muted2);text-align:center;}
 
-/* EQUIPE modal */
-.anim-check{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--r);cursor:pointer;transition:background .1s}
-.anim-check:hover{background:var(--bg)}
-.anim-check input{cursor:pointer}
+/* ── PILL on/air ── */
+.pill-live{display:flex;align-items:center;gap:5px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:20px;padding:3px 10px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#16A34A;}
+.pill-dot{width:6px;height:6px;border-radius:50%;background:#16A34A;animation:bdot 1.5s infinite;}
+@keyframes bdot{0%,100%{opacity:1}50%{opacity:.2}}
+.sync-ok{display:inline-flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:20px;padding:3px 10px;color:#16A34A;}
+.sync-ok::before{content:'';width:6px;height:6px;border-radius:50%;background:#16A34A;}
+
+/* ── CHECKBOX STYLE ── */
+.chk-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:5px;cursor:pointer;transition:background .1s;}
+.chk-row:hover{background:#F3F4F6;}
+.chk-row input{cursor:pointer;accent-color:var(--red);}
+.chk-lbl{font-size:12px;color:var(--muted);}
 </style>
 </head>
 <body>
 
-<aside>
-  <div class="sbl">
-    <div class="sbm">RM</div>
-    <div><div class="sbn">Radio Monaco</div><div class="sbs">Back Office</div></div>
+<!-- ══ HEADER ══ -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-mark">RM</div>
+    <div class="hdr-sep"></div>
+    <span class="hdr-title">Back Office</span>
   </div>
-  <div class="sbsec">Modules</div>
-  <button class="nav on" id="nav-comm" onclick="goto('comm')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-    Gestion Commerciale
-  </button>
-  <button class="nav" id="nav-ant" onclick="goto('ant')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>
-    Grille Antenne
-  </button>
-  <button class="nav" id="nav-live" onclick="goto('live')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 010 8.49M7.76 16.24a6 6 0 010-8.49M19.07 4.93a10 10 0 010 14.14M4.93 19.07a10 10 0 010-14.14"/></svg>
-    Live — trafic-tool
-  </button>
-  <div class="sbbot">
-    <div class="oa">
-      <div class="oa-dot"></div>
-      <div class="oa-s" id="oa-show">—</div>
-      <div class="oa-c" id="clk">—</div>
+  <div class="hdr-tabs">
+    <button class="tab-btn active" id="tbtn-comm" onclick="gotoTab('comm')">
+      <span>📋</span> Commercial
+    </button>
+    <button class="tab-btn" id="tbtn-ant" onclick="gotoTab('ant')">
+      <span>📡</span> Grille Antenne
+    </button>
+    <button class="tab-btn" id="tbtn-live" onclick="gotoTab('live')">
+      <span>🎙️</span> Note Antenne
+    </button>
+  </div>
+  <div class="hdr-clock" id="clk">--:--:--</div>
+</div>
+
+<!-- ══════════════════════ COMMERCIAL ══════════════════════════ -->
+<div class="tab-content active" id="tab-comm">
+  <div class="wrap">
+    <div class="stats">
+      <div class="sc-stat"><div class="sc-l">Annonceurs</div><div class="sc-v" id="nb-ann">0</div></div>
+      <div class="sc-stat"><div class="sc-l">Campagnes actives</div><div class="sc-v" id="nb-camp">0</div></div>
+      <div class="sc-stat"><div class="sc-l">Spots ce mois</div><div class="sc-v">—</div></div>
+      <div class="sc-stat"><div class="sc-l">Anomalies ouvertes</div><div class="sc-v danger" id="nb-anom">0</div></div>
     </div>
-  </div>
-</aside>
-
-<main>
-  <div class="topbar">
-    <span class="pttl" id="pttl">Gestion Commerciale</span>
-    <div class="tbr" id="tbr">
-      <button class="btn btn-g sm" onclick="openModal('modal-ann')">+ Annonceur</button>
-      <button class="btn btn-p sm" onclick="openModal('modal-camp')">+ Campagne</button>
-    </div>
-  </div>
-
-  <div class="content">
-
-    <!-- ═══════════ COMMERCIAL ═══════════ -->
-    <div class="panel on" id="panel-comm">
-      <div class="stats">
-        <div class="sc"><div class="sc-l">Annonceurs</div><div class="sc-v" id="nb-ann">0</div></div>
-        <div class="sc"><div class="sc-l">Campagnes actives</div><div class="sc-v" id="nb-camp">0</div></div>
-        <div class="sc"><div class="sc-l">Spots ce mois</div><div class="sc-v">—</div></div>
-        <div class="sc"><div class="sc-l">Anomalies ouvertes</div><div class="sc-v danger" id="nb-anom">0</div></div>
+    <div class="sc">
+      <div class="card-h">
+        <span class="card-t">Gestion Commerciale</span>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button class="btn btn-g sm" onclick="openModal('modal-ann')">+ Annonceur</button>
+          <button class="btn btn-p sm" onclick="openModal('modal-camp')">+ Campagne</button>
+        </div>
       </div>
-      <div class="tabs">
-        <button class="tab on" onclick="stab(this,'tc-ann')">Annonceurs</button>
-        <button class="tab" onclick="stab(this,'tc-camp')">Campagnes</button>
-        <button class="tab" onclick="stab(this,'tc-anom')">Anomalies</button>
-      </div>
-      <div id="tc-ann">
-        <div class="card">
-          <div class="ch"><span class="ch-t">Base annonceurs</span><button class="btn btn-p sm" onclick="openModal('modal-ann')">+ Ajouter</button></div>
+      <div style="padding:16px 18px">
+        <div class="stabs">
+          <button class="stab on" onclick="stab(this,'cc-ann')">Annonceurs</button>
+          <button class="stab" onclick="stab(this,'cc-camp')">Campagnes</button>
+          <button class="stab" onclick="stab(this,'cc-anom')">Anomalies</button>
+        </div>
+        <div id="cc-ann">
           <div id="ann-body"><div class="empty"><div class="empty-ic">🏢</div><div class="empty-t">Aucun annonceur</div><div class="empty-s">Ajoutez votre premier annonceur.</div></div></div>
         </div>
-      </div>
-      <div id="tc-camp" style="display:none">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px">
-          <span class="stitle" style="margin:0">Campagnes sponsor</span>
-          <button class="btn btn-p sm" onclick="openModal('modal-camp')">+ Nouvelle campagne</button>
+        <div id="cc-camp" style="display:none">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn btn-p sm" onclick="openModal('modal-camp')">+ Campagne</button></div>
+          <div id="camp-body"><div class="empty"><div class="empty-ic">📢</div><div class="empty-t">Aucune campagne</div><div class="empty-s">Créez votre première campagne.</div></div></div>
         </div>
-        <div id="camp-body"><div class="empty"><div class="empty-ic">📢</div><div class="empty-t">Aucune campagne</div><div class="empty-s">Créez d'abord un annonceur puis une campagne.</div></div></div>
-      </div>
-      <div id="tc-anom" style="display:none">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px">
-          <span class="stitle" style="margin:0">Anomalies déclarées</span>
-          <button class="btn btn-w sm" onclick="openModal('modal-anom')">⚠ Déclarer</button>
+        <div id="cc-anom" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <span class="stitle" style="margin:0">Anomalies déclarées</span>
+            <button class="btn btn-w sm" onclick="openModal('modal-anom')">⚠ Déclarer</button>
+          </div>
+          <div class="sc" id="anom-body"><div class="empty"><div class="empty-ic">✅</div><div class="empty-t">Aucune anomalie</div><div class="empty-s">Tout est en ordre.</div></div></div>
         </div>
-        <div class="card" id="anom-body"><div class="empty"><div class="empty-ic">✅</div><div class="empty-t">Aucune anomalie</div><div class="empty-s">Tout est en ordre.</div></div></div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- ═══════════ GRILLE ANTENNE ═══════════ -->
-    <div class="panel" id="panel-ant">
-      <div class="tabs">
-        <button class="tab on" onclick="stab(this,'ta-grille')">Grille hebdo</button>
-        <button class="tab" onclick="stab(this,'ta-ems')">Émissions</button>
-        <button class="tab" onclick="stab(this,'ta-anim')">Animateurs</button>
+<!-- ══════════════════════ GRILLE ANTENNE ══════════════════════ -->
+<div class="tab-content" id="tab-ant">
+  <div class="wrap">
+    <div class="sc">
+      <div class="card-h">
+        <span class="card-t">Grille Antenne</span>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button class="btn btn-p sm" onclick="openEmModal()">+ Émission</button>
+        </div>
       </div>
-
-      <!-- GRILLE -->
-      <div id="ta-grille">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px">
-          <div><div style="font-size:14px;font-weight:700">Semaine 22</div><div style="font-size:11px;color:var(--t3)">26 mai – 1er juin 2026</div></div>
-          <div style="display:flex;gap:7px">
-            <button class="btn btn-g sm">← Préc.</button>
-            <button class="btn btn-g sm">Suiv. →</button>
+      <div style="padding:16px 18px">
+        <div class="stabs">
+          <button class="stab on" onclick="stab(this,'ta-grille')">Grille hebdo</button>
+          <button class="stab" onclick="stab(this,'ta-ems')">Émissions</button>
+          <button class="stab" onclick="stab(this,'ta-anim')">Animateurs</button>
+        </div>
+        <!-- GRILLE -->
+        <div id="ta-grille">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:.05em;color:var(--text)">Semaine 22</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">26 mai – 1er juin 2026</div>
+            </div>
+            <div style="display:flex;gap:7px">
+              <button class="btn btn-g sm">← Préc.</button>
+              <button class="btn btn-g sm">Suiv. →</button>
+            </div>
+          </div>
+          <!-- Légende -->
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+            <span id="grid-legend" style="display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--muted);"></span>
+          </div>
+          <div class="sc" style="margin:0">
+            <div class="grille-wrap">
+              <table class="grille">
+                <thead><tr><th>Tranche</th><th>LUN</th><th>MAR</th><th>MER</th><th>JEU</th><th>VEN</th><th>SAM</th><th>DIM</th></tr></thead>
+                <tbody id="grid-body"></tbody>
+              </table>
+            </div>
           </div>
         </div>
-        <div class="card" style="margin:0"><div class="grille-wrap">
-          <table class="grille">
-            <thead><tr><th>Tranche</th><th>LUN</th><th>MAR</th><th>MER</th><th>JEU</th><th>VEN</th><th>SAM</th><th>DIM</th></tr></thead>
-            <tbody id="grid-body"></tbody>
-          </table>
-        </div></div>
-      </div>
-
-      <!-- ÉMISSIONS -->
-      <div id="ta-ems" style="display:none">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px">
-          <span class="stitle" style="margin:0">Catalogue</span>
-          <button class="btn btn-p sm" onclick="openEmModal()">+ Créer une émission</button>
+        <!-- ÉMISSIONS -->
+        <div id="ta-ems" style="display:none">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn btn-p sm" onclick="openEmModal()">+ Créer une émission</button></div>
+          <div id="em-catalog"><div class="empty"><div class="empty-ic">🎙️</div><div class="empty-t">Aucune émission</div><div class="empty-s">Créez votre première émission.</div></div></div>
         </div>
-        <div id="em-catalog"><div class="empty"><div class="empty-ic">🎙️</div><div class="empty-t">Aucune émission</div><div class="empty-s">Créez votre première émission.</div></div></div>
-      </div>
-
-      <!-- ANIMATEURS -->
-      <div id="ta-anim" style="display:none">
-        <div class="stitle">Équipe antenne</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
-          <div class="apill"><div class="aav" style="background:#e8192c">GL</div>Giulia</div>
-          <div class="apill"><div class="aav" style="background:#2563eb">LÉ</div>Léo</div>
-          <div class="apill"><div class="aav" style="background:#b45309">ÉR</div>Éric</div>
-          <div class="apill"><div class="aav" style="background:#7c3aed">CH</div>Charly</div>
-          <div class="apill"><div class="aav" style="background:#059669">AN</div>Anaïs</div>
-          <div class="apill"><div class="aav" style="background:#0891b2">JC</div>Jean Christophe</div>
-          <div class="apill"><div class="aav" style="background:#db2777">MA</div>Marie</div>
+        <!-- ANIMATEURS -->
+        <div id="ta-anim" style="display:none">
+          <div class="stitle">Équipe antenne</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
+            <div class="apill"><div class="aav" style="background:#E4032E">GL</div>Giulia</div>
+            <div class="apill"><div class="aav" style="background:#1B5EB8">LÉ</div>Léo</div>
+            <div class="apill"><div class="aav" style="background:#b45309">ÉR</div>Éric</div>
+            <div class="apill"><div class="aav" style="background:#7c3aed">CH</div>Charly</div>
+            <div class="apill"><div class="aav" style="background:#27AE60">AN</div>Anaïs</div>
+            <div class="apill"><div class="aav" style="background:#0891b2">JC</div>Jean Christophe</div>
+            <div class="apill"><div class="aav" style="background:#db2777">MA</div>Marie</div>
+          </div>
+          <div class="stitle">Affectations</div>
+          <div class="sc"><div id="anim-em-list"><div class="empty"><div class="empty-ic">📋</div><div class="empty-t">Aucune émission créée</div></div></div></div>
         </div>
-        <div class="stitle">Affectations</div>
-        <div class="card"><div id="anim-em-list"><div class="empty"><div class="empty-ic">📋</div><div class="empty-t">Aucune émission créée</div></div></div></div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- ═══════════ LIVE — trafic-tool ═══════════ -->
-    <div class="panel" id="panel-live">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-        <div>
-          <div style="font-size:14px;font-weight:700">Données Live — trafic-tool.pages.dev</div>
-          <div style="font-size:11px;color:var(--t3);margin-top:2px">Gérez les 4 rubriques de chaque émission · Données enregistrées localement</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="sync-badge" id="sync-status">Données à jour</span>
-          <button class="btn btn-g sm" onclick="copyJSON()">Exporter JSON</button>
-        </div>
+<!-- ══════════════════════ NOTE ANTENNE ══════════════════════════ -->
+<div class="tab-content" id="tab-live">
+  <div class="wrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Données synchronisées avec</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--text);letter-spacing:.04em;">trafic-tool.pages.dev</div>
       </div>
-      <div id="live-body">
-        <div class="empty"><div class="empty-ic">📡</div><div class="empty-t">Aucune émission configurée</div><div class="empty-s">Créez des émissions depuis la Grille Antenne pour gérer leur contenu live.</div></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="sync-ok" id="sync-lbl">Données à jour</span>
+        <a href="https://trafic-tool.pages.dev/" target="_blank" class="btn btn-g sm">↗ Ouvrir trafic-tool</a>
       </div>
     </div>
+    <div id="live-body">
+      <div class="empty"><div class="empty-ic">📡</div><div class="empty-t">Aucune émission configurée</div><div class="empty-s">Créez des émissions depuis la Grille Antenne.</div></div>
+    </div>
+  </div>
+</div>
 
-  </div><!-- /content -->
-</main>
-
-
-<!-- ═══════════════════ MODALS ═══════════════════ -->
+<!-- ══════════════════ MODALS ══════════════════ -->
 
 <!-- ANNONCEUR -->
 <div class="ov" id="modal-ann" onclick="obg(event,'modal-ann')">
   <div class="modal">
     <div class="mttl">Ajouter un annonceur <button class="mc" onclick="closeModal('modal-ann')">×</button></div>
-    <div class="fg"><label class="fl">Nom</label><input class="fc" id="a-nom" type="text" placeholder="Ex: Monte-Carlo SBM"></div>
+    <div class="fg"><label class="fl">Nom</label><input class="fc" id="a-nom" type="text" placeholder="Ex : Monte-Carlo SBM"></div>
     <div class="fg"><label class="fl">Adresse</label><input class="fc" id="a-adr" type="text" placeholder="Place du Casino, Monaco"></div>
     <div class="g2">
       <div class="fg" style="margin:0"><label class="fl">Contact</label><input class="fc" id="a-contact" type="text" placeholder="Prénom Nom"></div>
       <div class="fg" style="margin:0"><label class="fl">Téléphone</label><input class="fc" id="a-tel" type="tel" placeholder="+377 93 00 00 00"></div>
     </div>
     <div class="fg"><label class="fl">Email</label><input class="fc" id="a-email" type="email" placeholder="contact@annonceur.mc"></div>
-    <div style="display:flex;gap:7px;justify-content:flex-end">
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
       <button class="btn btn-g sm" onclick="closeModal('modal-ann')">Annuler</button>
       <button class="btn btn-p sm" onclick="saveAnn()">Enregistrer</button>
     </div>
@@ -360,67 +370,57 @@ textarea.fc{resize:vertical;min-height:60px}
   <div class="modal">
     <div class="mttl">Créer une campagne <button class="mc" onclick="closeModal('modal-camp')">×</button></div>
     <div class="fg"><label class="fl">Annonceur</label><select class="fc" id="c-ann"><option value="">— Sélectionner —</option></select></div>
-    <div class="fg"><label class="fl">Nom</label><input class="fc" id="c-nom" type="text" placeholder="Ex: SBM Été 2026"></div>
+    <div class="fg"><label class="fl">Nom de la campagne</label><input class="fc" id="c-nom" type="text" placeholder="Ex : SBM Été 2026"></div>
     <div class="g2">
       <div class="fg" style="margin:0"><label class="fl">Début</label><input class="fc" id="c-start" type="date"></div>
       <div class="fg" style="margin:0"><label class="fl">Fin</label><input class="fc" id="c-end" type="date"></div>
     </div>
     <div class="g2">
       <div class="fg" style="margin:0"><label class="fl">Durée spot</label><select class="fc" id="c-dur"><option>15s</option><option>20s</option><option selected>30s</option><option>60s</option></select></div>
-      <div class="fg" style="margin:0"><label class="fl">Spots/jour</label><input class="fc" id="c-nb" type="number" value="4" min="1"></div>
+      <div class="fg" style="margin:0"><label class="fl">Spots / jour</label><input class="fc" id="c-nb" type="number" value="4" min="1"></div>
     </div>
     <div class="fg"><label class="fl">Jours de diffusion</label>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:5px">
-        <label style="font-size:12px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Lun</label>
-        <label style="font-size:12px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Mar</label>
-        <label style="font-size:12px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Mer</label>
-        <label style="font-size:12px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Jeu</label>
-        <label style="font-size:12px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" checked> Ven</label>
-        <label style="font-size:12px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox"> Sam</label>
-        <label style="font-size:12px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox"> Dim</label>
+        <label class="chk-row"><input type="checkbox" checked><span class="chk-lbl">Lun</span></label>
+        <label class="chk-row"><input type="checkbox" checked><span class="chk-lbl">Mar</span></label>
+        <label class="chk-row"><input type="checkbox" checked><span class="chk-lbl">Mer</span></label>
+        <label class="chk-row"><input type="checkbox" checked><span class="chk-lbl">Jeu</span></label>
+        <label class="chk-row"><input type="checkbox" checked><span class="chk-lbl">Ven</span></label>
+        <label class="chk-row"><input type="checkbox"><span class="chk-lbl">Sam</span></label>
+        <label class="chk-row"><input type="checkbox"><span class="chk-lbl">Dim</span></label>
       </div>
     </div>
     <div class="fg"><label class="fl">Créneaux horaires</label>
-      <div style="display:flex;flex-direction:column;gap:5px;margin-top:5px">
-        <label style="font-size:12px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox"> 06:00–09:00</label>
-        <label style="font-size:12px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox"> 09:00–12:00</label>
-        <label style="font-size:12px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox"> 12:00–16:00</label>
-        <label style="font-size:12px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox"> 16:00–19:00</label>
-        <label style="font-size:12px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox"> 19:00–20:00</label>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-top:5px">
+        <label class="chk-row"><input type="checkbox"><span class="chk-lbl">06:00–09:00</span></label>
+        <label class="chk-row"><input type="checkbox"><span class="chk-lbl">09:00–12:00</span></label>
+        <label class="chk-row"><input type="checkbox"><span class="chk-lbl">12:00–16:00</span></label>
+        <label class="chk-row"><input type="checkbox"><span class="chk-lbl">16:00–19:00</span></label>
+        <label class="chk-row"><input type="checkbox"><span class="chk-lbl">19:00–20:00</span></label>
       </div>
     </div>
     <div class="fg"><label class="fl">Rendez-vous précis</label>
       <select class="fc" id="c-rdv">
         <option value="">— Aucun —</option>
         <optgroup label="Info Trafic">
-          <option>Trafic 06:20</option><option>Trafic 06:40</option>
-          <option>Trafic 07:20</option><option>Trafic 07:40</option>
-          <option>Trafic 08:20</option><option>Trafic 08:40</option>
-          <option>Trafic 09:20</option>
-          <option>Trafic 16:20</option><option>Trafic 16:40</option>
-          <option>Trafic 17:20</option><option>Trafic 17:40</option>
-          <option>Trafic 18:20</option><option>Trafic 18:40</option>
-          <option>Trafic 19:20</option><option>Trafic 19:40</option>
+          <option>Trafic 06:20</option><option>Trafic 06:40</option><option>Trafic 07:20</option><option>Trafic 07:40</option>
+          <option>Trafic 08:20</option><option>Trafic 08:40</option><option>Trafic 09:20</option>
+          <option>Trafic 16:20</option><option>Trafic 16:40</option><option>Trafic 17:20</option><option>Trafic 17:40</option>
+          <option>Trafic 18:20</option><option>Trafic 18:40</option><option>Trafic 19:20</option><option>Trafic 19:40</option>
         </optgroup>
         <optgroup label="Météo">
-          <option>Météo 06:00</option><option>Météo 06:30</option>
-          <option>Météo 07:00</option><option>Météo 07:30</option>
-          <option>Météo 08:00</option><option>Météo 08:30</option>
-          <option>Météo 09:00</option><option>Météo 09:30</option>
-          <option>Météo 17:00</option><option>Météo 17:30</option>
-          <option>Météo 18:00</option><option>Météo 18:30</option>
+          <option>Météo 06:00</option><option>Météo 06:30</option><option>Météo 07:00</option><option>Météo 07:30</option>
+          <option>Météo 08:00</option><option>Météo 08:30</option><option>Météo 09:00</option><option>Météo 09:30</option>
+          <option>Météo 17:00</option><option>Météo 17:30</option><option>Météo 18:00</option><option>Météo 18:30</option>
           <option>Météo 19:00</option><option>Météo 19:30</option>
         </optgroup>
-        <optgroup label="Ouverture d'émission">
-          <option>Ouverture 06:00–09:00</option>
-          <option>Ouverture 09:00–12:00</option>
-          <option>Ouverture 12:00–16:00</option>
-          <option>Ouverture 16:00–19:00</option>
-          <option>Ouverture 19:00–20:00</option>
+        <optgroup label="Ouverture émission">
+          <option>Ouverture 06:00–09:00</option><option>Ouverture 09:00–12:00</option>
+          <option>Ouverture 12:00–16:00</option><option>Ouverture 16:00–19:00</option><option>Ouverture 19:00–20:00</option>
         </optgroup>
       </select>
     </div>
-    <div style="display:flex;gap:7px;justify-content:flex-end">
+    <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-g sm" onclick="closeModal('modal-camp')">Annuler</button>
       <button class="btn btn-p sm" onclick="saveCamp()">Créer</button>
     </div>
@@ -445,7 +445,7 @@ textarea.fc{resize:vertical;min-height:60px}
     </div>
     <div class="fg"><label class="fl">Commentaire</label><textarea class="fc" id="an-com" placeholder="Décrivez l'anomalie…"></textarea></div>
     <div class="fg"><label class="fl">Priorité</label><select class="fc" id="an-pri"><option>Normal</option><option>Urgent</option><option>Critique</option></select></div>
-    <div style="display:flex;gap:7px;justify-content:flex-end">
+    <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-g sm" onclick="closeModal('modal-anom')">Annuler</button>
       <button class="btn btn-w sm" onclick="saveAnom()">Déclarer</button>
     </div>
@@ -457,17 +457,17 @@ textarea.fc{resize:vertical;min-height:60px}
   <div class="modal">
     <div class="mttl" id="em-mttl">Créer une émission <button class="mc" onclick="closeModal('modal-em')">×</button></div>
     <input type="hidden" id="em-eid">
-    <div class="fg"><label class="fl">Nom de l'émission</label><input class="fc" id="em-nom" type="text" placeholder="Ex: Morning"></div>
+    <div class="fg"><label class="fl">Nom de l'émission</label><input class="fc" id="em-nom" type="text" placeholder="Ex : Morning"></div>
     <div class="fg"><label class="fl">Couleur</label>
       <div class="swatches" id="em-sw">
-        <div class="sw sel" style="background:#e8192c" data-c="#e8192c" onclick="pickC(this)"></div>
-        <div class="sw" style="background:#2563eb" data-c="#2563eb" onclick="pickC(this)"></div>
-        <div class="sw" style="background:#059669" data-c="#059669" onclick="pickC(this)"></div>
-        <div class="sw" style="background:#d97706" data-c="#d97706" onclick="pickC(this)"></div>
+        <div class="sw sel" style="background:#E4032E" data-c="#E4032E" onclick="pickC(this)"></div>
+        <div class="sw" style="background:#1B5EB8" data-c="#1B5EB8" onclick="pickC(this)"></div>
+        <div class="sw" style="background:#27AE60" data-c="#27AE60" onclick="pickC(this)"></div>
+        <div class="sw" style="background:#F5C518" data-c="#F5C518" onclick="pickC(this)"></div>
         <div class="sw" style="background:#7c3aed" data-c="#7c3aed" onclick="pickC(this)"></div>
-        <div class="sw" style="background:#db2777" data-c="#db2777" onclick="pickC(this)"></div>
+        <div class="sw" style="background:#FF6B35" data-c="#FF6B35" onclick="pickC(this)"></div>
         <div class="sw" style="background:#0891b2" data-c="#0891b2" onclick="pickC(this)"></div>
-        <div class="sw" style="background:#65a30d" data-c="#65a30d" onclick="pickC(this)"></div>
+        <div class="sw" style="background:#db2777" data-c="#db2777" onclick="pickC(this)"></div>
       </div>
     </div>
     <div class="fg"><label class="fl">Tranche horaire</label>
@@ -478,17 +478,17 @@ textarea.fc{resize:vertical;min-height:60px}
       </select>
     </div>
     <div class="fg"><label class="fl">Animateurs</label>
-      <div style="display:flex;flex-direction:column;gap:3px;margin-top:5px">
-        <label class="anim-check"><input type="checkbox" value="Giulia"> <span class="aav" style="background:#e8192c;width:20px;height:20px;font-size:8px">GL</span> Giulia</label>
-        <label class="anim-check"><input type="checkbox" value="Léo"> <span class="aav" style="background:#2563eb;width:20px;height:20px;font-size:8px">LÉ</span> Léo</label>
-        <label class="anim-check"><input type="checkbox" value="Éric"> <span class="aav" style="background:#b45309;width:20px;height:20px;font-size:8px">ÉR</span> Éric</label>
-        <label class="anim-check"><input type="checkbox" value="Charly"> <span class="aav" style="background:#7c3aed;width:20px;height:20px;font-size:8px">CH</span> Charly</label>
-        <label class="anim-check"><input type="checkbox" value="Anaïs"> <span class="aav" style="background:#059669;width:20px;height:20px;font-size:8px">AN</span> Anaïs</label>
-        <label class="anim-check"><input type="checkbox" value="Jean Christophe"> <span class="aav" style="background:#0891b2;width:20px;height:20px;font-size:8px">JC</span> Jean Christophe</label>
-        <label class="anim-check"><input type="checkbox" value="Marie"> <span class="aav" style="background:#db2777;width:20px;height:20px;font-size:8px">MA</span> Marie</label>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <label class="chk-row"><input type="checkbox" value="Giulia"><span class="aav" style="background:#E4032E;width:20px;height:20px;font-size:8px">GL</span><span class="chk-lbl">Giulia</span></label>
+        <label class="chk-row"><input type="checkbox" value="Léo"><span class="aav" style="background:#1B5EB8;width:20px;height:20px;font-size:8px">LÉ</span><span class="chk-lbl">Léo</span></label>
+        <label class="chk-row"><input type="checkbox" value="Éric"><span class="aav" style="background:#b45309;width:20px;height:20px;font-size:8px">ÉR</span><span class="chk-lbl">Éric</span></label>
+        <label class="chk-row"><input type="checkbox" value="Charly"><span class="aav" style="background:#7c3aed;width:20px;height:20px;font-size:8px">CH</span><span class="chk-lbl">Charly</span></label>
+        <label class="chk-row"><input type="checkbox" value="Anaïs"><span class="aav" style="background:#27AE60;width:20px;height:20px;font-size:8px">AN</span><span class="chk-lbl">Anaïs</span></label>
+        <label class="chk-row"><input type="checkbox" value="Jean Christophe"><span class="aav" style="background:#0891b2;width:20px;height:20px;font-size:8px">JC</span><span class="chk-lbl">Jean Christophe</span></label>
+        <label class="chk-row"><input type="checkbox" value="Marie"><span class="aav" style="background:#db2777;width:20px;height:20px;font-size:8px">MA</span><span class="chk-lbl">Marie</span></label>
       </div>
     </div>
-    <div style="display:flex;gap:7px;justify-content:flex-end">
+    <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-g sm" onclick="closeModal('modal-em')">Annuler</button>
       <button class="btn btn-d sm" id="em-del" style="display:none" onclick="deleteEm()">Supprimer</button>
       <button class="btn btn-p sm" onclick="saveEm()">Enregistrer</button>
@@ -503,7 +503,7 @@ textarea.fc{resize:vertical;min-height:60px}
     <div class="fg"><label class="fl">Émission</label>
       <select class="fc" id="cell-sel"><option value="">— Aucune —</option></select>
     </div>
-    <div style="display:flex;gap:7px;justify-content:flex-end">
+    <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-g sm" onclick="closeModal('modal-cell')">Annuler</button>
       <button class="btn btn-p sm" onclick="assignCell()">Valider</button>
     </div>
@@ -515,10 +515,10 @@ textarea.fc{resize:vertical;min-height:60px}
   <div class="modal">
     <div class="mttl" id="antenne-ttl">Antenne Aujourd'hui <button class="mc" onclick="closeModal('modal-antenne')">×</button></div>
     <input type="hidden" id="antenne-emid">
-    <div class="fg"><label class="fl">Titre / Sujet du jour</label><input class="fc" id="ant-titre" type="text" placeholder="Ex: Spéciale Grand Prix de Monaco"></div>
+    <div class="fg"><label class="fl">Titre / Sujet du jour</label><input class="fc" id="ant-titre" type="text" placeholder="Ex : Spéciale Grand Prix de Monaco"></div>
     <div class="fg"><label class="fl">Description / Notes</label><textarea class="fc" id="ant-desc" placeholder="Infos du jour, invités, thématique…"></textarea></div>
-    <div class="fg"><label class="fl">Invité(s)</label><input class="fc" id="ant-invite" type="text" placeholder="Ex: Jean-Baptiste Martin, Maire de Monaco"></div>
-    <div style="display:flex;gap:7px;justify-content:flex-end">
+    <div class="fg"><label class="fl">Invité(s)</label><input class="fc" id="ant-invite" type="text" placeholder="Ex : Jean-Baptiste Martin, Maire de Monaco"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-g sm" onclick="closeModal('modal-antenne')">Annuler</button>
       <button class="btn btn-p sm" onclick="saveAntenne()">Enregistrer</button>
     </div>
@@ -530,16 +530,14 @@ textarea.fc{resize:vertical;min-height:60px}
   <div class="modal">
     <div class="mttl" id="jeu-ttl">Jeu Antenne <button class="mc" onclick="closeModal('modal-jeu')">×</button></div>
     <input type="hidden" id="jeu-emid">
-    <div class="fg"><label class="fl">Nom du jeu</label><input class="fc" id="jeu-nom" type="text" placeholder="Ex: Le Quiz du Matin"></div>
-    <div class="fg"><label class="fl">Description / Règles</label><textarea class="fc" id="jeu-desc" placeholder="Déroulement du jeu, règles…"></textarea></div>
+    <div class="fg"><label class="fl">Nom du jeu</label><input class="fc" id="jeu-nom" type="text" placeholder="Ex : Le Quiz du Matin"></div>
+    <div class="fg"><label class="fl">Description</label><textarea class="fc" id="jeu-desc" placeholder="Déroulement, règles…"></textarea></div>
     <div class="g2">
-      <div class="fg" style="margin:0"><label class="fl">Lot / Récompense</label><input class="fc" id="jeu-lot" type="text" placeholder="Ex: Weekend au Fairmont"></div>
-      <div class="fg" style="margin:0"><label class="fl">Valeur du lot</label><input class="fc" id="jeu-val" type="text" placeholder="Ex: 500 €"></div>
+      <div class="fg" style="margin:0"><label class="fl">Lot</label><input class="fc" id="jeu-lot" type="text" placeholder="Ex : Weekend au Fairmont"></div>
+      <div class="fg" style="margin:0"><label class="fl">Valeur</label><input class="fc" id="jeu-val" type="text" placeholder="Ex : 500 €"></div>
     </div>
-    <div class="fg"><label class="fl">Statut</label>
-      <select class="fc" id="jeu-statut"><option value="actif">Actif</option><option value="inactif">Inactif</option></select>
-    </div>
-    <div style="display:flex;gap:7px;justify-content:flex-end">
+    <div class="fg"><label class="fl">Heure de passage</label><input class="fc" id="jeu-heure" type="text" placeholder="Ex : 07h30 / 08h30"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-g sm" onclick="closeModal('modal-jeu')">Annuler</button>
       <button class="btn btn-p sm" onclick="saveJeu()">Enregistrer</button>
     </div>
@@ -547,71 +545,76 @@ textarea.fc{resize:vertical;min-height:60px}
 </div>
 
 <!-- COMMERCIAL EDITOR -->
-<div class="ov" id="modal-comm-editor" onclick="obg(event,'modal-comm-editor')">
+<div class="ov" id="modal-ce" onclick="obg(event,'modal-ce')">
   <div class="modal wide">
-    <div class="mttl" id="ce-ttl">Commercial Editor <button class="mc" onclick="closeModal('modal-comm-editor')">×</button></div>
+    <div class="mttl" id="ce-ttl">Commercial Editor <button class="mc" onclick="closeModal('modal-ce')">×</button></div>
     <input type="hidden" id="ce-emid">
-    <div style="font-size:11.5px;color:var(--t3);margin-bottom:14px">Sélectionnez les rendez-vous commerciaux affectés à cette émission.</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Sélectionnez les rendez-vous commerciaux affectés à cette émission.</div>
     <div class="fg"><label class="fl">Info Trafic</label>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:5px" id="ce-trafic">
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="06:20"> 06:20</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="06:40"> 06:40</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="07:20"> 07:20</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="07:40"> 07:40</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="08:20"> 08:20</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="08:40"> 08:40</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="09:20"> 09:20</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="16:20"> 16:20</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="16:40"> 16:40</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="17:20"> 17:20</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="17:40"> 17:40</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="18:20"> 18:20</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="18:40"> 18:40</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="19:20"> 19:20</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="19:40"> 19:40</label>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:5px" id="ce-trafic">
+        <label class="chk-row"><input type="checkbox" value="06:20"><span class="chk-lbl">06:20</span></label>
+        <label class="chk-row"><input type="checkbox" value="06:40"><span class="chk-lbl">06:40</span></label>
+        <label class="chk-row"><input type="checkbox" value="07:20"><span class="chk-lbl">07:20</span></label>
+        <label class="chk-row"><input type="checkbox" value="07:40"><span class="chk-lbl">07:40</span></label>
+        <label class="chk-row"><input type="checkbox" value="08:20"><span class="chk-lbl">08:20</span></label>
+        <label class="chk-row"><input type="checkbox" value="08:40"><span class="chk-lbl">08:40</span></label>
+        <label class="chk-row"><input type="checkbox" value="09:20"><span class="chk-lbl">09:20</span></label>
+        <label class="chk-row"><input type="checkbox" value="16:20"><span class="chk-lbl">16:20</span></label>
+        <label class="chk-row"><input type="checkbox" value="16:40"><span class="chk-lbl">16:40</span></label>
+        <label class="chk-row"><input type="checkbox" value="17:20"><span class="chk-lbl">17:20</span></label>
+        <label class="chk-row"><input type="checkbox" value="17:40"><span class="chk-lbl">17:40</span></label>
+        <label class="chk-row"><input type="checkbox" value="18:20"><span class="chk-lbl">18:20</span></label>
+        <label class="chk-row"><input type="checkbox" value="18:40"><span class="chk-lbl">18:40</span></label>
+        <label class="chk-row"><input type="checkbox" value="19:20"><span class="chk-lbl">19:20</span></label>
+        <label class="chk-row"><input type="checkbox" value="19:40"><span class="chk-lbl">19:40</span></label>
       </div>
     </div>
     <div class="fg"><label class="fl">Météo</label>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:5px" id="ce-meteo">
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="06:00"> 06:00</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="06:30"> 06:30</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="07:00"> 07:00</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="07:30"> 07:30</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="08:00"> 08:00</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="08:30"> 08:30</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="09:00"> 09:00</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="09:30"> 09:30</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="17:00"> 17:00</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="17:30"> 17:30</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="18:00"> 18:00</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="18:30"> 18:30</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="19:00"> 19:00</label>
-        <label style="font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px"><input type="checkbox" value="19:30"> 19:30</label>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:5px" id="ce-meteo">
+        <label class="chk-row"><input type="checkbox" value="06:00"><span class="chk-lbl">06:00</span></label>
+        <label class="chk-row"><input type="checkbox" value="06:30"><span class="chk-lbl">06:30</span></label>
+        <label class="chk-row"><input type="checkbox" value="07:00"><span class="chk-lbl">07:00</span></label>
+        <label class="chk-row"><input type="checkbox" value="07:30"><span class="chk-lbl">07:30</span></label>
+        <label class="chk-row"><input type="checkbox" value="08:00"><span class="chk-lbl">08:00</span></label>
+        <label class="chk-row"><input type="checkbox" value="08:30"><span class="chk-lbl">08:30</span></label>
+        <label class="chk-row"><input type="checkbox" value="09:00"><span class="chk-lbl">09:00</span></label>
+        <label class="chk-row"><input type="checkbox" value="09:30"><span class="chk-lbl">09:30</span></label>
+        <label class="chk-row"><input type="checkbox" value="17:00"><span class="chk-lbl">17:00</span></label>
+        <label class="chk-row"><input type="checkbox" value="17:30"><span class="chk-lbl">17:30</span></label>
+        <label class="chk-row"><input type="checkbox" value="18:00"><span class="chk-lbl">18:00</span></label>
+        <label class="chk-row"><input type="checkbox" value="18:30"><span class="chk-lbl">18:30</span></label>
+        <label class="chk-row"><input type="checkbox" value="19:00"><span class="chk-lbl">19:00</span></label>
+        <label class="chk-row"><input type="checkbox" value="19:30"><span class="chk-lbl">19:30</span></label>
       </div>
     </div>
-    <div style="display:flex;gap:7px;justify-content:flex-end">
-      <button class="btn btn-g sm" onclick="closeModal('modal-comm-editor')">Annuler</button>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-g sm" onclick="closeModal('modal-ce')">Annuler</button>
       <button class="btn btn-p sm" onclick="saveCE()">Enregistrer</button>
     </div>
   </div>
 </div>
 
-<!-- ÉQUIPE DE LA SEMAINE -->
+<!-- ÉQUIPE SEMAINE -->
 <div class="ov" id="modal-equipe" onclick="obg(event,'modal-equipe')">
-  <div class="modal" style="width:380px">
+  <div class="modal" style="width:360px">
     <div class="mttl" id="eq-ttl">Équipe de la semaine <button class="mc" onclick="closeModal('modal-equipe')">×</button></div>
     <input type="hidden" id="eq-emid">
-    <div style="font-size:11.5px;color:var(--t3);margin-bottom:14px">Sélectionnez l'équipe pour cette émission cette semaine.</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Sélectionnez les animateurs présents cette semaine.</div>
     <div style="display:flex;flex-direction:column;gap:3px">
-      <label class="anim-check"><input type="checkbox" value="Giulia" id="eq-Giulia"> <span class="aav" style="background:#e8192c;width:20px;height:20px;font-size:8px">GL</span> Giulia</label>
-      <label class="anim-check"><input type="checkbox" value="Léo" id="eq-Léo"> <span class="aav" style="background:#2563eb;width:20px;height:20px;font-size:8px">LÉ</span> Léo</label>
-      <label class="anim-check"><input type="checkbox" value="Éric" id="eq-Éric"> <span class="aav" style="background:#b45309;width:20px;height:20px;font-size:8px">ÉR</span> Éric</label>
-      <label class="anim-check"><input type="checkbox" value="Charly" id="eq-Charly"> <span class="aav" style="background:#7c3aed;width:20px;height:20px;font-size:8px">CH</span> Charly</label>
-      <label class="anim-check"><input type="checkbox" value="Anaïs" id="eq-Anaïs"> <span class="aav" style="background:#059669;width:20px;height:20px;font-size:8px">AN</span> Anaïs</label>
-      <label class="anim-check"><input type="checkbox" value="Jean Christophe" id="eq-Jean Christophe"> <span class="aav" style="background:#0891b2;width:20px;height:20px;font-size:8px">JC</span> Jean Christophe</label>
-      <label class="anim-check"><input type="checkbox" value="Marie" id="eq-Marie"> <span class="aav" style="background:#db2777;width:20px;height:20px;font-size:8px">MA</span> Marie</label>
+      <label class="chk-row"><input type="checkbox" value="Giulia" id="eq-Giulia"><span class="aav" style="background:#E4032E;width:20px;height:20px;font-size:8px">GL</span><span class="chk-lbl">Giulia</span></label>
+      <label class="chk-row"><input type="checkbox" value="Léo" id="eq-Léo"><span class="aav" style="background:#1B5EB8;width:20px;height:20px;font-size:8px">LÉ</span><span class="chk-lbl">Léo</span></label>
+      <label class="chk-row"><input type="checkbox" value="Éric" id="eq-Éric"><span class="aav" style="background:#b45309;width:20px;height:20px;font-size:8px">ÉR</span><span class="chk-lbl">Éric</span></label>
+      <label class="chk-row"><input type="checkbox" value="Charly" id="eq-Charly"><span class="aav" style="background:#7c3aed;width:20px;height:20px;font-size:8px">CH</span><span class="chk-lbl">Charly</span></label>
+      <label class="chk-row"><input type="checkbox" value="Anaïs" id="eq-Anaïs"><span class="aav" style="background:#27AE60;width:20px;height:20px;font-size:8px">AN</span><span class="chk-lbl">Anaïs</span></label>
+      <label class="chk-row"><input type="checkbox" value="Jean Christophe" id="eq-Jean Christophe"><span class="aav" style="background:#0891b2;width:20px;height:20px;font-size:8px">JC</span><span class="chk-lbl">Jean Christophe</span></label>
+      <label class="chk-row"><input type="checkbox" value="Marie" id="eq-Marie"><span class="aav" style="background:#db2777;width:20px;height:20px;font-size:8px">MA</span><span class="chk-lbl">Marie</span></label>
     </div>
-    <div style="display:flex;gap:7px;justify-content:flex-end;margin-top:14px">
+    <!-- Planning jour par jour -->
+    <div style="margin-top:16px">
+      <div class="stitle">Affectation jour par jour (optionnel)</div>
+      <div id="eq-planning" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
       <button class="btn btn-g sm" onclick="closeModal('modal-equipe')">Annuler</button>
       <button class="btn btn-p sm" onclick="saveEquipe()">Enregistrer</button>
     </div>
@@ -619,157 +622,184 @@ textarea.fc{resize:vertical;min-height:60px}
 </div>
 
 <script>
-/* ════════ DATA ════════ */
-let annonceurs=[], campagnes=[], anomalies=[];
-let emissions=[], nextId=1;
-let grid={};  // "t_d" => emId | null
-// liveData[emId] = { antenne:{titre,desc,invite}, jeu:{nom,desc,lot,val,statut}, ce:{trafic:[],meteo:[]}, equipe:[] }
-let liveData={};
-
+/* ════ DATA ════ */
+let annonceurs=[],campagnes=[],anomalies=[];
+let emissions=[],nextId=1;
+let liveData={};  // liveData[emId] = {antenne,jeu,ce,equipe,planning}
+let grid={};      // grid["t_d"] = emId | null
 const TRANCHES=['06:00 – 09:00','09:00 – 12:00','12:00 – 16:00','16:00 – 19:00','19:00 – 20:00'];
 const DAYS=['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
+const DAYS_FULL=['Lundi','Mardi','Mercredi','Jeudi','Vendredi'];
+for(let t=0;t<5;t++) for(let d=0;d<7;d++) grid[`${t}_${d}`]=null;
 
-for(let t=0;t<5;t++) for(let d=0;d<7;d++) grid[t+'_'+d]=null;
-
-/* ════════ STORAGE ════════ */
+/* ════ STORAGE ════ */
 async function persist(){
   try{
     const data={annonceurs,campagnes,anomalies,emissions,nextId,grid,liveData};
-    await window.storage.set('rm_backoffice', JSON.stringify(data));
+    await window.storage.set('rm_backoffice',JSON.stringify(data));
+    // Synchroniser aussi avec le format de trafic-tool.pages.dev
+    await syncToTraficTool();
+    setSyncStatus();
   }catch(e){}
 }
 async function loadData(){
   try{
     const r=await window.storage.get('rm_backoffice');
-    if(r){
-      const d=JSON.parse(r.value);
-      annonceurs=d.annonceurs||[]; campagnes=d.campagnes||[]; anomalies=d.anomalies||[];
-      emissions=d.emissions||[]; nextId=d.nextId||1;
-      grid=d.grid||grid; liveData=d.liveData||{};
-      renderAll();
-    }
+    if(r){const d=JSON.parse(r.value);annonceurs=d.annonceurs||[];campagnes=d.campagnes||[];anomalies=d.anomalies||[];emissions=d.emissions||[];nextId=d.nextId||1;grid=d.grid||grid;liveData=d.liveData||{};}
   }catch(e){}
+  renderAll();
+}
+
+/* ════ SYNC TRAFIC-TOOL ════
+ * Écrit les données dans le format attendu par trafic-tool.pages.dev/tab-antenne
+ * Clé partagée : rm_na_emissions (shared=true pour que les deux pages puissent la lire)
+ */
+async function syncToTraficTool(){
+  try{
+    // Construire la structure NA_DATA attendue par trafic-tool
+    const naData={};
+    emissions.forEach(em=>{
+      const ld=liveData[em.id]||{};
+      const eq=ld.equipe||[];
+      const planning=ld.planning||DAYS_FULL.map((d,i)=>({day:d.slice(0,3),team:'—'}));
+      const todayIdx=new Date().getDay()-1;
+      const todayTeam=(todayIdx>=0&&todayIdx<5)?planning[todayIdx].team||'—':'—';
+
+      naData[em.id]={
+        name:em.nom,
+        tranche:TRANCHES[em.tranche],
+        color:em.color,
+        animateurs:em.animateurs,
+        equipe:eq,
+        planning:planning,
+        todayTeam:todayTeam,
+        jeu:ld.jeu||{nom:'',desc:'',lot:'',val:'',heure:''},
+        ce:{trafic:(ld.ce||{}).trafic||[],meteo:(ld.ce||{}).meteo||[]},
+        antenne:ld.antenne||{titre:'',desc:'',invite:''},
+        commercial:buildCommercialItems(em.id)
+      };
+    });
+    // Écrire en shared=true pour que trafic-tool puisse lire
+    await window.storage.set('rm_na_emissions',JSON.stringify(naData),true);
+  }catch(e){}
+}
+
+function buildCommercialItems(emId){
+  const ld=liveData[emId]||{};
+  const ce=ld.ce||{trafic:[],meteo:[]};
+  const items=[];
+  (ce.trafic||[]).forEach(h=>items.push({time:h,nom:'Info Trafic',type:'Trafic'}));
+  (ce.meteo||[]).forEach(h=>items.push({time:h,nom:'Météo',type:'Météo'}));
+  items.sort((a,b)=>a.time.localeCompare(b.time));
+  return items;
+}
+
+function setSyncStatus(){
+  const el=document.getElementById('sync-lbl');
+  if(el)el.textContent='Synchronisé · '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
 }
 
 function renderAll(){renderAnn();renderCamp();renderAnom();renderEmCatalog();renderGrid();renderAnimEm();renderLive();renderStats();updateOa();}
 
-/* ════════ NAVIGATION ════════ */
-function goto(id){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.nav').forEach(n=>n.classList.remove('on'));
-  document.getElementById('panel-'+id).classList.add('on');
-  document.getElementById('nav-'+id).classList.add('on');
-  const titles={comm:'Gestion Commerciale',ant:'Grille Antenne',live:'Live — trafic-tool.pages.dev'};
-  document.getElementById('pttl').textContent=titles[id]||id;
-  const tbr=document.getElementById('tbr');
-  if(id==='comm') tbr.innerHTML=`<button class="btn btn-g sm" onclick="openModal('modal-ann')">+ Annonceur</button><button class="btn btn-p sm" onclick="openModal('modal-camp')">+ Campagne</button>`;
-  else if(id==='ant') tbr.innerHTML=`<button class="btn btn-p sm" onclick="openEmModal()">+ Émission</button>`;
-  else tbr.innerHTML=`<button class="btn btn-g sm" onclick="copyJSON()">Exporter JSON</button>`;
+/* ════ NAVIGATION ════ */
+function gotoTab(id){
+  document.querySelectorAll('.tab-content').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(n=>n.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('tbtn-'+id).classList.add('active');
 }
 function stab(btn,tid){
-  btn.closest('.panel').querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  const panel=btn.closest('.sc')||btn.closest('.tab-content');
+  panel.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
   btn.classList.add('on');
   const pfx=tid.split('-').slice(0,2).join('-')+'-';
-  btn.closest('.panel').querySelectorAll('[id^="'+pfx+'"]').forEach(el=>{if(el.id!==tid)el.style.display='none';});
+  panel.querySelectorAll('[id^="'+pfx+'"]').forEach(el=>{if(el.id!==tid)el.style.display='none';});
   document.getElementById(tid).style.display='block';
 }
 
-/* ════════ MODALS ════════ */
+/* ════ MODALS ════ */
 function openModal(id){
   if(id==='modal-camp') popSel('c-ann',annonceurs.map(a=>a.nom));
   if(id==='modal-anom') popSel('an-camp',campagnes.map(c=>c.nom));
   document.getElementById(id).classList.add('show');
 }
-function closeModal(id){document.getElementById(id).classList.remove('show')}
-function obg(e,id){if(e.target===e.currentTarget)closeModal(id)}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+function obg(e,id){if(e.target===e.currentTarget)closeModal(id);}
 function popSel(id,items){
   const s=document.getElementById(id);
   s.innerHTML='<option value="">— Sélectionner —</option>'+items.map(x=>`<option>${esc(x)}</option>`).join('');
 }
 
-/* ════════ ANNONCEURS ════════ */
+/* ════ ANNONCEURS ════ */
 function saveAnn(){
-  const nom=v('a-nom'); if(!nom){alert('Nom requis');return;}
+  const nom=v('a-nom');if(!nom){alert('Nom requis');return;}
   annonceurs.push({nom,adr:v('a-adr'),contact:v('a-contact'),tel:v('a-tel'),email:v('a-email')});
   ['a-nom','a-adr','a-contact','a-tel','a-email'].forEach(id=>document.getElementById(id).value='');
-  closeModal('modal-ann'); renderAnn(); renderStats(); persist();
+  closeModal('modal-ann');renderAnn();renderStats();persist();
 }
 function delAnn(i){if(confirm('Supprimer ?')){annonceurs.splice(i,1);renderAnn();renderStats();persist();}}
 function renderAnn(){
   const b=document.getElementById('ann-body');
-  if(!annonceurs.length){b.innerHTML=emptyHTML('🏢','Aucun annonceur','Ajoutez votre premier annonceur.');return;}
+  if(!annonceurs.length){b.innerHTML=empty('🏢','Aucun annonceur','Ajoutez votre premier annonceur.');return;}
   b.innerHTML=`<div class="tw"><table><thead><tr><th>Annonceur</th><th>Adresse</th><th>Contact</th><th>Téléphone</th><th>Email</th><th></th></tr></thead><tbody>`+
     annonceurs.map((a,i)=>`<tr><td class="tds">${esc(a.nom)}</td><td>${esc(a.adr)||'—'}</td><td>${esc(a.contact)||'—'}</td><td>${esc(a.tel)||'—'}</td><td>${esc(a.email)||'—'}</td><td><button class="btn btn-d sm" onclick="delAnn(${i})">×</button></td></tr>`).join('')+`</tbody></table></div>`;
 }
 
-/* ════════ CAMPAGNES ════════ */
-const CC=['#e8192c','#2563eb','#059669','#7c3aed','#d97706','#0891b2','#db2777'];
+/* ════ CAMPAGNES ════ */
+const CC=['#E4032E','#1B5EB8','#27AE60','#7c3aed','#F5C518','#0891b2','#db2777'];
 function saveCamp(){
-  const ann=v('c-ann'); const nom=v('c-nom'); if(!ann||!nom){alert('Annonceur et nom requis');return;}
+  const ann=document.getElementById('c-ann').value,nom=v('c-nom');
+  if(!ann||!nom){alert('Annonceur et nom requis');return;}
   const nb=parseInt(document.getElementById('c-nb').value)||4;
   campagnes.push({ann,nom,start:v('c-start'),end:v('c-end'),dur:document.getElementById('c-dur').value,nb,spots:0,total:nb*30});
-  document.getElementById('c-nom').value=''; closeModal('modal-camp'); renderCamp(); renderStats(); persist();
+  document.getElementById('c-nom').value='';closeModal('modal-camp');renderCamp();renderStats();persist();
 }
 function delCamp(i){if(confirm('Supprimer ?')){campagnes.splice(i,1);renderCamp();renderStats();persist();}}
 function renderCamp(){
   const b=document.getElementById('camp-body');
-  if(!campagnes.length){b.innerHTML=emptyHTML('📢','Aucune campagne','Créez votre première campagne.');return;}
+  if(!campagnes.length){b.innerHTML=empty('📢','Aucune campagne','Créez votre première campagne.');return;}
   b.innerHTML=campagnes.map((c,i)=>{
-    const col=CC[i%CC.length]; const pct=c.total>0?Math.round(c.spots/c.total*100):0;
+    const col=CC[i%CC.length],pct=c.total>0?Math.round(c.spots/c.total*100):0;
     const pfcls=pct>=80?'pf-g':pct>=40?'pf-o':'pf-r';
-    return `<div class="ccard"><div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:9px">
+    return `<div class="ccard"><div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
       <div class="cc-ic" style="background:${col}1a;color:${col}">${esc(c.ann.substring(0,3).toUpperCase())}</div>
-      <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--t1)">${esc(c.nom)}</div>
-      <div style="font-size:11px;color:var(--t3);margin-top:2px">${esc(c.dur)} · ${c.nb}×/jour · ${c.start||'—'} → ${c.end||'—'}</div></div>
-      <div style="display:flex;gap:7px">
-        <span class="chip cg">Active</span>
-        <button class="btn btn-w sm" onclick="openAnomCamp(${i})">⚠ Anomalie</button>
-        <button class="btn btn-d sm" onclick="delCamp(${i})">×</button>
-      </div></div>
-      <div class="pb"><div class="pf ${pfcls}" style="width:${pct}%"></div></div>
-      <div style="display:flex;justify-content:space-between;margin-top:6px">
-        <span style="font-size:11px;color:var(--t3)">Progression : <strong style="color:var(--t1)">${pct}%</strong></span>
-        <span style="font-size:11px;color:var(--t3)">${c.spots}/${c.total} spots</span>
-      </div></div>`;
-  }).join('');
+      <div style="flex:1"><div class="tds">${esc(c.nom)}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${esc(c.dur)} · ${c.nb}×/jour · ${c.start||'—'} → ${c.end||'—'}</div></div>
+      <div style="display:flex;gap:7px"><span class="chip cg">Active</span><button class="btn btn-w sm" onclick="openAnomCamp(${i})">⚠</button><button class="btn btn-d sm" onclick="delCamp(${i})">×</button></div>
+    </div><div class="pb"><div class="pf ${pfcls}" style="width:${pct}%"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:6px"><span style="font-size:11px;color:var(--muted)">Progression : <strong style="color:var(--text)">${pct}%</strong></span><span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${c.spots}/${c.total} spots</span></div></div>`;  }).join('');
 }
 function openAnomCamp(i){popSel('an-camp',campagnes.map(c=>c.nom));document.getElementById('an-camp').value=campagnes[i].nom;openModal('modal-anom');}
 
-/* ════════ ANOMALIES ════════ */
+/* ════ ANOMALIES ════ */
 function saveAnom(){
-  const camp=v('an-camp'); if(!camp){alert('Sélectionnez une campagne');return;}
-  anomalies.push({camp,date:v('an-date'),heure:v('an-heure'),type:document.getElementById('an-type').value,
-    com:v('an-com'),pri:document.getElementById('an-pri').value,status:'Ouverte',created:new Date().toLocaleDateString('fr-FR')});
-  document.getElementById('an-com').value=''; closeModal('modal-anom'); renderAnom(); renderStats(); persist();
+  const camp=document.getElementById('an-camp').value;if(!camp){alert('Sélectionnez une campagne');return;}
+  anomalies.push({camp,date:v('an-date'),heure:v('an-heure'),type:document.getElementById('an-type').value,com:v('an-com'),pri:document.getElementById('an-pri').value,status:'Ouverte',created:new Date().toLocaleDateString('fr-FR')});
+  document.getElementById('an-com').value='';closeModal('modal-anom');renderAnom();renderStats();persist();
 }
 function resAnom(i){anomalies[i].status='Résolue';renderAnom();renderStats();persist();}
 function renderAnom(){
   const b=document.getElementById('anom-body');
-  if(!anomalies.length){b.innerHTML=emptyHTML('✅','Aucune anomalie','Tout est en ordre.');return;}
+  if(!anomalies.length){b.innerHTML=empty('✅','Aucune anomalie','Tout est en ordre.');return;}
   b.innerHTML=anomalies.map((a,i)=>{
-    const ic=a.status==='Résolue'?'a-r':'a-o'; const chip=a.status==='Résolue'?'cg':a.pri==='Critique'?'cr':'co';
+    const ic=a.status==='Résolue'?'a-r':'a-o';const ch=a.status==='Résolue'?'cg':a.pri==='Critique'?'cr':'co';
     return `<div class="arow"><div class="a-ic ${ic}">${a.status==='Résolue'?'✓':'!'}</div>
-      <div style="flex:1"><div style="font-size:12.5px;font-weight:600;color:var(--t1)">${esc(a.type)} — ${esc(a.camp)}</div>
-      <div style="font-size:11px;color:var(--t3);margin-top:1px">${a.date||'—'} ${a.heure||''} · ${a.created}</div></div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
-        <span class="chip ${chip}">${a.status}</span>
-        ${a.status!=='Résolue'?`<button class="btn btn-g sm" onclick="resAnom(${i})" style="font-size:10px;padding:3px 7px">Résoudre</button>`:''}
-      </div></div>`;
+      <div style="flex:1"><div class="tds" style="font-size:13px">${esc(a.type)} — ${esc(a.camp)}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${a.date||'—'} ${a.heure||''} · ${a.created}</div></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="chip ${ch}">${a.status}</span>${a.status!=='Résolue'?`<button class="btn btn-g sm" onclick="resAnom(${i})" style="font-size:10px">Résoudre</button>`:''}</div></div>`;
   }).join('');
 }
 
-/* ════════ STATS ════════ */
+/* ════ STATS ════ */
 function renderStats(){
   document.getElementById('nb-ann').textContent=annonceurs.length;
   document.getElementById('nb-camp').textContent=campagnes.length;
   document.getElementById('nb-anom').textContent=anomalies.filter(a=>a.status==='Ouverte').length;
 }
 
-/* ════════ COULEUR ════════ */
-let selColor='#e8192c';
+/* ════ COULEUR ÉMISSION ════ */
+let selColor='#E4032E';
 function pickC(el){document.querySelectorAll('#em-sw .sw').forEach(s=>s.classList.remove('sel'));el.classList.add('sel');selColor=el.dataset.c;}
 
-/* ════════ ÉMISSIONS ════════ */
+/* ════ ÉMISSIONS ════ */
 function openEmModal(id){
   document.getElementById('em-eid').value=id||'';
   if(id){
@@ -781,82 +811,76 @@ function openEmModal(id){
     selColor=em.color;
     document.querySelectorAll('#em-sw .sw').forEach(sw=>sw.classList.toggle('sel',sw.dataset.c===em.color));
     document.querySelectorAll('#modal-em input[type=checkbox]').forEach(cb=>cb.checked=em.animateurs.includes(cb.value));
-  } else {
+  }else{
     document.getElementById('em-mttl').innerHTML=`Créer une émission <button class="mc" onclick="closeModal('modal-em')">×</button>`;
     document.getElementById('em-nom').value='';
     document.getElementById('em-tranche').value='0';
     document.getElementById('em-del').style.display='none';
-    selColor='#e8192c';
+    selColor='#E4032E';
     document.querySelectorAll('#em-sw .sw').forEach((sw,i)=>sw.classList.toggle('sel',i===0));
     document.querySelectorAll('#modal-em input[type=checkbox]').forEach(cb=>cb.checked=false);
   }
   document.getElementById('modal-em').classList.add('show');
 }
 function saveEm(){
-  const nom=v('em-nom'); if(!nom){alert('Nom requis');return;}
+  const nom=v('em-nom');if(!nom){alert('Nom requis');return;}
   const tranche=parseInt(document.getElementById('em-tranche').value);
   const animateurs=[...document.querySelectorAll('#modal-em input[type=checkbox]:checked')].map(cb=>cb.value);
   const eid=document.getElementById('em-eid').value;
-  if(eid){
-    const em=emissions.find(e=>e.id==eid);
-    if(em){em.nom=nom;em.color=selColor;em.tranche=tranche;em.animateurs=animateurs;}
-  } else {
+  if(eid){const em=emissions.find(e=>e.id==eid);if(em){em.nom=nom;em.color=selColor;em.tranche=tranche;em.animateurs=animateurs;}}
+  else{
     const id=nextId++;
     emissions.push({id,nom,color:selColor,tranche,animateurs});
-    if(!liveData[id]) liveData[id]={antenne:{titre:'',desc:'',invite:''},jeu:{nom:'',desc:'',lot:'',val:'',statut:'actif'},ce:{trafic:[],meteo:[]},equipe:[]};
+    liveData[id]={antenne:{titre:'',desc:'',invite:''},jeu:{nom:'',desc:'',lot:'',val:'',heure:''},ce:{trafic:[],meteo:[]},equipe:[],planning:DAYS_FULL.map((d,i)=>({day:d.slice(0,3),team:'—'}))};
   }
-  closeModal('modal-em'); renderEmCatalog(); renderGrid(); renderAnimEm(); renderLive(); persist();
+  closeModal('modal-em');renderEmCatalog();renderGrid();renderAnimEm();renderLive();renderLegend();persist();
 }
 function deleteEm(){
-  const eid=document.getElementById('em-eid').value; if(!eid)return;
+  const eid=document.getElementById('em-eid').value;if(!eid)return;
   if(!confirm('Supprimer cette émission de toute la grille ?'))return;
-  emissions=emissions.filter(e=>e.id!=eid);
-  delete liveData[eid];
+  emissions=emissions.filter(e=>e.id!=eid);delete liveData[eid];
   for(let k in grid) if(grid[k]==eid) grid[k]=null;
-  closeModal('modal-em'); renderEmCatalog(); renderGrid(); renderAnimEm(); renderLive(); persist();
+  closeModal('modal-em');renderEmCatalog();renderGrid();renderAnimEm();renderLive();renderLegend();persist();
+}
+function renderLegend(){
+  const el=document.getElementById('grid-legend');if(!el)return;
+  el.innerHTML=emissions.map(em=>`<span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:${em.color}33;border:1px solid ${em.color}55;display:inline-block"></span>${esc(em.nom)}</span>`).join('');
 }
 function renderEmCatalog(){
   const b=document.getElementById('em-catalog');
-  if(!emissions.length){b.innerHTML=emptyHTML('🎙️','Aucune émission','Créez votre première émission.');return;}
+  if(!emissions.length){b.innerHTML=empty('🎙️','Aucune émission','Créez votre première émission.');return;}
   b.innerHTML=emissions.map(em=>`<div class="emcard">
     <div style="width:10px;height:10px;border-radius:50%;background:${em.color};flex-shrink:0"></div>
-    <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--t1)">${esc(em.nom)}</div>
-    <div style="font-size:11px;color:var(--t3);margin-top:1px">${TRANCHES[em.tranche]} · ${em.animateurs.length?em.animateurs.join(', '):'Aucun animateur'}</div></div>
+    <div style="flex:1"><div class="tds">${esc(em.nom)}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${TRANCHES[em.tranche]} · ${em.animateurs.length?em.animateurs.join(', '):'Aucun animateur'}</div></div>
     <button class="btn btn-g sm" onclick="openEmModal(${em.id})">Modifier</button>
   </div>`).join('');
 }
 
-/* ════════ GRILLE ════════ */
+/* ════ GRILLE ════ */
 function renderGrid(){
-  const tbody=document.getElementById('grid-body');
-  let html='';
+  const tbody=document.getElementById('grid-body');let html='';
   for(let t=0;t<5;t++){
     html+=`<tr><td class="tranche-lbl">${TRANCHES[t]}</td>`;
     for(let d=0;d<7;d++){
-      const k=t+'_'+d; const emId=grid[k];
-      const em=emId?emissions.find(e=>e.id==emId):null;
+      const k=`${t}_${d}`,emId=grid[k],em=emId?emissions.find(e=>e.id==emId):null;
       if(em){
-        html+=`<td><div class="em-cell" style="background:${em.color}18;border:1px solid ${em.color}44" onclick="openCellModal(${t},${d})">
+        html+=`<td><div class="em-cell" style="background:${em.color}22;border:1px solid ${em.color}44" onclick="openCellModal(${t},${d})">
           <div class="em-rm" onclick="event.stopPropagation();removeCell(${t},${d})">×</div>
           <div class="em-n" style="color:${em.color}">${esc(em.nom)}</div>
           ${em.animateurs.length?`<div class="em-a" style="color:${em.color}">${em.animateurs.join('·')}</div>`:''}
         </div></td>`;
-      } else {
-        html+=`<td onclick="openCellModal(${t},${d})"><div class="em-add">+</div></td>`;
-      }
+      }else{html+=`<td onclick="openCellModal(${t},${d})"><div class="em-add">+</div></td>`;}
     }
     html+='</tr>';
   }
   tbody.innerHTML=html;
 }
-function removeCell(t,d){grid[t+'_'+d]=null;renderGrid();persist();}
-
+function removeCell(t,d){grid[`${t}_${d}`]=null;renderGrid();persist();}
 let pendingCell=null;
 function openCellModal(t,d){
   pendingCell={t,d};
   document.getElementById('cell-ttl').innerHTML=`${DAYS[d]} · ${TRANCHES[t]} <button class="mc" onclick="closeModal('modal-cell')">×</button>`;
-  const matching=emissions.filter(e=>e.tranche==t);
-  const cur=grid[t+'_'+d];
+  const matching=emissions.filter(e=>e.tranche==t),cur=grid[`${t}_${d}`];
   const sel=document.getElementById('cell-sel');
   sel.innerHTML='<option value="">— Aucune —</option>'+matching.map(e=>`<option value="${e.id}"${cur==e.id?' selected':''}>${esc(e.nom)}</option>`).join('');
   document.getElementById('modal-cell').classList.add('show');
@@ -864,101 +888,112 @@ function openCellModal(t,d){
 function assignCell(){
   if(!pendingCell)return;
   const val=document.getElementById('cell-sel').value;
-  grid[pendingCell.t+'_'+pendingCell.d]=val?parseInt(val):null;
-  closeModal('modal-cell'); pendingCell=null; renderGrid(); persist();
+  grid[`${pendingCell.t}_${pendingCell.d}`]=val?parseInt(val):null;
+  closeModal('modal-cell');pendingCell=null;renderGrid();persist();
 }
-
-/* ════════ ANIM ════════ */
 function renderAnimEm(){
   const b=document.getElementById('anim-em-list');
-  if(!emissions.length){b.innerHTML=emptyHTML('📋','Aucune émission créée','');return;}
+  if(!emissions.length){b.innerHTML=empty('📋','Aucune émission','');return;}
   b.innerHTML=`<div class="tw"><table><thead><tr><th>Émission</th><th>Tranche</th><th>Animateurs</th></tr></thead><tbody>`+
     emissions.map(em=>`<tr>
       <td><div style="display:flex;align-items:center;gap:7px"><div style="width:10px;height:10px;border-radius:50%;background:${em.color}"></div><span class="tds">${esc(em.nom)}</span></div></td>
-      <td>${TRANCHES[em.tranche]}</td>
-      <td>${em.animateurs.map(a=>`<span class="apill" style="margin-right:4px">${esc(a)}</span>`).join('')||'<span style="color:var(--t3);font-size:11px">Aucun</span>'}</td>
+      <td><span style="font-family:'Share Tech Mono',monospace;font-size:11px">${TRANCHES[em.tranche]}</span></td>
+      <td>${em.animateurs.map(a=>`<span class="apill" style="margin-right:4px">${esc(a)}</span>`).join('')||'<span style="color:var(--muted2);font-size:11px">Aucun</span>'}</td>
     </tr>`).join('')+`</tbody></table></div>`;
 }
 
-/* ════════ LIVE — 4 rubriques ════════ */
+/* ════ LIVE — Note Antenne ════ */
 function renderLive(){
   const b=document.getElementById('live-body');
-  if(!emissions.length){
-    b.innerHTML=emptyHTML('📡','Aucune émission configurée','Créez des émissions depuis la Grille Antenne.');
-    return;
-  }
+  if(!emissions.length){b.innerHTML=empty('📡','Aucune émission configurée','Créez des émissions depuis la Grille Antenne.');return;}
   b.innerHTML=emissions.map(em=>{
-    const ld=liveData[em.id]||{antenne:{},jeu:{},ce:{trafic:[],meteo:[]},equipe:[]};
-    const ant=ld.antenne||{}; const jeu=ld.jeu||{}; const ce=ld.ce||{trafic:[],meteo:[]}; const eq=ld.equipe||[];
+    const ld=liveData[em.id]||{};
+    const ant=ld.antenne||{},jeu=ld.jeu||{},ce=ld.ce||{trafic:[],meteo:[]},eq=ld.equipe||[];
+    const planning=ld.planning||DAYS_FULL.map((d,i)=>({day:d.slice(0,3),team:'—'}));
+    const todayIdx=new Date().getDay()-1;
+    const todayTeam=(todayIdx>=0&&todayIdx<5)?planning[todayIdx].team||'—':'—';
 
     const rdvPills=[
-      ...(ce.trafic||[]).map(h=>`<span class="live-rdv-pill trafic">🚦 ${h}</span>`),
-      ...(ce.meteo||[]).map(h=>`<span class="live-rdv-pill meteo">🌤 ${h}</span>`)
+      ...(ce.trafic||[]).map(h=>`<span class="rdv-pill rdv-trafic">🚦 ${h}</span>`),
+      ...(ce.meteo||[]).map(h=>`<span class="rdv-pill rdv-meteo">🌤 ${h}</span>`)
     ].join('');
 
-    return `<div class="live-card">
-      <div class="live-header">
-        <div class="live-title">
-          <span>${esc(em.nom)}</span>
-          <span class="live-range">${TRANCHES[em.tranche]}</span>
+    const planningHtml=planning.map((d,i)=>{
+      const isToday=(i===todayIdx);
+      const isEmpty=(!d.team||d.team==='—');
+      return `<div class="na-plan-day${isToday?' today':''}">
+        <div class="na-plan-day-name">${d.day}</div>
+        <div class="na-plan-person${isEmpty?' empty':''}">${d.team}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="na-block">
+      <div class="na-block-header">
+        <div class="na-block-title-group">
+          <span class="na-block-name">${esc(em.nom)}</span>
+          <span class="na-block-time">${TRANCHES[em.tranche]}</span>
         </div>
-        <button class="btn btn-p sm" onclick="openEquipe(${em.id})">👥 Équipe de la semaine</button>
+        <button class="na-planning-btn" onclick="openEquipe(${em.id})">📅 Équipe de la semaine</button>
       </div>
-      <div class="live-body">
+      <div class="na-planning-wrap" id="na-plan-${em.id}" style="display:none">
+        <div class="na-planning-grid">${planningHtml}</div>
+      </div>
+      <div class="na-body">
         <!-- ANTENNE AUJOURD'HUI -->
-        <div class="live-col">
-          <div class="live-col-title">
+        <div class="na-col">
+          <div class="na-col-label">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>
             Antenne Aujourd'hui
           </div>
-          <div class="live-val">
-            ${ant.titre?`<div style="font-weight:600">${esc(ant.titre)}</div>`:''}
-            ${ant.desc?`<div style="font-size:12px;color:var(--t2);margin-top:3px">${esc(ant.desc)}</div>`:''}
-            ${ant.invite?`<div style="font-size:11px;color:var(--t3);margin-top:3px">Invité : ${esc(ant.invite)}</div>`:''}
-            ${!ant.titre&&!ant.desc?`<span class="live-empty">—</span>`:''}
-          </div>
-          <button class="btn btn-g sm" style="margin-top:10px;width:100%;justify-content:center" onclick="openAntenne(${em.id})">✏️ Modifier</button>
+          <div class="${!todayTeam||todayTeam==='—'?'na-val empty':'na-val'}">${todayTeam&&todayTeam!=='—'?esc(todayTeam):'—'}</div>
+          ${ant.titre?`<div class="na-meta">${esc(ant.titre)}</div>`:''}
+          ${ant.invite?`<div class="na-meta" style="color:var(--yellow)">Invité : ${esc(ant.invite)}</div>`:''}
+          <button class="na-edit-btn" onclick="openAntenne(${em.id})">✏ Modifier</button>
         </div>
         <!-- JEU ANTENNE -->
-        <div class="live-col">
-          <div class="live-col-title">
+        <div class="na-col">
+          <div class="na-col-label">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg>
             Jeu Antenne
           </div>
-          <div class="live-val">
-            ${jeu.nom?`<div style="font-weight:600">${esc(jeu.nom)}</div>`:''}
-            ${jeu.lot?`<div style="font-size:12px;color:var(--t2);margin-top:3px">🎁 ${esc(jeu.lot)}${jeu.val?' ('+esc(jeu.val)+')':''}</div>`:''}
-            ${jeu.statut==='actif'&&jeu.nom?`<span class="chip cg" style="margin-top:5px">Actif</span>`:''}
-            ${!jeu.nom?`<span class="live-empty">Aucun jeu configuré</span>`:''}
-          </div>
-          <button class="btn btn-g sm" style="margin-top:10px;width:100%;justify-content:center" onclick="openJeu(${em.id})">✏️ Modifier</button>
+          ${jeu.nom?`<div class="na-val">${esc(jeu.nom)}</div>${jeu.lot?`<div class="na-meta">🎁 ${esc(jeu.lot)}${jeu.val?' ('+esc(jeu.val)+')':''}</div>`:''}${jeu.heure?`<div class="na-meta" style="font-family:'Share Tech Mono',monospace;color:var(--yellow);font-size:11px">${esc(jeu.heure)}</div>`:''}`:`<div class="na-val empty">Aucun jeu configuré</div>`}
+          <button class="na-edit-btn" onclick="openJeu(${em.id})">✏ Modifier</button>
         </div>
         <!-- COMMERCIAL EDITOR -->
-        <div class="live-col">
-          <div class="live-col-title">
+        <div class="na-col">
+          <div class="na-col-label">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             Commercial Editor
           </div>
-          <div class="live-val">
-            ${rdvPills||`<span class="live-empty">Aucun rendez-vous</span>`}
+          <div style="display:flex;flex-wrap:wrap;gap:2px;min-height:28px">
+            ${rdvPills||`<span class="na-val empty">Aucun rendez-vous</span>`}
           </div>
-          <button class="btn btn-g sm" style="margin-top:10px;width:100%;justify-content:center" onclick="openCE(${em.id})">✏️ Modifier</button>
+          <button class="na-edit-btn" onclick="openCE(${em.id})">✏ Modifier</button>
         </div>
       </div>
-      ${eq.length?`<div style="padding:10px 18px;border-top:1px solid var(--bd);background:#fafbfc;display:flex;align-items:center;gap:8px">
-        <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.8px">Équipe semaine :</span>
-        ${eq.map(a=>`<span class="apill">${esc(a)}</span>`).join('')}
-      </div>`:''}
+      ${eq.length?`<div style="padding:10px 22px;border-top:1px solid #E5E7EB;background:#F8F9FB;display:flex;align-items:center;gap:8px"><span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9CA3AF">Équipe semaine :</span>${eq.map(a=>`<span class="apill">${esc(a)}</span>`).join('')}</div>`:''}
     </div>`;
   }).join('');
+
+  // Relier les boutons planning
+  emissions.forEach(em=>{
+    const planWrap=document.getElementById(`na-plan-${em.id}`);
+    if(!planWrap)return;
+    // le bouton "Équipe" toggle le planning
+  });
 }
 
-/* ════════ ANTENNE AUJOURD'HUI ════════ */
+function togglePlan(emId){
+  const el=document.getElementById(`na-plan-${emId}`);
+  if(el)el.style.display=el.style.display==='none'?'block':'none';
+}
+
+/* ════ ANTENNE AUJOURD'HUI ════ */
 function openAntenne(emId){
   document.getElementById('antenne-emid').value=emId;
   const em=emissions.find(e=>e.id==emId);
   document.getElementById('antenne-ttl').innerHTML=`Antenne Aujourd'hui — ${esc(em.nom)} <button class="mc" onclick="closeModal('modal-antenne')">×</button>`;
-  const ld=liveData[emId]||{}; const ant=ld.antenne||{};
+  const ld=liveData[emId]||{};const ant=ld.antenne||{};
   document.getElementById('ant-titre').value=ant.titre||'';
   document.getElementById('ant-desc').value=ant.desc||'';
   document.getElementById('ant-invite').value=ant.invite||'';
@@ -966,104 +1001,112 @@ function openAntenne(emId){
 }
 function saveAntenne(){
   const emId=parseInt(document.getElementById('antenne-emid').value);
-  if(!liveData[emId]) liveData[emId]={antenne:{},jeu:{nom:'',desc:'',lot:'',val:'',statut:'actif'},ce:{trafic:[],meteo:[]},equipe:[]};
+  if(!liveData[emId])liveData[emId]={antenne:{},jeu:{},ce:{trafic:[],meteo:[]},equipe:[],planning:DAYS_FULL.map(d=>({day:d.slice(0,3),team:'—'}))};
   liveData[emId].antenne={titre:v('ant-titre'),desc:v('ant-desc'),invite:v('ant-invite')};
-  closeModal('modal-antenne'); renderLive(); setSyncStatus(); persist();
+  closeModal('modal-antenne');renderLive();persist();
 }
 
-/* ════════ JEU ANTENNE ════════ */
+/* ════ JEU ANTENNE ════ */
 function openJeu(emId){
   document.getElementById('jeu-emid').value=emId;
   const em=emissions.find(e=>e.id==emId);
   document.getElementById('jeu-ttl').innerHTML=`Jeu Antenne — ${esc(em.nom)} <button class="mc" onclick="closeModal('modal-jeu')">×</button>`;
-  const ld=liveData[emId]||{}; const jeu=ld.jeu||{};
+  const ld=liveData[emId]||{};const jeu=ld.jeu||{};
   document.getElementById('jeu-nom').value=jeu.nom||'';
   document.getElementById('jeu-desc').value=jeu.desc||'';
   document.getElementById('jeu-lot').value=jeu.lot||'';
   document.getElementById('jeu-val').value=jeu.val||'';
-  document.getElementById('jeu-statut').value=jeu.statut||'actif';
+  document.getElementById('jeu-heure').value=jeu.heure||'';
   document.getElementById('modal-jeu').classList.add('show');
 }
 function saveJeu(){
   const emId=parseInt(document.getElementById('jeu-emid').value);
-  if(!liveData[emId]) liveData[emId]={antenne:{},jeu:{},ce:{trafic:[],meteo:[]},equipe:[]};
-  liveData[emId].jeu={nom:v('jeu-nom'),desc:v('jeu-desc'),lot:v('jeu-lot'),val:v('jeu-val'),statut:document.getElementById('jeu-statut').value};
-  closeModal('modal-jeu'); renderLive(); setSyncStatus(); persist();
+  if(!liveData[emId])liveData[emId]={antenne:{},jeu:{},ce:{trafic:[],meteo:[]},equipe:[],planning:DAYS_FULL.map(d=>({day:d.slice(0,3),team:'—'}))};
+  liveData[emId].jeu={nom:v('jeu-nom'),desc:v('jeu-desc'),lot:v('jeu-lot'),val:v('jeu-val'),heure:v('jeu-heure')};
+  closeModal('modal-jeu');renderLive();persist();
 }
 
-/* ════════ COMMERCIAL EDITOR ════════ */
+/* ════ COMMERCIAL EDITOR ════ */
 function openCE(emId){
   document.getElementById('ce-emid').value=emId;
   const em=emissions.find(e=>e.id==emId);
-  document.getElementById('ce-ttl').innerHTML=`Commercial Editor — ${esc(em.nom)} <button class="mc" onclick="closeModal('modal-comm-editor')">×</button>`;
-  const ld=liveData[emId]||{}; const ce=ld.ce||{trafic:[],meteo:[]};
+  document.getElementById('ce-ttl').innerHTML=`Commercial Editor — ${esc(em.nom)} <button class="mc" onclick="closeModal('modal-ce')">×</button>`;
+  const ld=liveData[emId]||{};const ce=ld.ce||{trafic:[],meteo:[]};
   document.querySelectorAll('#ce-trafic input').forEach(cb=>cb.checked=(ce.trafic||[]).includes(cb.value));
   document.querySelectorAll('#ce-meteo input').forEach(cb=>cb.checked=(ce.meteo||[]).includes(cb.value));
-  document.getElementById('modal-comm-editor').classList.add('show');
+  document.getElementById('modal-ce').classList.add('show');
 }
 function saveCE(){
   const emId=parseInt(document.getElementById('ce-emid').value);
-  if(!liveData[emId]) liveData[emId]={antenne:{},jeu:{},ce:{trafic:[],meteo:[]},equipe:[]};
+  if(!liveData[emId])liveData[emId]={antenne:{},jeu:{},ce:{trafic:[],meteo:[]},equipe:[],planning:DAYS_FULL.map(d=>({day:d.slice(0,3),team:'—'}))};
   liveData[emId].ce={
     trafic:[...document.querySelectorAll('#ce-trafic input:checked')].map(cb=>cb.value),
     meteo:[...document.querySelectorAll('#ce-meteo input:checked')].map(cb=>cb.value)
   };
-  closeModal('modal-comm-editor'); renderLive(); setSyncStatus(); persist();
+  closeModal('modal-ce');renderLive();persist();
 }
 
-/* ════════ ÉQUIPE DE LA SEMAINE ════════ */
+/* ════ ÉQUIPE ════ */
 function openEquipe(emId){
   document.getElementById('eq-emid').value=emId;
   const em=emissions.find(e=>e.id==emId);
-  document.getElementById('eq-ttl').innerHTML=`Équipe de la semaine — ${esc(em.nom)} <button class="mc" onclick="closeModal('modal-equipe')">×</button>`;
-  const eq=(liveData[emId]||{}).equipe||[];
+  document.getElementById('eq-ttl').innerHTML=`Équipe — ${esc(em.nom)} <button class="mc" onclick="closeModal('modal-equipe')">×</button>`;
+  const ld=liveData[emId]||{};
+  const eq=ld.equipe||[];
+  const planning=ld.planning||DAYS_FULL.map(d=>({day:d.slice(0,3),team:'—'}));
   ['Giulia','Léo','Éric','Charly','Anaïs','Jean Christophe','Marie'].forEach(a=>{
-    const cb=document.getElementById('eq-'+a);
-    if(cb) cb.checked=eq.includes(a);
+    const cb=document.getElementById('eq-'+a);if(cb)cb.checked=eq.includes(a);
   });
+  // Planning jour par jour
+  const pEl=document.getElementById('eq-planning');
+  pEl.innerHTML=planning.map((d,i)=>`<div style="display:grid;grid-template-columns:60px 1fr;align-items:center;gap:8px">
+    <span style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">${d.day}</span>
+    <input class="fc" style="padding:5px 8px;font-size:12px" type="text" id="eq-plan-${i}" value="${d.team&&d.team!=='—'?d.team:''}" placeholder="Animateur(s)">
+  </div>`).join('');
   document.getElementById('modal-equipe').classList.add('show');
 }
 function saveEquipe(){
   const emId=parseInt(document.getElementById('eq-emid').value);
-  if(!liveData[emId]) liveData[emId]={antenne:{},jeu:{},ce:{trafic:[],meteo:[]},equipe:[]};
-  liveData[emId].equipe=[...document.querySelectorAll('#modal-equipe input:checked')].map(cb=>cb.value);
-  closeModal('modal-equipe'); renderLive(); setSyncStatus(); persist();
+  if(!liveData[emId])liveData[emId]={antenne:{},jeu:{},ce:{trafic:[],meteo:[]},equipe:[],planning:DAYS_FULL.map(d=>({day:d.slice(0,3),team:'—'}))};
+  liveData[emId].equipe=[...document.querySelectorAll('#modal-equipe input[type=checkbox]:checked')].map(cb=>cb.value);
+  liveData[emId].planning=DAYS_FULL.map((d,i)=>({
+    day:d.slice(0,3),
+    team:document.getElementById(`eq-plan-${i}`)?.value.trim()||'—'
+  }));
+  closeModal('modal-equipe');renderLive();persist();
 }
 
-/* ════════ SYNC / EXPORT ════════ */
-function setSyncStatus(){
-  const el=document.getElementById('sync-status');
-  if(el) el.textContent='Données à jour · '+(new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}));
-}
-function copyJSON(){
-  const data={emissions:emissions.map(em=>({...em,live:liveData[em.id]||{}})),exportedAt:new Date().toISOString()};
-  const json=JSON.stringify(data,null,2);
-  navigator.clipboard.writeText(json).then(()=>alert('JSON copié dans le presse-papier !\n\nIntégrez-le dans trafic-tool.pages.dev via votre API.'));
-}
-
-/* ════════ ON AIR ════════ */
+/* ════ ON AIR ════ */
 function updateOa(){
-  const n=new Date(); const min=n.getHours()*60+n.getMinutes();
+  const n=new Date(),min=n.getHours()*60+n.getMinutes();
   const ranges=[[360,540],[540,720],[720,960],[960,1140],[1140,1200]];
-  let ti=-1; for(let i=0;i<ranges.length;i++) if(min>=ranges[i][0]&&min<ranges[i][1]){ti=i;break;}
-  const day=new Date().getDay(); const di=day===0?6:day-1;
-  let label='Hors antenne';
-  if(ti>=0){const emId=grid[ti+'_'+di]; const em=emId?emissions.find(e=>e.id==emId):null; if(em) label=em.nom;}
-  document.getElementById('oa-show').textContent=label;
+  let ti=-1;ranges.forEach((r,i)=>{if(min>=r[0]&&min<r[1])ti=i;});
+  const day=new Date().getDay(),di=day===0?6:day-1;
+  const emId=ti>=0?grid[`${ti}_${di}`]:null;
+  const em=emId?emissions.find(e=>e.id==emId):null;
 }
 
-/* ════════ CLOCK ════════ */
-function tick(){
-  const n=new Date(),pad=x=>String(x).padStart(2,'0');
-  document.getElementById('clk').textContent=pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
-  updateOa();
-}
+/* ════ CLOCK ════ */
+function tick(){const n=new Date(),pad=x=>String(x).padStart(2,'0');document.getElementById('clk').textContent=pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());}
 setInterval(tick,1000);tick();
 
-/* ════════ UTILS ════════ */
+/* ════ UTILS ════ */
 function esc(s){return s?(s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
-function v(id){return (document.getElementById(id)||{}).value?.trim()||''}
-function emptyHTML(ic,t,s){return `<div class="empty"><div class="empty-ic">${ic}</div><div class="empty-t">${t}</div>${s?`<div class="empty-s">${s}</div>`:''}</div>`}
+function v(id){return(document.getElementById(id)||{}).value?.trim()||''}
+function empty(ic,t,s){return`<div class="empty"><div class="empty-ic">${ic}</div><div class="empty-t">${t}</div>${s?`<div class="empty-s">${s}</div>`:''}</div>`}
+
+// Relier les boutons "Équipe de la semaine" dans renderLive
+// via event delegation
+document.getElementById('live-body').addEventListener('click',function(e){
+  if(e.target.closest('.na-planning-btn')){
+    const btn=e.target.closest('.na-planning-btn');
+    // Trouver l'emId du bloc parent
+    const block=btn.closest('.na-block');
+    if(!block)return;
+    const emId=block.querySelector('.na-planning-btn').getAttribute('onclick')?.match(/\d+/)?.[0];
+    if(emId){const plan=document.getElementById('na-plan-'+emId);if(plan)plan.style.display=plan.style.display==='none'?'block':'none';}
+  }
+});
 
 loadData();
 </script>
