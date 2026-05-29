@@ -275,6 +275,8 @@ textarea.fc{resize:vertical;min-height:60px;}
           <button class="stab on" onclick="stab(this,'ta-grille')">Grille hebdo</button>
           <button class="stab" onclick="stab(this,'ta-ems')">Émissions</button>
           <button class="stab" onclick="stab(this,'ta-anim')">Animateurs</button>
+          <button class="stab" onclick="stab(this,'ta-journ')">🎙 Grille Journaliste</button>
+          <button class="stab" onclick="stab(this,'ta-gtypes')">📋 Grille Type</button>
         </div>
         <!-- GRILLE -->
         <div id="ta-grille">
@@ -318,8 +320,62 @@ textarea.fc{resize:vertical;min-height:60px;}
             <div class="apill"><div class="aav" style="background:#0891b2">JC</div>Jean Christophe</div>
             <div class="apill"><div class="aav" style="background:#db2777">MA</div>Marie</div>
           </div>
-          <div class="stitle">Affectations</div>
+          <div class="stitle">Affectations émissions</div>
           <div class="sc"><div id="anim-em-list"><div class="empty"><div class="empty-ic">📋</div><div class="empty-t">Aucune émission créée</div></div></div></div>
+          <!-- JOURNALISTES SECTION -->
+          <div style="margin-top:20px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <div class="stitle" style="margin:0">Journalistes</div>
+              <button class="btn btn-p sm" onclick="openJournModal()">+ Ajouter</button>
+            </div>
+            <div id="journ-list"></div>
+          </div>
+        </div>
+
+        <!-- GRILLE JOURNALISTE -->
+        <div id="ta-journ" style="display:none">
+          <div class="week-nav-mini">
+            <button class="week-nav-arrow" onclick="prevJWeek()">&#8249;</button>
+            <span>
+              <span class="week-name" id="jw-num">S22</span>
+              <span class="week-sub" id="jw-label">26 mai – 1er juin 2026</span>
+            </span>
+            <button class="week-nav-arrow" onclick="nextJWeek()">&#8250;</button>
+            <button class="btn btn-g sm" onclick="goToCurrentJWeek()">Aujourd'hui</button>
+            <div style="flex:1"></div>
+            <button class="btn btn-g sm" onclick="openApplyGTModal()">📋 Appliquer une grille type</button>
+          </div>
+          <div class="sc" style="margin:0">
+            <div class="grille-wrap">
+              <table class="grille" id="jgrid-table">
+                <thead><tr><th style="text-align:left;padding-left:14px;width:80px">Créneau</th>
+                  <th id="jh-0">LUN</th><th id="jh-1">MAR</th><th id="jh-2">MER</th>
+                  <th id="jh-3">JEU</th><th id="jh-4">VEN</th><th id="jh-5">SAM</th><th id="jh-6">DIM</th>
+                </tr></thead>
+                <tbody id="jgrid-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRILLE TYPE -->
+        <div id="ta-gtypes" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div class="stitle" style="margin:0">Grilles Type</div>
+            <button class="btn btn-p sm" onclick="openCreateGTModal()">+ Nouvelle grille</button>
+          </div>
+          <div id="gt-list"></div>
+
+          <div style="margin-top:20px">
+            <div class="stitle" style="margin-bottom:10px">📰 Marche Normale — Journaliste</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Affectation par défaut pré-remplie à la création d'une nouvelle semaine.</div>
+            <div class="sc" style="margin:0;max-width:400px">
+              <table class="grille" style="min-width:0;width:100%">
+                <thead><tr><th style="text-align:left;padding-left:14px">Créneau</th><th>Journaliste par défaut</th></tr></thead>
+                <tbody id="mn-body"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -632,10 +688,55 @@ const DAYS=['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
 const DAYS_FULL=['Lundi','Mardi','Mercredi','Jeudi','Vendredi'];
 for(let t=0;t<5;t++) for(let d=0;d<7;d++) grid[`${t}_${d}`]=null;
 
+/* ════ JOURNALISTE / GRILLE TYPE DATA ════ */
+const CRENEAUX_J=['06:00','06:30','07:00','07:30','08:00','08:30','09:00','12:00','17:00','17:30','18:00','18:30','19:00'];
+const JOURS_COURT=['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
+let journalistes=[
+  {id:'j1',nom:'Marc D.',color:'#374151'},
+  {id:'j2',nom:'Sophie L.',color:'#2563EB'},
+  {id:'j3',nom:'Pierre M.',color:'#059669'},
+  {id:'j4',nom:'Laure B.',color:'#7C3AED'},
+  {id:'j5',nom:'Antoine R.',color:'#DC2626'},
+];
+let nextJId=10;
+let jgrids={};       // jgrids[weekKey]["c_d"] = journaliste id
+let grillesType=[];  // [{id,name,jgrid:{}}]
+let marcheNormale={};// marcheNormale["c_d"] = journaliste id
+let currentJWeek=null; // YYYY-MM-DD (lundi)
+let selJColor='#6B7280';
+let pendingJCell=null; // {c, d}
+let pendingGTId=null;  // for GT cell edit
+let pendingGTCell=null; // {c, d}
+let pendingMNKey=null;  // "c_d" for marche normale
+
+/* ── Week utilities ── */
+function getMondayOf(d){const dt=new Date(d);const dow=dt.getDay();dt.setDate(dt.getDate()-(dow===0?6:dow-1));dt.setHours(0,0,0,0);return dt;}
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function toDateStr(d){return d.toISOString().slice(0,10);}
+function getWeekDays(wk){return Array.from({length:7},(_,i)=>addDays(new Date(wk),i));}
+function isoWeekNum(d){const date=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));date.setUTCDate(date.getUTCDate()+4-(date.getUTCDay()||7));const ys=new Date(Date.UTC(date.getUTCFullYear(),0,1));return Math.ceil(((date-ys)/86400000+1)/7);}
+function weekRangeLabel(wk){const mon=new Date(wk);const sun=addDays(mon,6);const fmt=d=>d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});return fmt(mon)+' – '+fmt(sun)+' '+sun.getFullYear();}
+function jnomById(id){return(journalistes.find(j=>j.id==id)||{}).nom||'';}
+function jById(id){return journalistes.find(j=>j.id==id)||null;}
+function jInitials(nom){return(nom||'').split(/[\s\-]+/).map(w=>w[0]?.toUpperCase()||'').slice(0,2).join('');}
+function getJGrid(wk){
+  if(!jgrids[wk]){
+    // Pre-fill from marche normale
+    jgrids[wk]={};
+    CRENEAUX_J.forEach(c=>Array.from({length:7},(_,d)=>{
+      const key=c+'_'+d, def=marcheNormale[c+'_0']||null; // broadcast same default across days? Or per-day?
+      // Default: weekday (Mon-Fri) from marche normale per-creneau (day-agnostic)
+      const jDef=marcheNormale[c]||null;
+      jgrids[wk][key]=d<5?jDef:null; // Week-end non rempli par défaut
+    }));
+  }
+  return jgrids[wk];
+}
+
 /* ════ STORAGE ════ */
 async function persist(){
   try{
-    const data={annonceurs,campagnes,anomalies,emissions,nextId,grid,liveData};
+    const data={annonceurs,campagnes,anomalies,emissions,nextId,grid,liveData,journalistes,nextJId,jgrids,grillesType,marcheNormale,currentJWeek};
     await window.storage.set('rm_backoffice',JSON.stringify(data));
     // Synchroniser aussi avec le format de trafic-tool.pages.dev
     await syncToTraficTool();
@@ -645,7 +746,7 @@ async function persist(){
 async function loadData(){
   try{
     const r=await window.storage.get('rm_backoffice');
-    if(r){const d=JSON.parse(r.value);annonceurs=d.annonceurs||[];campagnes=d.campagnes||[];anomalies=d.anomalies||[];emissions=d.emissions||[];nextId=d.nextId||1;grid=d.grid||grid;liveData=d.liveData||{};}
+    if(r){const d=JSON.parse(r.value);annonceurs=d.annonceurs||[];campagnes=d.campagnes||[];anomalies=d.anomalies||[];emissions=d.emissions||[];nextId=d.nextId||1;grid=d.grid||grid;liveData=d.liveData||{};journalistes=d.journalistes||journalistes;nextJId=d.nextJId||nextJId;jgrids=d.jgrids||{};grillesType=d.grillesType||[];marcheNormale=d.marcheNormale||{};currentJWeek=d.currentJWeek||null;}
   }catch(e){}
   renderAll();
 }
@@ -699,7 +800,7 @@ function setSyncStatus(){
   if(el)el.textContent='Synchronisé · '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
 }
 
-function renderAll(){renderAnn();renderCamp();renderAnom();renderEmCatalog();renderGrid();renderAnimEm();renderLive();renderStats();updateOa();}
+function renderAll(){renderAnn();renderCamp();renderAnom();renderEmCatalog();renderGrid();renderAnimEm();renderLive();renderStats();updateOa();renderJournList();initJWeek();renderJGrid();renderGTList();renderMarcheNormale();}
 
 /* ════ NAVIGATION ════ */
 function gotoTab(id){
@@ -712,8 +813,8 @@ function stab(btn,tid){
   const panel=btn.closest('.sc')||btn.closest('.tab-content');
   panel.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
   btn.classList.add('on');
-  const pfx=tid.split('-').slice(0,2).join('-')+'-';
-  panel.querySelectorAll('[id^="'+pfx+'"]').forEach(el=>{if(el.id!==tid)el.style.display='none';});
+  const pfx=tid.split('-')[0]+'-';
+  panel.querySelectorAll('[id^="'+pfx+'"]').forEach(el=>{el.style.display='none';});
   document.getElementById(tid).style.display='block';
 }
 
@@ -1108,7 +1209,387 @@ document.getElementById('live-body').addEventListener('click',function(e){
   }
 });
 
+
+/* ════════════════════════════════════════════════
+   JOURNALISTES — GESTION
+════════════════════════════════════════════════ */
+function renderJournList(){
+  const wrap=document.getElementById('journ-list');
+  if(!wrap)return;
+  if(!journalistes.length){wrap.innerHTML='<div class="empty" style="padding:16px 0"><div class="empty-t">Aucun journaliste</div></div>';return;}
+  wrap.innerHTML=journalistes.map(j=>`
+    <div class="journ-row">
+      <div class="journ-avatar" style="background:${j.color}">${jInitials(j.nom)}</div>
+      <span class="journ-nom">${esc(j.nom)}</span>
+      <span class="emp-role-badge" style="background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:12px">Journaliste</span>
+      <button class="btn btn-g sm" onclick="openJournModal('${esc(j.id)}')">✏</button>
+    </div>`).join('');
+}
+function openJournModal(jid){
+  const j=jid?jById(jid):null;
+  document.getElementById('journ-mttl').innerHTML=`${j?'Modifier':'Nouveau journaliste'} <button class="mc" onclick="closeModal('modal-journ')">×</button>`;
+  document.getElementById('journ-nom').value=j?j.nom:'';
+  selJColor=j?j.color:'#6B7280';
+  document.querySelectorAll('#journ-sw .sw').forEach(sw=>sw.classList.toggle('sel',sw.dataset.c===selJColor));
+  document.getElementById('journ-del-btn').style.display=j?'inline-flex':'none';
+  document.getElementById('journ-del-btn').onclick=()=>deleteJourn(jid);
+  document.getElementById('journ-del-btn').dataset.jid=jid||'';
+  document.getElementById('modal-journ').classList.add('show');
+}
+function pickJC(el){document.querySelectorAll('#journ-sw .sw').forEach(s=>s.classList.remove('sel'));el.classList.add('sel');selJColor=el.dataset.c;}
+function saveJourn(){
+  const nom=document.getElementById('journ-nom').value.trim();
+  if(!nom){alert('Nom requis');return;}
+  const jid=document.getElementById('journ-del-btn').dataset.jid;
+  if(jid){const j=jById(jid);if(j){j.nom=nom;j.color=selJColor;}}
+  else{journalistes.push({id:'j'+(nextJId++),nom,color:selJColor});}
+  closeModal('modal-journ');renderJournList();renderJGrid();renderMarcheNormale();persist();
+}
+function deleteJourn(jid){
+  if(!confirm('Supprimer ce journaliste ?'))return;
+  journalistes=journalistes.filter(j=>j.id!==jid);
+  closeModal('modal-journ');renderJournList();renderJGrid();renderMarcheNormale();persist();
+}
+
+/* ════════════════════════════════════════════════
+   GRILLE JOURNALISTE — SEMAINE
+════════════════════════════════════════════════ */
+function initJWeek(){
+  if(!currentJWeek){currentJWeek=toDateStr(getMondayOf(new Date()));}
+  updateJWeekHeader();
+}
+function updateJWeekHeader(){
+  const wk=currentJWeek;
+  const mon=new Date(wk);
+  const numEl=document.getElementById('jw-num');
+  const lblEl=document.getElementById('jw-label');
+  if(numEl)numEl.textContent='S'+isoWeekNum(mon);
+  if(lblEl)lblEl.textContent=weekRangeLabel(wk);
+  // Update day headers with dates
+  getWeekDays(wk).forEach((d,i)=>{
+    const th=document.getElementById('jh-'+i);
+    if(th){
+      const isToday=(toDateStr(d)===toDateStr(new Date()));
+      th.innerHTML=`${JOURS_COURT[i]}<br><span style="font-family:'Share Tech Mono',monospace;font-size:9px;font-weight:400;color:${isToday?'var(--red)':'var(--muted2)'}">${d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span>`;
+      if(isToday)th.style.color='var(--red)';else th.style.color='';
+    }
+  });
+}
+function prevJWeek(){currentJWeek=toDateStr(addDays(new Date(currentJWeek),-7));updateJWeekHeader();renderJGrid();persist();}
+function nextJWeek(){currentJWeek=toDateStr(addDays(new Date(currentJWeek),7));updateJWeekHeader();renderJGrid();persist();}
+function goToCurrentJWeek(){currentJWeek=toDateStr(getMondayOf(new Date()));updateJWeekHeader();renderJGrid();}
+
+function renderJGrid(){
+  const tbody=document.getElementById('jgrid-body');
+  if(!tbody)return;
+  if(!currentJWeek)initJWeek();
+  const jg=getJGrid(currentJWeek);
+  const todayDayIdx=(()=>{const mon=getMondayOf(new Date());const td=new Date();td.setHours(0,0,0,0);const diff=Math.round((td-mon)/86400000);return(diff>=0&&diff<7)?diff:-1;})();
+  const isCurrentWeek=(currentJWeek===toDateStr(getMondayOf(new Date())));
+  let html='';
+  CRENEAUX_J.forEach(c=>{
+    html+=`<tr><td class="tranche-lbl"><span class="creneau-lbl">${c}</span></td>`;
+    for(let d=0;d<7;d++){
+      const key=c+'_'+d;
+      const jId=jg[key]||null;
+      const journ=jId?jById(jId):null;
+      const isToday=isCurrentWeek&&d===todayDayIdx;
+      html+=`<td class="jcell${isToday?' today-jcol':''}" onclick="openJCellModal('${c}',${d})" style="${isToday?'background:rgba(228,3,46,.03);':''}">`;
+      if(journ){
+        html+=`<div class="jcell-inner" style="border-left:3px solid ${journ.color};background:${journ.color}15">`;
+        html+=`<span class="jcell-name">${esc(journ.nom)}</span>`;
+        html+='</div>';
+      }else{
+        html+='<div class="jcell-empty">+</div>';
+      }
+      html+='</td>';
+    }
+    html+='</tr>';
+  });
+  tbody.innerHTML=html;
+}
+
+function openJCellModal(c,d){
+  pendingJCell={c,d};
+  document.getElementById('jcell-ttl').innerHTML=`${JOURS_COURT[d]} — ${c} <button class="mc" onclick="closeModal('modal-jcell')">×</button>`;
+  const jg=getJGrid(currentJWeek);
+  const cur=jg[c+'_'+d]||'';
+  const sel=document.getElementById('jcell-sel');
+  sel.innerHTML='<option value="">— Vide —</option>'+journalistes.map(j=>`<option value="${esc(j.id)}"${cur===j.id?' selected':''}>${esc(j.nom)}</option>`).join('');
+  document.getElementById('jcell-clear-btn').style.display=cur?'inline-flex':'none';
+  document.getElementById('modal-jcell').classList.add('show');
+}
+function saveJCell(){
+  if(!pendingJCell)return;
+  const val=document.getElementById('jcell-sel').value||null;
+  const jg=getJGrid(currentJWeek);
+  jg[pendingJCell.c+'_'+pendingJCell.d]=val;
+  closeModal('modal-jcell');pendingJCell=null;renderJGrid();persist();
+}
+function clearJCell(){
+  if(!pendingJCell)return;
+  getJGrid(currentJWeek)[pendingJCell.c+'_'+pendingJCell.d]=null;
+  closeModal('modal-jcell');pendingJCell=null;renderJGrid();persist();
+}
+
+/* ════════════════════════════════════════════════
+   GRILLE TYPE
+════════════════════════════════════════════════ */
+function renderGTList(){
+  const wrap=document.getElementById('gt-list');
+  if(!wrap)return;
+  if(!grillesType.length){wrap.innerHTML='<div class="empty" style="padding:16px 0"><div class="empty-t">Aucune grille type. Créez-en une.</div></div>';return;}
+  wrap.innerHTML=grillesType.map(gt=>`
+    <div class="gt-card" id="gtcard-${gt.id}" onclick="toggleGTEditor('${esc(gt.id)}')">
+      <span class="gt-card-name">📋 ${esc(gt.name)}</span>
+      <div style="display:flex;gap:6px;margin-left:auto" onclick="event.stopPropagation()">
+        <button class="btn btn-g sm" onclick="openApplyGTModal('${esc(gt.id)}')">Appliquer</button>
+        <button class="btn btn-d sm" onclick="deleteGT('${esc(gt.id)}')">×</button>
+      </div>
+    </div>
+    <div class="gt-editor" id="gte-${gt.id}" style="display:none">
+      <div class="gt-editor-title">
+        Édition : ${esc(gt.name)}
+        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Cliquez sur les créneaux pour affecter les journalistes</span>
+      </div>
+      <div class="sc" style="margin:0;overflow-x:auto">
+        <table class="grille" style="min-width:600px">
+          <thead><tr>
+            <th style="text-align:left;padding-left:14px;width:80px">Créneau</th>
+            ${Array.from({length:7},(_,i)=>'<th>'+JOURS_COURT[i]+'</th>').join('')}
+          </tr></thead>
+          <tbody>${renderGTGridBody(gt)}</tbody>
+        </table>
+      </div>
+    </div>`).join('');
+}
+function renderGTGridBody(gt){
+  return CRENEAUX_J.map(c=>`<tr><td class="tranche-lbl"><span class="creneau-lbl">${c}</span></td>`+
+    Array.from({length:7},(_,d)=>{
+      const key=c+'_'+d, jId=(gt.jgrid||{})[key]||null, journ=jId?jById(jId):null;
+      return `<td class="jcell" onclick="openGTJCellModal('${esc(gt.id)}','${c}',${d})">
+        ${journ
+          ?`<div class="jcell-inner" style="border-left:3px solid ${journ.color};background:${journ.color}15"><span class="jcell-name">${esc(journ.nom)}</span></div>`
+          :'<div class="jcell-empty">+</div>'}
+      </td>`;
+    }).join('')+'</tr>').join('');
+}
+function toggleGTEditor(gtId){
+  const ed=document.getElementById('gte-'+gtId);
+  const card=document.getElementById('gtcard-'+gtId);
+  if(!ed)return;
+  const open=ed.style.display==='none';
+  // Close all others
+  grillesType.forEach(g=>{
+    const e=document.getElementById('gte-'+g.id);
+    const c=document.getElementById('gtcard-'+g.id);
+    if(e)e.style.display='none';
+    if(c)c.classList.remove('sel');
+  });
+  if(open){ed.style.display='block';if(card)card.classList.add('sel');}
+}
+function openCreateGTModal(){
+  document.getElementById('gt-name-inp').value='';
+  document.getElementById('modal-gt-create').classList.add('show');
+}
+function createGT(){
+  const name=document.getElementById('gt-name-inp').value.trim();
+  if(!name){alert('Nom requis');return;}
+  const id='gt_'+(Date.now()%1000000);
+  grillesType.push({id,name,jgrid:{}});
+  closeModal('modal-gt-create');renderGTList();persist();
+}
+function deleteGT(gtId){
+  if(!confirm('Supprimer cette grille type ?'))return;
+  grillesType=grillesType.filter(g=>g.id!==gtId);renderGTList();persist();
+}
+function openGTJCellModal(gtId,c,d){
+  pendingGTId=gtId;pendingGTCell={c,d};
+  document.getElementById('gtjcell-ttl').innerHTML=`${JOURS_COURT[d]} — ${c} <button class="mc" onclick="closeModal('modal-gtjcell')">×</button>`;
+  const gt=grillesType.find(g=>g.id===gtId);
+  const cur=(gt&&gt.jgrid&&gt.jgrid[c+'_'+d])||'';
+  const sel=document.getElementById('gtjcell-sel');
+  sel.innerHTML='<option value="">— Vide —</option>'+journalistes.map(j=>`<option value="${esc(j.id)}"${cur===j.id?' selected':''}>${esc(j.nom)}</option>`).join('');
+  document.getElementById('modal-gtjcell').classList.add('show');
+}
+function saveGTJCell(){
+  if(!pendingGTId||!pendingGTCell)return;
+  const gt=grillesType.find(g=>g.id===pendingGTId);
+  if(!gt)return;
+  if(!gt.jgrid)gt.jgrid={};
+  const val=document.getElementById('gtjcell-sel').value||null;
+  gt.jgrid[pendingGTCell.c+'_'+pendingGTCell.d]=val;
+  closeModal('modal-gtjcell');
+  // Re-render editor inline
+  const body=document.querySelector(`#gte-${pendingGTId} tbody`);
+  if(body)body.innerHTML=renderGTGridBody(gt);
+  persist();
+}
+function openApplyGTModal(gtId){
+  if(!grillesType.length){alert('Aucune grille type disponible');return;}
+  const sel=document.getElementById('gt-apply-sel');
+  sel.innerHTML=grillesType.map(g=>`<option value="${esc(g.id)}"${g.id===gtId?' selected':''}>${esc(g.name)}</option>`).join('');
+  document.getElementById('gt-apply-week').value=currentJWeek||toDateStr(getMondayOf(new Date()));
+  document.getElementById('modal-gt-apply').classList.add('show');
+}
+function openApplyGTModalFromHeader(){openApplyGTModal('');}
+function openApplyGTModalFromTab(){openApplyGTModal('');}
+function applyGT(){
+  const gtId=document.getElementById('gt-apply-sel').value;
+  const weekVal=document.getElementById('gt-apply-week').value;
+  const doJourn=document.getElementById('gt-apply-jonly').checked;
+  if(!gtId||!weekVal){alert('Sélectionnez une grille et une semaine');return;}
+  const gt=grillesType.find(g=>g.id===gtId);if(!gt)return;
+  const wk=toDateStr(getMondayOf(new Date(weekVal)));
+  if(doJourn){
+    if(!jgrids[wk])jgrids[wk]={};
+    Object.assign(jgrids[wk],JSON.parse(JSON.stringify(gt.jgrid||{})));
+    currentJWeek=wk;
+    updateJWeekHeader();
+    renderJGrid();
+  }
+  closeModal('modal-gt-apply');persist();
+  // Switch to journalist grid view
+  const jBtn=document.querySelector('.stab[onclick*="ta-journ"]');
+  if(jBtn)jBtn.click();
+}
+// Alias for button in header
+function openApplyGTModal2(){openApplyGTModal('');}
+// For the stab openApplyGTModal we already have openApplyGTModal('')
+function openApplyGrilleModal(){openApplyGTModal('');}
+
+/* ════════════════════════════════════════════════
+   MARCHE NORMALE
+════════════════════════════════════════════════ */
+function renderMarcheNormale(){
+  const tbody=document.getElementById('mn-body');
+  if(!tbody)return;
+  tbody.innerHTML=CRENEAUX_J.map(c=>{
+    const jId=marcheNormale[c]||null;
+    const journ=jId?jById(jId):null;
+    return`<tr>
+      <td class="tranche-lbl"><span class="creneau-lbl">${c}</span></td>
+      <td class="jcell" onclick="openMNModal('${c}')">
+        ${journ
+          ?`<div class="jcell-inner" style="border-left:3px solid ${journ.color};background:${journ.color}15"><span class="jcell-name">${esc(journ.nom)}</span></div>`
+          :'<div class="jcell-empty" style="justify-content:flex-start;padding-left:12px;font-size:13px;color:var(--muted2)">— Non assigné —</div>'}
+      </td>
+    </tr>`;
+  }).join('');
+}
+function openMNModal(c){
+  pendingMNKey=c;
+  document.getElementById('mn-ttl').innerHTML=`Marche normale — ${c} <button class="mc" onclick="closeModal('modal-mn')">×</button>`;
+  const cur=marcheNormale[c]||'';
+  const sel=document.getElementById('mn-sel');
+  sel.innerHTML='<option value="">— Vide —</option>'+journalistes.map(j=>`<option value="${esc(j.id)}"${cur===j.id?' selected':''}>${esc(j.nom)}</option>`).join('');
+  document.getElementById('modal-mn').classList.add('show');
+}
+function saveMN(){
+  if(!pendingMNKey)return;
+  const val=document.getElementById('mn-sel').value||null;
+  if(val)marcheNormale[pendingMNKey]=val;else delete marcheNormale[pendingMNKey];
+  closeModal('modal-mn');pendingMNKey=null;renderMarcheNormale();persist();
+}
+
 loadData();
 </script>
+
+<!-- ══ MODAL : Affecter journaliste ══ -->
+<div class="ov" id="modal-jcell" onclick="obg(event,'modal-jcell')">
+  <div class="modal">
+    <div class="mttl" id="jcell-ttl">Affecter un journaliste <button class="mc" onclick="closeModal('modal-jcell')">×</button></div>
+    <div class="fg"><label class="fl">Journaliste</label>
+      <select class="fc" id="jcell-sel"></select>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-d sm" id="jcell-clear-btn" onclick="clearJCell()">Effacer</button>
+      <button class="btn btn-g sm" onclick="closeModal('modal-jcell')">Annuler</button>
+      <button class="btn btn-p sm" onclick="saveJCell()">Valider</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL : Nouveau journaliste ══ -->
+<div class="ov" id="modal-journ" onclick="obg(event,'modal-journ')">
+  <div class="modal">
+    <div class="mttl" id="journ-mttl">Ajouter un journaliste <button class="mc" onclick="closeModal('modal-journ')">×</button></div>
+    <div class="fg"><label class="fl">Nom</label><input class="fc" id="journ-nom" placeholder="Prénom NOM"></div>
+    <div class="fg"><label class="fl">Couleur</label>
+      <div class="swatches" id="journ-sw">
+        <div class="sw" data-c="#374151" style="background:#374151" onclick="pickJC(this)"></div>
+        <div class="sw" data-c="#2563EB" style="background:#2563EB" onclick="pickJC(this)"></div>
+        <div class="sw" data-c="#059669" style="background:#059669" onclick="pickJC(this)"></div>
+        <div class="sw" data-c="#7C3AED" style="background:#7C3AED" onclick="pickJC(this)"></div>
+        <div class="sw" data-c="#DC2626" style="background:#DC2626" onclick="pickJC(this)"></div>
+        <div class="sw" data-c="#D97706" style="background:#D97706" onclick="pickJC(this)"></div>
+        <div class="sw" data-c="#0891B2" style="background:#0891B2" onclick="pickJC(this)"></div>
+        <div class="sw" data-c="#DB2777" style="background:#DB2777" onclick="pickJC(this)"></div>
+        <div class="sw sel" data-c="#6B7280" style="background:#6B7280" onclick="pickJC(this)"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-d sm" id="journ-del-btn" onclick="deleteJourn()" style="display:none">Supprimer</button>
+      <button class="btn btn-g sm" onclick="closeModal('modal-journ')">Annuler</button>
+      <button class="btn btn-p sm" onclick="saveJourn()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL : Créer grille type ══ -->
+<div class="ov" id="modal-gt-create" onclick="obg(event,'modal-gt-create')">
+  <div class="modal">
+    <div class="mttl">Nouvelle grille type <button class="mc" onclick="closeModal('modal-gt-create')">×</button></div>
+    <div class="fg"><label class="fl">Nom</label><input class="fc" id="gt-name-inp" placeholder="Ex : Grille Standard, Été, Vacances…"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-g sm" onclick="closeModal('modal-gt-create')">Annuler</button>
+      <button class="btn btn-p sm" onclick="createGT()">Créer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL : Appliquer grille type ══ -->
+<div class="ov" id="modal-gt-apply" onclick="obg(event,'modal-gt-apply')">
+  <div class="modal">
+    <div class="mttl">Appliquer une grille type <button class="mc" onclick="closeModal('modal-gt-apply')">×</button></div>
+    <div class="fg"><label class="fl">Grille type</label><select class="fc" id="gt-apply-sel"></select></div>
+    <div class="fg"><label class="fl">Semaine cible (lundi)</label><input class="fc" id="gt-apply-week" type="date"></div>
+    <div class="fg">
+      <label class="fl">Inclure</label>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="gt-apply-jonly" checked><span style="font-size:13px">Grille Journaliste</span></label>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-g sm" onclick="closeModal('modal-gt-apply')">Annuler</button>
+      <button class="btn btn-p sm" onclick="applyGT()">Appliquer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL : Affecter case grille type ══ -->
+<div class="ov" id="modal-gtjcell" onclick="obg(event,'modal-gtjcell')">
+  <div class="modal">
+    <div class="mttl" id="gtjcell-ttl">Grille type — créneau <button class="mc" onclick="closeModal('modal-gtjcell')">×</button></div>
+    <div class="fg"><label class="fl">Journaliste</label><select class="fc" id="gtjcell-sel"></select></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-g sm" onclick="closeModal('modal-gtjcell')">Annuler</button>
+      <button class="btn btn-p sm" onclick="saveGTJCell()">Valider</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL : Marche normale créneau ══ -->
+<div class="ov" id="modal-mn" onclick="obg(event,'modal-mn')">
+  <div class="modal">
+    <div class="mttl" id="mn-ttl">Marche normale <button class="mc" onclick="closeModal('modal-mn')">×</button></div>
+    <div class="fg"><label class="fl">Journaliste par défaut</label><select class="fc" id="mn-sel"></select></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-g sm" onclick="closeModal('modal-mn')">Annuler</button>
+      <button class="btn btn-p sm" onclick="saveMN()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
