@@ -56,7 +56,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .gc-day-num{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;display:block;line-height:1;color:#fff;}
 .gc-day-head.today .gc-day-num{color:#7aabff;}
 .gc-day-name{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35);display:block;margin-top:1px;}
-.gc-day-dup{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.25);display:block;margin-top:2px;}
+
 .gc-hour-label{display:flex;align-items:flex-start;justify-content:flex-end;padding:3px 6px 0;border-right:1px solid rgba(255,255,255,.1);font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(255,255,255,.3);height:38px;border-bottom:1px solid rgba(255,255,255,.05);}
 .gc-cell{position:relative;height:38px;border-left:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.05);background:transparent;transition:background .1s;cursor:pointer;}
 .gc-cell:hover{background:rgba(255,255,255,.04);}
@@ -230,13 +230,16 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 
 <!-- MODAL : Dupliquer journee -->
 <div class="modal-overlay" id="modal-dup">
-  <div class="modal" style="max-width:380px;">
+  <div class="modal" style="max-width:420px;">
     <div class="modal-header"><span>Dupliquer la journee</span><button class="modal-close" onclick="closeModal('modal-dup')">&#10005;</button></div>
     <div class="modal-body">
       <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Copier les emissions de <strong id="dup-src-label" style="color:#fff;"></strong> vers :</p>
-      <div class="form-group"><label>Jour de destination</label><select id="dup-dest"></select></div>
-      <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;">
-        <input type="checkbox" id="dup-replace"> Remplacer les emissions du jour cible
+      <div class="form-group">
+        <label>Jours de destination (selection multiple)</label>
+        <div id="dup-dest-days" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;"></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;margin-top:4px;">
+        <input type="checkbox" id="dup-replace"> Remplacer les emissions des jours cibles
       </label>
     </div>
     <div class="modal-footer">
@@ -282,13 +285,23 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 
 <!-- MODAL : Appliquer grille type -->
 <div class="modal-overlay" id="modal-grille-apply">
-  <div class="modal" style="max-width:380px;">
+  <div class="modal" style="max-width:420px;">
     <div class="modal-header"><span>Appliquer la grille</span><button class="modal-close" onclick="closeModal('modal-grille-apply')">&#10005;</button></div>
     <div class="modal-body">
       <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Appliquer <strong id="apply-gt-label" style="color:#fff;"></strong> a la semaine :</p>
       <div class="form-row-2">
-        <div class="form-group"><label>Semaine</label><input type="number" id="apply-gt-week" min="1" max="53"></div>
-        <div class="form-group"><label>Annee</label><input type="number" id="apply-gt-year" min="2024" max="2035"></div>
+        <div class="form-group">
+          <label>Semaine</label>
+          <input type="number" id="apply-gt-week" min="1" max="53" oninput="updateWeekPreview()">
+        </div>
+        <div class="form-group">
+          <label>Annee</label>
+          <input type="number" id="apply-gt-year" min="2024" max="2035" oninput="updateWeekPreview()">
+        </div>
+      </div>
+      <div id="apply-week-preview" style="display:none;background:rgba(91,141,239,.12);border:1px solid rgba(91,141,239,.3);border-radius:6px;padding:10px 14px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px;">Dates de la semaine</div>
+        <div id="apply-week-dates" style="font-family:'Barlow',sans-serif;font-size:13px;color:#fff;line-height:1.8;"></div>
       </div>
       <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;">
         <input type="checkbox" id="apply-gt-replace"> Remplacer les emissions existantes
@@ -524,29 +537,48 @@ function deleteEmission(){
 }
 
 /* ── Dupliquer une journee ───────────────────────────────────────── */
+var dupDestDays=[];
+
 function openDupModal(dayIdx){
   dupSrcDay=dayIdx;
+  dupDestDays=[];
   document.getElementById('dup-src-label').textContent=JOURS_FULL[dayIdx];
-  var sel=document.getElementById('dup-dest');
-  sel.innerHTML=JOURS_FULL.map(function(j,i){
-    return '<option value="'+i+'"'+(i===dayIdx?' disabled':'')+'>'+j+'</option>';
-  }).join('');
-  sel.value=dayIdx===0?'1':'0';
   document.getElementById('dup-replace').checked=false;
+  // Construire les boutons toggle pour chaque jour sauf la source
+  var el=document.getElementById('dup-dest-days');
+  el.innerHTML=JOURS_FULL.map(function(j,i){
+    if(i===dayIdx) return ''; // exclure le jour source
+    return '<button type="button" class="anim-toggle" data-day="'+i+'" onclick="toggleDupDay('+i+',this)">'+j+'</button>';
+  }).join('');
   openModal('modal-dup');
 }
 
+function toggleDupDay(idx, btn){
+  var pos=dupDestDays.indexOf(idx);
+  if(pos>=0){
+    dupDestDays.splice(pos,1);
+    btn.classList.remove('selected');
+    btn.style.cssText='';
+  } else {
+    dupDestDays.push(idx);
+    btn.classList.add('selected');
+    btn.style.cssText='background:rgba(91,141,239,.3);border-color:rgba(91,141,239,.75);color:#fff;';
+  }
+}
+
 function dupDay(){
-  var dest=parseInt(document.getElementById('dup-dest').value);
+  if(!dupDestDays.length){ alert('Selectionnez au moins un jour de destination.'); return; }
   var replace=document.getElementById('dup-replace').checked;
   var key=getMondayKey(currentWeekOffset);
   var src=emissions.filter(function(e){ return e.jour===dupSrcDay && e.weekKey===key; });
   if(!src.length){ alert('Aucune emission ce jour-la.'); return; }
-  if(replace) emissions=emissions.filter(function(e){ return !(e.jour===dest && e.weekKey===key); });
-  src.forEach(function(e){
-    var c=JSON.parse(JSON.stringify(e));
-    c.id=Date.now()+Math.random(); c.jour=dest; c.weekKey=key;
-    emissions.push(c);
+  dupDestDays.forEach(function(dest){
+    if(replace) emissions=emissions.filter(function(e){ return !(e.jour===dest && e.weekKey===key); });
+    src.forEach(function(e){
+      var c=JSON.parse(JSON.stringify(e));
+      c.id=Date.now()+Math.random(); c.jour=dest; c.weekKey=key;
+      emissions.push(c);
+    });
   });
   saveData(); closeModal('modal-dup'); renderCalendar();
 }
@@ -634,6 +666,24 @@ function deleteGrilleType(){
 }
 
 /* ── Appliquer grille type ───────────────────────────────────────── */
+var MOIS_LONG=['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+
+function updateWeekPreview(){
+  var wk=parseInt(document.getElementById('apply-gt-week').value);
+  var yr=parseInt(document.getElementById('apply-gt-year').value);
+  var preview=document.getElementById('apply-week-preview');
+  var datesEl=document.getElementById('apply-week-dates');
+  if(!wk||!yr||wk<1||wk>53||yr<2024){ preview.style.display='none'; return; }
+  var offset=getWeekOffset(wk,yr);
+  var days=getWeekDates(offset);
+  preview.style.display='block';
+  datesEl.innerHTML=JOURS_FULL.map(function(j,i){
+    var d=days[i];
+    return '<span style="display:inline-block;width:95px;color:rgba(255,255,255,.5);">'+j+'</span>'+
+      '<strong>'+d.getDate()+' '+MOIS_LONG[d.getMonth()]+' '+d.getFullYear()+'</strong><br>';
+  }).join('');
+}
+
 function openApplyGrille(gtId){
   applyingGrilleId=gtId;
   var g=grillesType.find(function(x){ return x.id===gtId; });
@@ -647,6 +697,7 @@ function openApplyGrille(gtId){
   document.getElementById('apply-gt-replace').checked=false;
   closeModal('modal-grilles-list');
   openModal('modal-grille-apply');
+  setTimeout(updateWeekPreview,50);
 }
 
 function getWeekOffset(weekNum,year){
@@ -694,7 +745,7 @@ function renderCalendar(){
     html+='<div class="gc-day-head'+(isToday?' today':'')+'" onclick="openDupModal('+i+')">'+
       '<span class="gc-day-num">'+d.getDate()+'</span>'+
       '<span class="gc-day-name">'+JOURS[i]+'</span>'+
-      '<span class="gc-day-dup">&#x2398; Dupliquer</span>'+
+      
     '</div>';
   });
 
