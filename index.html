@@ -169,13 +169,9 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     <div class="ga-toolbar">
       <div>
         <div class="ga-title">Grille Journaliste</div>
-        <div class="ga-sub">Semaine du <span id="gj-week-label">-</span></div>
+  
       </div>
       <div class="ga-toolbar-right">
-        <button class="ga-btn" onclick="gjChangeWeek(-1)">&#9664; Prec.</button>
-        <button class="ga-btn" onclick="gjChangeWeek(0)">Auj.</button>
-        <button class="ga-btn" onclick="gjChangeWeek(1)">Suiv. &#9654;</button>
-        <div class="ga-sep"></div>
         <button class="ga-btn ga-btn-primary" onclick="openModal('modal-journalistes-list')">&#43; Journaliste</button>
         <button class="ga-btn ga-btn-primary" onclick="openGjRdvModal()">&#43; Rendez-vous</button>
         <div class="ga-sep"></div>
@@ -376,7 +372,7 @@ function showSection(id,btn){
   document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
   var s=document.getElementById(id); if(s) s.classList.add('active');
   if(btn) btn.classList.add('active');
-  if(id==='grille-antenne') renderCalendar();
+  if(id==='grille-antenne'){ renderCalendar(); gjRenderCalendar(); }
 }
 
 /* ── Modals ──────────────────────────────────────────────────────── */
@@ -420,6 +416,7 @@ function getMondayKey(offset){
 function changeWeek(dir){
   if(dir===0) currentWeekOffset=0; else currentWeekOffset+=dir;
   renderCalendar();
+  gjRenderCalendar();
 }
 
 /* ── Animateurs ──────────────────────────────────────────────────── */
@@ -851,7 +848,7 @@ gjRenderCalendar();
    GRILLE JOURNALISTE
 ═══════════════════════════════════════════════════════════════════ */
 var journalistes=[], gjRdvs=[], gjGrillesType=[];
-var gjWeekOffset=0;
+var currentWeekOffset=0;
 var editingJournalisteId=null, editingGjRdvId=null, editingGjGrilleId=null;
 var selectedJournalisteIds=[], gjDupSrcDay=0, gjDupDestDays=[], gjApplyingGrilleId=null;
 var gjEditingGrilleRdvs=[];
@@ -884,7 +881,7 @@ document.getElementById('gj-rdv-hfin').value='1';
 
 /* ── Semaine GJ ── */
 function gjChangeWeek(dir){
-  if(dir===0) gjWeekOffset=0; else gjWeekOffset+=dir;
+  if(dir===0) currentWeekOffset=0; else currentWeekOffset+=dir;
   gjRenderCalendar();
 }
 function gjGetMondayKey(offset){
@@ -1012,7 +1009,7 @@ function saveGjRdv(){
   if(!titre){ alert('Titre requis.'); return; }
   if(hfin<=hdebut){ alert('Heure de fin invalide.'); return; }
   var jObjs=journalistes.filter(function(j){ return selectedJournalisteIds.indexOf(j.id)>=0; });
-  var key=gjGetMondayKey(gjWeekOffset);
+  var key=gjGetMondayKey(currentWeekOffset);
   if(editingGjRdvId!==null){
     var r=gjRdvs.find(function(x){ return x.id===editingGjRdvId; });
     if(r){ r.titre=titre; r.jour=jour; r.hdebut=hdebut; r.hfin=hfin; r.color=color; r.journalisteIds=selectedJournalisteIds.slice(); r.journalistes=jObjs; }
@@ -1048,7 +1045,7 @@ function gjToggleDupDay(idx,btn){
 function gjDupDay(){
   if(!gjDupDestDays.length){ alert('Selectionnez au moins un jour.'); return; }
   var replace=document.getElementById('gj-dup-replace').checked;
-  var key=gjGetMondayKey(gjWeekOffset);
+  var key=gjGetMondayKey(currentWeekOffset);
   var src=gjRdvs.filter(function(r){ return r.jour===gjDupSrcDay && r.weekKey===key; });
   if(!src.length){ alert('Aucun rendez-vous ce jour-la.'); return; }
   gjDupDestDays.forEach(function(dest){
@@ -1099,7 +1096,7 @@ function openGjGrilleForm(gtId){
 }
 
 function gjImportWeekToGrille(){
-  var key=gjGetMondayKey(gjWeekOffset);
+  var key=gjGetMondayKey(currentWeekOffset);
   gjEditingGrilleRdvs=JSON.parse(JSON.stringify(gjRdvs.filter(function(r){ return r.weekKey===key; })));
   gjRefreshGtList();
 }
@@ -1156,7 +1153,7 @@ function gjOpenApplyGrille(gtId){
   var g=gjGrillesType.find(function(x){ return x.id===gtId; });
   if(!g) return;
   document.getElementById('gj-apply-gt-label').textContent=g.nom;
-  var days=getWeekDates(gjWeekOffset);
+  var days=getWeekDates(currentWeekOffset);
   var jan1=new Date(days[0].getFullYear(),0,1);
   var wk=Math.ceil(((days[0]-jan1)/86400000+jan1.getDay()+1)/7);
   document.getElementById('gj-apply-gt-week').value=wk;
@@ -1182,17 +1179,13 @@ function gjApplyGrilleType(){
     c.id=Date.now()+Math.random(); c.weekKey=targetKey;
     gjRdvs.push(c);
   });
-  saveGjData(); gjWeekOffset=targetOffset; closeModal('modal-gj-grille-apply'); gjRenderCalendar();
+  saveGjData(); currentWeekOffset=targetOffset; closeModal('modal-gj-grille-apply'); gjRenderCalendar();
 }
 
 /* ── Calendrier GJ ── */
 function gjRenderCalendar(){
-  var days=getWeekDates(gjWeekOffset);
+  var days=getWeekDates(currentWeekOffset);
   var today=new Date(); today.setHours(0,0,0,0);
-  document.getElementById('gj-week-label').textContent=
-    days[0].getDate()+' '+MOIS[days[0].getMonth()]+' - '+
-    days[6].getDate()+' '+MOIS[days[6].getMonth()]+' '+days[6].getFullYear();
-
   var cal=document.getElementById('gj-calendar');
   var html='<div class="gc-corner"></div>';
 
@@ -1215,7 +1208,7 @@ function gjRenderCalendar(){
   }
   cal.innerHTML=html;
 
-  var key=gjGetMondayKey(gjWeekOffset);
+  var key=gjGetMondayKey(currentWeekOffset);
   gjRdvs.filter(function(r){ return r.weekKey===key; }).forEach(function(rdv){
     var topOffset=(rdv.hdebut%1)*CELL_H;
     var heightPx=(rdv.hfin-rdv.hdebut)*CELL_H-3;
@@ -1263,12 +1256,7 @@ function gjUpdateTimeline(cal,days){
   cal.appendChild(tl);
 }
 
-/* Init GJ au chargement de la section */
-var _origShowSection=showSection;
-showSection=function(id,btn){
-  _origShowSection(id,btn);
-  if(id==='grille-antenne') gjRenderCalendar();
-};
+
 
 </script>
 
