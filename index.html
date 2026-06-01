@@ -259,31 +259,58 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   </div>
 </div>
 
-<!-- PANEL : Emissions -->
+<!-- PANEL : Catalogue des emissions -->
 <div class="modal-overlay" id="modal-emissions-panel">
   <div class="modal" style="max-width:560px;width:95%;">
     <div class="modal-header">
-      <span>Emissions &mdash; <span id="em-panel-week" style="font-weight:400;opacity:.6;font-size:13px;text-transform:none;letter-spacing:0;"></span></span>
+      <span>Catalogue des emissions</span>
       <button class="modal-close" onclick="closeModal('modal-emissions-panel')">&#10005;</button>
     </div>
     <div class="modal-body" style="padding:16px 24px;">
-      <div id="em-panel-list" style="display:flex;flex-direction:column;gap:7px;max-height:420px;overflow-y:auto;"></div>
+      <div id="em-catalogue-list" style="display:flex;flex-direction:column;gap:7px;max-height:420px;overflow-y:auto;"></div>
     </div>
     <div class="modal-footer">
       <div></div>
       <div class="modal-footer-right">
-        <button class="ga-btn ga-btn-primary" onclick="closeModal('modal-emissions-panel');openEmissionModal()">&#43; Creer une emission</button>
+        <button class="ga-btn ga-btn-primary" onclick="openEmissionTypeForm(null)">&#43; Nouvelle emission</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL : Emission -->
+<!-- MODAL : Formulaire type d emission -->
+<div class="modal-overlay" id="modal-emission-type">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <span id="em-type-form-title">Nouvelle emission</span>
+      <button class="modal-close" onclick="closeModal('modal-emission-type');openModal('modal-emissions-panel')">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nom de l emission</label><input type="text" id="em-type-nom" placeholder="Ex : Morning Show"></div>
+      <div class="form-group"><label>Couleur par defaut</label><input type="color" id="em-type-color" value="#5B8DEF"></div>
+      <div class="form-group"><label>Description (optionnel)</label><input type="text" id="em-type-desc" placeholder="Ex : Emission matinale"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="ga-btn ga-btn-danger" id="em-type-del-btn" style="display:none" onclick="deleteEmissionType()">&#128465; Supprimer</button>
+      <div class="modal-footer-right">
+        <button class="ga-btn" onclick="closeModal('modal-emission-type');openModal('modal-emissions-panel')">Annuler</button>
+        <button class="ga-btn ga-btn-primary" onclick="saveEmissionType()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : Affectation d une emission dans la grille -->
 <div class="modal-overlay" id="modal-emission">
   <div class="modal">
-    <div class="modal-header"><span id="modal-em-title">Creer une emission</span><button class="modal-close" onclick="closeModal('modal-emission')">&#10005;</button></div>
+    <div class="modal-header"><span id="modal-em-title">Affecter une emission</span><button class="modal-close" onclick="closeModal('modal-emission')">&#10005;</button></div>
     <div class="modal-body">
-      <div class="form-group"><label>Titre</label><input type="text" id="em-titre" placeholder="Ex : Morning Show"></div>
+      <div class="form-group">
+        <label>Emission</label>
+        <select id="em-type-id" onchange="onEmissionTypeChange()">
+          <option value="">— Choisir une emission —</option>
+        </select>
+      </div>
       <div class="form-row">
         <div class="form-group"><label>Jour</label>
           <select id="em-jour">
@@ -304,10 +331,10 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
       <div class="form-group"><label>Animateurs</label><div class="anim-selector" id="em-anim-selector"></div></div>
     </div>
     <div class="modal-footer">
-      <button class="ga-btn ga-btn-danger" id="modal-del-btn" style="display:none" onclick="deleteEmission()">&#128465; Supprimer</button>
+      <button class="ga-btn ga-btn-danger" id="modal-del-btn" style="display:none" onclick="deleteAffectation()">&#128465; Retirer</button>
       <div class="modal-footer-right">
         <button class="ga-btn" onclick="closeModal('modal-emission')">Annuler</button>
-        <button class="ga-btn ga-btn-primary" onclick="saveEmission()">Enregistrer</button>
+        <button class="ga-btn ga-btn-primary" onclick="saveAffectation()">Placer dans la grille</button>
       </div>
     </div>
   </div>
@@ -572,6 +599,7 @@ function loadAll(){
   });
 }
 loadAll();
+/* Charger catalogue et affectations (après loadAll pour migration) */
 
 /* ── openModal UNIQUE ────────────────────────────────────────────── */
 function openModal(id){
@@ -800,43 +828,7 @@ function openEmissionsPanel(){
   openModal('modal-emissions-panel');
 }
 
-function refreshEmissionsPanel(){
-  var el=document.getElementById('em-panel-list');
-  var lbl=document.getElementById('em-panel-week');
-  if(!el) return;
-  var days=getWeekDates(currentWeekOffset);
-  if(lbl) lbl.textContent='sem. du '+days[0].getDate()+' '+MOIS_LONG[days[0].getMonth()]+' au '+days[6].getDate()+' '+MOIS_LONG[days[6].getMonth()]+' '+days[6].getFullYear();
-  var key=getMondayKey(currentWeekOffset);
-  var week=emissions.filter(function(e){ return e.weekKey===key; });
-  week.sort(function(a,b){ return a.jour!==b.jour?a.jour-b.jour:a.hdebut-b.hdebut; });
-  if(!week.length){
-    el.innerHTML='<div class="list-empty">Aucune emission cette semaine.</div>'; return;
-  }
-  el.innerHTML=week.map(function(em){
-    var hd=String(Math.floor(em.hdebut)).padStart(2,'0')+'h'+(em.hdebut%1?'30':'00');
-    var hf=String(Math.floor(em.hfin)).padStart(2,'0')+'h'+(em.hfin%1?'30':'00');
-    var animNames=(em.anims&&em.anims.length)?em.anims.map(function(a){ return a.prenom+' '+a.nom; }).join(', '):'—';
-    return '<div class="em-list-item" onclick="editEmFromPanel('+em.id+')">'+
-      '<div class="em-list-bar" style="background:'+em.color+'"></div>'+
-      '<div class="em-list-info">'+
-        '<div class="em-list-title">'+em.titre+'</div>'+
-        '<div class="em-list-meta">'+JOURS_FULL[em.jour]+' &bull; '+hd+' - '+hf+' &bull; '+animNames+'</div>'+
-      '</div>'+
-      '<button class="anim-row-edit" style="color:#f7a0a0;border-color:rgba(220,60,60,.3);flex-shrink:0;" onclick="delEmFromPanel(event,'+em.id+')">&#128465;</button>'+
-    '</div>';
-  }).join('');
-}
-
-function editEmFromPanel(emId){
-  closeModal('modal-emissions-panel');
-  openEmissionEdit(emId);
-}
-function delEmFromPanel(e,emId){
-  e.stopPropagation();
-  if(!confirm('Supprimer cette emission ?')) return;
-  emissions=emissions.filter(function(x){ return x.id!==emId; });
-  saveData(); renderCalendar(); gjRenderCalendar(); refreshEmissionsPanel();
-}
+/* refreshEmissionsPanel -> voir catalogue JS */
 
 
 /* ── Team selector dans formulaire emission ── */
@@ -883,59 +875,8 @@ function toggleAnim(id){
 }
 
 /* ── Emissions ── */
-function openEmissionModal(jour,hdebut){
-  editingEmissionId=null;
-  document.getElementById('modal-em-title').textContent='Creer une emission';
-  document.getElementById('em-titre').value='';
-  document.getElementById('em-jour').value=jour!==undefined?jour:0;
-  document.getElementById('em-hdebut').value=hdebut!==undefined?hdebut:8;
-  document.getElementById('em-hfin').value=hdebut!==undefined?(parseFloat(hdebut)+1):9;
-  document.getElementById('em-color').value='#5B8DEF';
-  document.getElementById('modal-del-btn').style.display='none';
-  selectedAnimIds=[];
-  buildTeamSelect();
-  buildAnimSelector();
-  openModal('modal-emission');
-}
-function openEmissionEdit(emId){
-  var em=emissions.find(function(e){ return e.id===emId; });
-  if(!em) return;
-  editingEmissionId=emId;
-  document.getElementById('modal-em-title').textContent='Modifier l emission';
-  document.getElementById('em-titre').value=em.titre;
-  document.getElementById('em-jour').value=em.jour;
-  document.getElementById('em-hdebut').value=em.hdebut;
-  document.getElementById('em-hfin').value=em.hfin;
-  document.getElementById('em-color').value=em.color;
-  document.getElementById('modal-del-btn').style.display='inline-flex';
-  selectedAnimIds=em.animIds?em.animIds.slice():[];
-  buildTeamSelect();
-  buildAnimSelector();
-  openModal('modal-emission');
-}
-function saveEmission(){
-  var titre=document.getElementById('em-titre').value.trim();
-  var jour=parseInt(document.getElementById('em-jour').value);
-  var hdebut=parseFloat(document.getElementById('em-hdebut').value);
-  var hfin=parseFloat(document.getElementById('em-hfin').value);
-  var color=document.getElementById('em-color').value;
-  if(!titre){ alert('Titre requis.'); return; }
-  if(hfin<=hdebut){ alert('Heure de fin invalide.'); return; }
-  var anims=animateurs.filter(function(a){ return selectedAnimIds.indexOf(a.id)>=0; });
-  var key=getMondayKey(currentWeekOffset);
-  if(editingEmissionId!==null){
-    var em=emissions.find(function(e){ return e.id===editingEmissionId; });
-    if(em){ em.titre=titre; em.jour=jour; em.hdebut=hdebut; em.hfin=hfin; em.color=color; em.animIds=selectedAnimIds.slice(); em.anims=anims; }
-  } else {
-    emissions.push({id:Date.now(),titre:titre,jour:jour,hdebut:hdebut,hfin:hfin,color:color,animIds:selectedAnimIds.slice(),anims:anims,weekKey:key});
-  }
-  saveData(); closeModal('modal-emission'); renderCalendar(); gjRenderCalendar();
-}
-function deleteEmission(){
-  if(!confirm('Supprimer cette emission ?')) return;
-  emissions=emissions.filter(function(e){ return e.id!==editingEmissionId; });
-  saveData(); closeModal('modal-emission'); renderCalendar(); gjRenderCalendar();
-}
+/* openEmissionModal/Edit -> voir catalogue JS */
+/* saveEmission/deleteEmission -> voir saveAffectation/deleteAffectation dans catalogue */
 
 /* ── Duplication antenne ── */
 function openDupModal(dayIdx){
@@ -1013,7 +954,9 @@ function openGrilleForm(gtId){
 }
 function importWeekToGrille(){
   var key=getMondayKey(currentWeekOffset);
-  editingGrilleEmissions=JSON.parse(JSON.stringify(emissions.filter(function(e){ return e.weekKey===key; })));
+  editingGrilleEmissions=JSON.parse(JSON.stringify(
+    affectations.filter(function(a){ return !a.weekKey||a.weekKey===key; })
+  ));
   refreshGtEmList();
 }
 function refreshGtEmList(){
@@ -1023,8 +966,10 @@ function refreshGtEmList(){
   el.innerHTML=editingGrilleEmissions.map(function(e){
     var hd=String(Math.floor(e.hdebut)).padStart(2,'0')+'h'+(e.hdebut%1?'30':'00');
     var hf=String(Math.floor(e.hfin)).padStart(2,'0')+'h'+(e.hfin%1?'30':'00');
+    var t=catalogue.find(function(x){ return x.id===e.typeId; });
+    var nom=e.nom||(t?t.nom:'?');
     return '<div class="gt-em-item" style="border-left:3px solid '+e.color+'">'+
-      '<span class="gt-em-title">'+JOURS_FULL[e.jour]+' — '+e.titre+'</span>'+
+      '<span class="gt-em-title">'+JOURS_FULL[e.jour]+' — '+nom+'</span>'+
       '<span class="gt-em-time">'+hd+' - '+hf+'</span></div>';
   }).join('');
 }
@@ -1079,12 +1024,12 @@ function applyGrilleType(){
   if(!g) return;
   var targetOffset=getWeekOffset(wk,yr);
   var targetKey=getWeekDates(targetOffset)[0].toISOString().slice(0,10);
-  if(replace) emissions=emissions.filter(function(e){ return e.weekKey!==targetKey; });
+  if(replace) affectations=affectations.filter(function(a){ return a.weekKey!==targetKey; });
   (g.emissions||[]).forEach(function(e){
     var c=JSON.parse(JSON.stringify(e));
-    c.id=Date.now()+Math.random(); c.weekKey=targetKey; emissions.push(c);
+    c.id=Date.now()+Math.random(); c.weekKey=targetKey; affectations.push(c);
   });
-  saveData(); currentWeekOffset=targetOffset; closeModal('modal-grille-apply'); renderCalendar(); gjRenderCalendar();
+  saveCatalogue(); currentWeekOffset=targetOffset; closeModal('modal-grille-apply'); renderCalendar(); gjRenderCalendar();
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -1375,17 +1320,19 @@ function renderCalendar(){
   }
   cal.innerHTML=html;
   var key=getMondayKey(currentWeekOffset);
-  emissions.filter(function(e){ return e.weekKey===key; }).forEach(function(em){
-    var cells=cal.querySelectorAll('.gc-cell[data-day="'+em.jour+'"][data-hour="'+Math.floor(em.hdebut)+'"]');
+  affectations.filter(function(a){ return !a.weekKey||a.weekKey===key; }).forEach(function(aff){
+    var cells=cal.querySelectorAll('.gc-cell[data-day="'+aff.jour+'"][data-hour="'+Math.floor(aff.hdebut)+'"]');
     if(!cells.length) return;
+    var t=catalogue.find(function(x){ return x.id===aff.typeId; });
+    var nom=aff.nom||(t?t.nom:'?');
     var div=document.createElement('div');
     div.className='gc-emission';
-    div.style.cssText='background:'+hexAlpha(em.color,.28)+';border-left:3px solid '+em.color+';top:'+((em.hdebut%1)*CELL_H)+'px;height:'+((em.hfin-em.hdebut)*CELL_H-3)+'px;';
-    div.innerHTML='<div class="gc-em-title">'+em.titre+'</div>'+
-      (em.anims&&em.anims.length?'<div class="gc-em-anims">'+em.anims.map(function(a){
+    div.style.cssText='background:'+hexAlpha(aff.color,.28)+';border-left:3px solid '+aff.color+';top:'+((aff.hdebut%1)*CELL_H)+'px;height:'+((aff.hfin-aff.hdebut)*CELL_H-3)+'px;';
+    div.innerHTML='<div class="gc-em-title">'+nom+'</div>'+
+      (aff.anims&&aff.anims.length?'<div class="gc-em-anims">'+aff.anims.map(function(a){
         return '<span class="gc-em-anim-chip" style="border-left:2px solid '+a.color+'">'+a.prenom+' '+a.nom+'</span>';
       }).join('')+'</div>':'');
-    div.onclick=function(ev){ ev.stopPropagation(); openEmissionEdit(em.id); };
+    div.onclick=function(ev){ ev.stopPropagation(); openEmissionEdit(aff.id); };
     cells[0].appendChild(div);
   });
   requestAnimationFrame(function(){ updateTimeline(cal, days); });
@@ -1474,6 +1421,223 @@ function hexAlpha(hex,alpha){
 
 renderCalendar();
 gjRenderCalendar();
+
+/* ═══════════════════════════════════════════════════════════════════
+   CATALOGUE DES EMISSIONS (types)
+   affectations = placements dans la grille (weekKey + créneau)
+═══════════════════════════════════════════════════════════════════ */
+var catalogue = [];       // types d'émissions
+var affectations = [];    // placements dans la grille
+
+function saveCatalogue(){
+  localStorage.setItem('at_catalogue',    JSON.stringify(catalogue));
+  localStorage.setItem('at_affectations', JSON.stringify(affectations));
+}
+function loadCatalogue(){
+  try{ var c=localStorage.getItem('at_catalogue');    if(c) catalogue=JSON.parse(c); }catch(e){}
+  try{ var a=localStorage.getItem('at_affectations'); if(a) affectations=JSON.parse(a); }catch(e){}
+  /* Migration : anciennes emissions => catalogue + affectations si besoin */
+  if(!catalogue.length && emissions.length){
+    var seen={};
+    emissions.forEach(function(e){
+      if(!seen[e.titre]){
+        seen[e.titre]=true;
+        catalogue.push({id:Date.now()+Math.random(),nom:e.titre,color:e.color,desc:''});
+      }
+    });
+    emissions.forEach(function(e){
+      var type=catalogue.find(function(c){ return c.nom===e.titre; });
+      if(type) affectations.push({
+        id:e.id,typeId:type.id,jour:e.jour,hdebut:e.hdebut,hfin:e.hfin,
+        color:e.color,animIds:e.animIds||[],anims:e.anims||[],weekKey:e.weekKey||getMondayKey(0)
+      });
+    });
+    saveCatalogue();
+  }
+}
+
+/* ── Catalogue : refresh liste ── */
+function refreshEmissionsPanel(){
+  var el=document.getElementById('em-catalogue-list');
+  if(!el) return;
+  if(!catalogue.length){
+    el.innerHTML='<div class="list-empty">Aucune emission dans le catalogue.<br><br>Creez vos types d'emission ici, puis affectez-les dans la grille.</div>';
+    return;
+  }
+  el.innerHTML=catalogue.map(function(t){
+    var nbAff=affectations.filter(function(a){ return a.typeId===t.id; }).length;
+    return '<div class="em-list-item" onclick="openEmissionTypeForm('+t.id+')">'+
+      '<div class="em-list-bar" style="background:'+t.color+'"></div>'+
+      '<div class="em-list-info">'+
+        '<div class="em-list-title">'+t.nom+'</div>'+
+        '<div class="em-list-meta">'+(t.desc||'&mdash;')+' &bull; '+nbAff+' affectation'+(nbAff>1?'s':'')+'</div>'+
+      '</div>'+
+      '<button class="anim-row-edit" onclick="event.stopPropagation();openEmissionTypeForm('+t.id+')">&#9998;</button>'+
+    '</div>';
+  }).join('');
+}
+
+/* ── Catalogue : formulaire ── */
+var editingTypeId=null;
+function openEmissionTypeForm(typeId){
+  editingTypeId=typeId;
+  if(typeId===null){
+    document.getElementById('em-type-form-title').textContent='Nouvelle emission';
+    document.getElementById('em-type-nom').value='';
+    document.getElementById('em-type-color').value='#5B8DEF';
+    document.getElementById('em-type-desc').value='';
+    document.getElementById('em-type-del-btn').style.display='none';
+  } else {
+    var t=catalogue.find(function(x){ return x.id===typeId; });
+    if(!t) return;
+    document.getElementById('em-type-form-title').textContent='Modifier l emission';
+    document.getElementById('em-type-nom').value=t.nom;
+    document.getElementById('em-type-color').value=t.color;
+    document.getElementById('em-type-desc').value=t.desc||'';
+    document.getElementById('em-type-del-btn').style.display='inline-flex';
+  }
+  closeModal('modal-emissions-panel');
+  openModal('modal-emission-type');
+}
+
+function saveEmissionType(){
+  var nom=document.getElementById('em-type-nom').value.trim();
+  var color=document.getElementById('em-type-color').value;
+  var desc=document.getElementById('em-type-desc').value.trim();
+  if(!nom){ alert('Nom requis.'); return; }
+  if(editingTypeId!==null){
+    var t=catalogue.find(function(x){ return x.id===editingTypeId; });
+    if(t){ t.nom=nom; t.color=color; t.desc=desc;
+      /* Mettre à jour la couleur et le nom dans les affectations existantes */
+      affectations.forEach(function(a){
+        if(a.typeId===editingTypeId){ a.nom=nom; a.color=color; }
+      });
+    }
+  } else {
+    catalogue.push({id:Date.now(),nom:nom,color:color,desc:desc});
+  }
+  saveCatalogue(); closeModal('modal-emission-type'); openModal('modal-emissions-panel');
+  renderCalendar();
+}
+
+function deleteEmissionType(){
+  if(!catalogue.find(function(x){ return x.id===editingTypeId; })) return;
+  var nbAff=affectations.filter(function(a){ return a.typeId===editingTypeId; }).length;
+  if(nbAff>0 && !confirm('Cette emission a '+nbAff+' affectation(s) dans la grille. Tout supprimer ?')) return;
+  catalogue=catalogue.filter(function(t){ return t.id!==editingTypeId; });
+  affectations=affectations.filter(function(a){ return a.typeId!==editingTypeId; });
+  saveCatalogue(); closeModal('modal-emission-type'); openModal('modal-emissions-panel');
+  renderCalendar();
+}
+
+/* ── Affectations : ouvrir modal ── */
+var editingAffId=null;
+
+function populateEmissionTypeSelect(){
+  var sel=document.getElementById('em-type-id');
+  sel.innerHTML='<option value="">— Choisir une emission —</option>'+
+    catalogue.map(function(t){
+      return '<option value="'+t.id+'">'+t.nom+'</option>';
+    }).join('');
+}
+
+function onEmissionTypeChange(){
+  var sel=document.getElementById('em-type-id');
+  var typeId=parseInt(sel.value);
+  if(!typeId) return;
+  var t=catalogue.find(function(x){ return x.id===typeId; });
+  if(t) document.getElementById('em-color').value=t.color;
+}
+
+function openEmissionModal(jour, hdebut){
+  if(!catalogue.length){
+    if(confirm('Aucune emission dans le catalogue. En creer une maintenant ?')){
+      openEmissionsPanel();
+    }
+    return;
+  }
+  editingAffId=null;
+  document.getElementById('modal-em-title').textContent='Affecter une emission';
+  populateEmissionTypeSelect();
+  document.getElementById('em-type-id').value='';
+  document.getElementById('em-jour').value=jour!==undefined?jour:0;
+  document.getElementById('em-hdebut').value=hdebut!==undefined?hdebut:8;
+  document.getElementById('em-hfin').value=hdebut!==undefined?(parseFloat(hdebut)+1):9;
+  document.getElementById('em-color').value='#5B8DEF';
+  document.getElementById('modal-del-btn').style.display='none';
+  selectedAnimIds=[];
+  buildTeamSelect();
+  buildAnimSelector();
+  openModal('modal-emission');
+}
+
+function openEmissionEdit(affId){
+  var aff=affectations.find(function(a){ return a.id===affId; });
+  if(!aff) return;
+  editingAffId=affId;
+  document.getElementById('modal-em-title').textContent='Modifier l affectation';
+  populateEmissionTypeSelect();
+  document.getElementById('em-type-id').value=aff.typeId;
+  document.getElementById('em-jour').value=aff.jour;
+  document.getElementById('em-hdebut').value=aff.hdebut;
+  document.getElementById('em-hfin').value=aff.hfin;
+  document.getElementById('em-color').value=aff.color;
+  document.getElementById('modal-del-btn').style.display='inline-flex';
+  selectedAnimIds=aff.animIds?aff.animIds.slice():[];
+  buildTeamSelect();
+  buildAnimSelector();
+  openModal('modal-emission');
+}
+
+function saveAffectation(){
+  var typeId=parseInt(document.getElementById('em-type-id').value);
+  var jour=parseInt(document.getElementById('em-jour').value);
+  var hdebut=parseFloat(document.getElementById('em-hdebut').value);
+  var hfin=parseFloat(document.getElementById('em-hfin').value);
+  var color=document.getElementById('em-color').value;
+  if(!typeId){ alert('Choisissez une emission.'); return; }
+  if(hfin<=hdebut){ alert('Heure de fin invalide.'); return; }
+  var t=catalogue.find(function(x){ return x.id===typeId; });
+  var anims=animateurs.filter(function(a){ return selectedAnimIds.indexOf(a.id)>=0; });
+  var key=getMondayKey(currentWeekOffset);
+  if(editingAffId!==null){
+    var aff=affectations.find(function(a){ return a.id===editingAffId; });
+    if(aff){ aff.typeId=typeId; aff.nom=t?t.nom:''; aff.jour=jour; aff.hdebut=hdebut; aff.hfin=hfin; aff.color=color; aff.animIds=selectedAnimIds.slice(); aff.anims=anims; }
+  } else {
+    affectations.push({id:Date.now(),typeId:typeId,nom:t?t.nom:'',jour:jour,hdebut:hdebut,hfin:hfin,color:color,animIds:selectedAnimIds.slice(),anims:anims,weekKey:key});
+  }
+  saveCatalogue(); closeModal('modal-emission'); renderCalendar();
+}
+
+function deleteAffectation(){
+  if(!confirm('Retirer cette emission de la grille ?')) return;
+  affectations=affectations.filter(function(a){ return a.id!==editingAffId; });
+  saveCatalogue(); closeModal('modal-emission'); renderCalendar();
+}
+
+/* ── Duplication : utilise affectations ── */
+function dupDay(){
+  if(!dupDestDays.length){ alert('Selectionnez au moins un jour.'); return; }
+  var replace=document.getElementById('dup-replace').checked;
+  var key=getMondayKey(currentWeekOffset);
+  var src=affectations.filter(function(a){
+    return a.jour===dupSrcDay && (!a.weekKey||a.weekKey===key);
+  });
+  if(!src.length){ alert('Aucune emission ce jour-la.'); return; }
+  dupDestDays.forEach(function(dest){
+    if(replace) affectations=affectations.filter(function(a){
+      return !(a.jour===dest && (!a.weekKey||a.weekKey===key));
+    });
+    src.forEach(function(a){
+      var c=JSON.parse(JSON.stringify(a));
+      c.id=Date.now()+Math.random(); c.jour=dest; c.weekKey=key;
+      affectations.push(c);
+    });
+  });
+  saveCatalogue(); closeModal('modal-dup'); renderCalendar();
+}
+
+loadCatalogue();
 </script>
 </body>
 </html>
