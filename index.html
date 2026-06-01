@@ -151,15 +151,18 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 
   <!-- Grille Antenne -->
   <div class="ga-toolbar">
-    <div>
-      <div class="ga-title">Grille Antenne</div>
-      <div class="ga-sub">Semaine du <span id="ga-week-label">-</span></div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div>
+        <div class="ga-title">Grille Antenne</div>
+        <div class="ga-sub">Semaine du <span id="ga-week-label">-</span></div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;margin-left:4px;">
+        <button class="ga-btn" onclick="changeWeek(-1)">&#9664;</button>
+        <button class="ga-btn" onclick="changeWeek(0)">Auj.</button>
+        <button class="ga-btn" onclick="changeWeek(1)">&#9654;</button>
+      </div>
     </div>
     <div class="ga-toolbar-right">
-      <button class="ga-btn" onclick="changeWeek(-1)">&#9664; Prec.</button>
-      <button class="ga-btn" onclick="changeWeek(0)">Auj.</button>
-      <button class="ga-btn" onclick="changeWeek(1)">Suiv. &#9654;</button>
-      <div class="ga-sep"></div>
       <button class="ga-btn" onclick="openModal('modal-equipes')">&#128101; Gestion des equipes</button>
       <button class="ga-btn ga-btn-primary" onclick="openEmissionsPanel()">&#43; Emission</button>
       <div class="ga-sep"></div>
