@@ -132,7 +132,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   <nav class="hdr-nav">
     <button class="nav-btn active" onclick="showSection('accueil',this)"><span class="nav-btn-ico">&#127968;</span><span class="nav-btn-txt">Accueil</span></button>
     <button class="nav-btn" onclick="showSection('grille-antenne',this)"><span class="nav-btn-ico">&#128250;</span><span class="nav-btn-txt">Grille<br>Antenne</span></button>
-    <button class="nav-btn" onclick="showSection('grille-journaliste',this)"><span class="nav-btn-ico">&#128221;</span><span class="nav-btn-txt">Grille<br>Journaliste</span></button>
+    <button class="nav-btn" onclick="showSection('jeu-antenne',this)"><span class="nav-btn-ico">&#127925;</span><span class="nav-btn-txt">Jeu<br>Antenne</span></button>
     <button class="nav-btn" onclick="showSection('commercial',this)"><span class="nav-btn-ico">&#128200;</span><span class="nav-btn-txt">Commercial<br>Editor</span></button>
     <button class="nav-btn nav-btn-incident" onclick="showSection('incidents',this)"><span class="nav-btn-ico">&#9888;&#65039;</span><span class="nav-btn-txt">Gestion des<br>Incidents</span></button>
   </nav>
@@ -163,9 +163,32 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   <div class="ga-calendar-wrap">
     <div class="ga-calendar" id="ga-calendar"></div>
   </div>
+
+  <!-- ══ GRILLE JOURNALISTE ══════════════════════════════════════════════ -->
+  <div style="margin-top:48px;">
+    <div class="ga-toolbar">
+      <div>
+        <div class="ga-title">Grille Journaliste</div>
+        <div class="ga-sub">Semaine du <span id="gj-week-label">-</span></div>
+      </div>
+      <div class="ga-toolbar-right">
+        <button class="ga-btn" onclick="gjChangeWeek(-1)">&#9664; Prec.</button>
+        <button class="ga-btn" onclick="gjChangeWeek(0)">Auj.</button>
+        <button class="ga-btn" onclick="gjChangeWeek(1)">Suiv. &#9654;</button>
+        <div class="ga-sep"></div>
+        <button class="ga-btn ga-btn-primary" onclick="openModal('modal-journalistes-list')">&#43; Journaliste</button>
+        <button class="ga-btn ga-btn-primary" onclick="openGjRdvModal()">&#43; Rendez-vous</button>
+        <div class="ga-sep"></div>
+        <button class="ga-btn" onclick="openModal('modal-gj-grilles-list')">&#9776; Grilles type</button>
+      </div>
+    </div>
+    <div class="ga-calendar-wrap">
+      <div class="ga-calendar" id="gj-calendar"></div>
+    </div>
+  </div>
 </section>
 
-<section id="grille-journaliste" class="section"><div class="placeholder">[ Grille Journaliste ]</div></section>
+<section id="jeu-antenne" class="section"><div class="placeholder">[ Jeu Antenne ]</div></section>
 <section id="commercial" class="section"><div class="placeholder">[ Commercial Editor ]</div></section>
 <section id="incidents" class="section"><div class="placeholder">[ Gestion des Incidents ]</div></section>
 
@@ -822,6 +845,572 @@ function hexAlpha(hex,alpha){
 }
 
 renderCalendar();
+gjRenderCalendar();
+
+/* ═══════════════════════════════════════════════════════════════════
+   GRILLE JOURNALISTE
+═══════════════════════════════════════════════════════════════════ */
+var journalistes=[], gjRdvs=[], gjGrillesType=[];
+var gjWeekOffset=0;
+var editingJournalisteId=null, editingGjRdvId=null, editingGjGrilleId=null;
+var selectedJournalisteIds=[], gjDupSrcDay=0, gjDupDestDays=[], gjApplyingGrilleId=null;
+var gjEditingGrilleRdvs=[];
+
+/* Persistance */
+function saveGjData(){
+  localStorage.setItem('at_journalistes', JSON.stringify(journalistes));
+  localStorage.setItem('at_gj_rdvs',      JSON.stringify(gjRdvs));
+  localStorage.setItem('at_gj_grilles',   JSON.stringify(gjGrillesType));
+}
+function loadGjData(){
+  try{ var a=localStorage.getItem('at_journalistes'); if(a) journalistes=JSON.parse(a); }catch(e){}
+  try{ var b=localStorage.getItem('at_gj_rdvs');      if(b) gjRdvs=JSON.parse(b);       }catch(e){}
+  try{ var c=localStorage.getItem('at_gj_grilles');   if(c) gjGrillesType=JSON.parse(c); }catch(e){}
+}
+loadGjData();
+
+/* openModal étendu pour GJ */
+var _origOpenModal=openModal;
+openModal=function(id){
+  _origOpenModal(id);
+  if(id==='modal-journalistes-list') gjRefreshJournalistesList();
+  if(id==='modal-gj-grilles-list')   gjRefreshGrillesList();
+};
+
+/* Heures GJ */
+document.getElementById('gj-rdv-hdebut').innerHTML=buildHourOptions();
+document.getElementById('gj-rdv-hfin').innerHTML=buildHourOptions();
+document.getElementById('gj-rdv-hfin').value='1';
+
+/* ── Semaine GJ ── */
+function gjChangeWeek(dir){
+  if(dir===0) gjWeekOffset=0; else gjWeekOffset+=dir;
+  gjRenderCalendar();
+}
+function gjGetMondayKey(offset){
+  return getWeekDates(offset)[0].toISOString().slice(0,10);
+}
+
+/* ── Journalistes ── */
+function gjRefreshJournalistesList(){
+  var el=document.getElementById('journaliste-full-list');
+  if(!el) return;
+  if(!journalistes.length){ el.innerHTML='<div class="list-empty">Aucun journaliste.</div>'; return; }
+  el.innerHTML=journalistes.map(function(j){
+    return '<div class="anim-row">'+
+      '<span class="anim-row-dot" style="background:'+j.color+'"></span>'+
+      '<span class="anim-row-name">'+j.prenom+' '+j.nom+'</span>'+
+      '<button class="anim-row-edit" onclick="openJournalisteForm('+j.id+')">&#9998; Modifier</button>'+
+    '</div>';
+  }).join('');
+}
+
+function openJournalisteForm(jId){
+  editingJournalisteId=jId;
+  if(jId===null){
+    document.getElementById('journaliste-form-title').textContent='Nouveau journaliste';
+    document.getElementById('journaliste-prenom').value='';
+    document.getElementById('journaliste-nom').value='';
+    document.getElementById('journaliste-color').value='#E87C3E';
+    document.getElementById('journaliste-del-btn').style.display='none';
+  } else {
+    var j=journalistes.find(function(x){ return x.id===jId; });
+    if(!j) return;
+    document.getElementById('journaliste-form-title').textContent='Modifier le journaliste';
+    document.getElementById('journaliste-prenom').value=j.prenom;
+    document.getElementById('journaliste-nom').value=j.nom;
+    document.getElementById('journaliste-color').value=j.color;
+    document.getElementById('journaliste-del-btn').style.display='inline-flex';
+  }
+  closeModal('modal-journalistes-list');
+  openModal('modal-journaliste');
+}
+
+function saveJournaliste(){
+  var p=document.getElementById('journaliste-prenom').value.trim();
+  var n=document.getElementById('journaliste-nom').value.trim();
+  var c=document.getElementById('journaliste-color').value;
+  if(!p&&!n){ alert('Veuillez entrer un nom.'); return; }
+  if(editingJournalisteId!==null){
+    var j=journalistes.find(function(x){ return x.id===editingJournalisteId; });
+    if(j){ j.prenom=p; j.nom=n; j.color=c; }
+    gjRdvs.forEach(function(r){
+      if(r.journalistes) r.journalistes.forEach(function(x){
+        if(x.id===editingJournalisteId){ x.prenom=p; x.nom=n; x.color=c; }
+      });
+    });
+  } else {
+    journalistes.push({id:Date.now(),prenom:p,nom:n,color:c});
+  }
+  saveGjData(); closeModal('modal-journaliste'); openModal('modal-journalistes-list'); gjRenderCalendar();
+}
+
+function deleteJournaliste(){
+  if(!confirm('Supprimer ce journaliste ?')) return;
+  journalistes=journalistes.filter(function(j){ return j.id!==editingJournalisteId; });
+  gjRdvs.forEach(function(r){
+    r.journalisteIds=(r.journalisteIds||[]).filter(function(id){ return id!==editingJournalisteId; });
+    r.journalistes=(r.journalistes||[]).filter(function(j){ return j.id!==editingJournalisteId; });
+  });
+  saveGjData(); closeModal('modal-journaliste'); openModal('modal-journalistes-list'); gjRenderCalendar();
+}
+
+/* ── Selector multi-journalistes ── */
+function gjBuildSelector(){
+  var el=document.getElementById('gj-rdv-selector');
+  if(!journalistes.length){ el.innerHTML='<span class="anim-empty">Aucun journaliste cree</span>'; return; }
+  el.innerHTML=journalistes.map(function(j){
+    var sel=selectedJournalisteIds.indexOf(j.id)>=0;
+    var sty=sel?'background:'+hexAlpha(j.color,.3)+';border-color:'+hexAlpha(j.color,.75)+';color:#fff':'';
+    return '<button type="button" class="anim-toggle'+(sel?' selected':'')+'" style="'+sty+'" onclick="gjToggleJournaliste('+j.id+')">'+
+      '<span class="anim-toggle-dot" style="background:'+j.color+'"></span>'+j.prenom+' '+j.nom+'</button>';
+  }).join('');
+}
+function gjToggleJournaliste(id){
+  var idx=selectedJournalisteIds.indexOf(id);
+  if(idx>=0) selectedJournalisteIds.splice(idx,1); else selectedJournalisteIds.push(id);
+  gjBuildSelector();
+}
+
+/* ── RDV ── */
+function openGjRdvModal(jour,hdebut){
+  editingGjRdvId=null;
+  document.getElementById('modal-gj-rdv-title').textContent='Creer un rendez-vous';
+  document.getElementById('gj-rdv-titre').value='';
+  document.getElementById('gj-rdv-jour').value=jour!==undefined?jour:0;
+  document.getElementById('gj-rdv-hdebut').value=hdebut!==undefined?hdebut:8;
+  document.getElementById('gj-rdv-hfin').value=hdebut!==undefined?(parseFloat(hdebut)+1):9;
+  document.getElementById('gj-rdv-color').value='#E87C3E';
+  document.getElementById('gj-rdv-del-btn').style.display='none';
+  selectedJournalisteIds=[];
+  gjBuildSelector();
+  openModal('modal-gj-rdv');
+}
+
+function openGjRdvEdit(rdvId){
+  var r=gjRdvs.find(function(x){ return x.id===rdvId; });
+  if(!r) return;
+  editingGjRdvId=rdvId;
+  document.getElementById('modal-gj-rdv-title').textContent='Modifier le rendez-vous';
+  document.getElementById('gj-rdv-titre').value=r.titre;
+  document.getElementById('gj-rdv-jour').value=r.jour;
+  document.getElementById('gj-rdv-hdebut').value=r.hdebut;
+  document.getElementById('gj-rdv-hfin').value=r.hfin;
+  document.getElementById('gj-rdv-color').value=r.color;
+  document.getElementById('gj-rdv-del-btn').style.display='inline-flex';
+  selectedJournalisteIds=r.journalisteIds?r.journalisteIds.slice():[];
+  gjBuildSelector();
+  openModal('modal-gj-rdv');
+}
+
+function saveGjRdv(){
+  var titre=document.getElementById('gj-rdv-titre').value.trim();
+  var jour=parseInt(document.getElementById('gj-rdv-jour').value);
+  var hdebut=parseFloat(document.getElementById('gj-rdv-hdebut').value);
+  var hfin=parseFloat(document.getElementById('gj-rdv-hfin').value);
+  var color=document.getElementById('gj-rdv-color').value;
+  if(!titre){ alert('Titre requis.'); return; }
+  if(hfin<=hdebut){ alert('Heure de fin invalide.'); return; }
+  var jObjs=journalistes.filter(function(j){ return selectedJournalisteIds.indexOf(j.id)>=0; });
+  var key=gjGetMondayKey(gjWeekOffset);
+  if(editingGjRdvId!==null){
+    var r=gjRdvs.find(function(x){ return x.id===editingGjRdvId; });
+    if(r){ r.titre=titre; r.jour=jour; r.hdebut=hdebut; r.hfin=hfin; r.color=color; r.journalisteIds=selectedJournalisteIds.slice(); r.journalistes=jObjs; }
+  } else {
+    gjRdvs.push({id:Date.now(),titre:titre,jour:jour,hdebut:hdebut,hfin:hfin,color:color,journalisteIds:selectedJournalisteIds.slice(),journalistes:jObjs,weekKey:key});
+  }
+  saveGjData(); closeModal('modal-gj-rdv'); gjRenderCalendar();
+}
+
+function deleteGjRdv(){
+  if(!confirm('Supprimer ce rendez-vous ?')) return;
+  gjRdvs=gjRdvs.filter(function(r){ return r.id!==editingGjRdvId; });
+  saveGjData(); closeModal('modal-gj-rdv'); gjRenderCalendar();
+}
+
+/* ── Duplication ── */
+function gjOpenDupModal(dayIdx){
+  gjDupSrcDay=dayIdx; gjDupDestDays=[];
+  document.getElementById('gj-dup-src-label').textContent=JOURS_FULL[dayIdx];
+  document.getElementById('gj-dup-replace').checked=false;
+  var el=document.getElementById('gj-dup-dest-days');
+  el.innerHTML=JOURS_FULL.map(function(j,i){
+    if(i===dayIdx) return '';
+    return '<button type="button" class="anim-toggle" onclick="gjToggleDupDay('+i+',this)">'+j+'</button>';
+  }).join('');
+  openModal('modal-gj-dup');
+}
+function gjToggleDupDay(idx,btn){
+  var pos=gjDupDestDays.indexOf(idx);
+  if(pos>=0){ gjDupDestDays.splice(pos,1); btn.classList.remove('selected'); btn.style.cssText=''; }
+  else { gjDupDestDays.push(idx); btn.classList.add('selected'); btn.style.cssText='background:rgba(91,141,239,.3);border-color:rgba(91,141,239,.75);color:#fff;'; }
+}
+function gjDupDay(){
+  if(!gjDupDestDays.length){ alert('Selectionnez au moins un jour.'); return; }
+  var replace=document.getElementById('gj-dup-replace').checked;
+  var key=gjGetMondayKey(gjWeekOffset);
+  var src=gjRdvs.filter(function(r){ return r.jour===gjDupSrcDay && r.weekKey===key; });
+  if(!src.length){ alert('Aucun rendez-vous ce jour-la.'); return; }
+  gjDupDestDays.forEach(function(dest){
+    if(replace) gjRdvs=gjRdvs.filter(function(r){ return !(r.jour===dest && r.weekKey===key); });
+    src.forEach(function(r){
+      var c=JSON.parse(JSON.stringify(r));
+      c.id=Date.now()+Math.random(); c.jour=dest; c.weekKey=key;
+      gjRdvs.push(c);
+    });
+  });
+  saveGjData(); closeModal('modal-gj-dup'); gjRenderCalendar();
+}
+
+/* ── Grilles type GJ ── */
+function gjRefreshGrillesList(){
+  var el=document.getElementById('gj-grilles-list');
+  if(!el) return;
+  if(!gjGrillesType.length){ el.innerHTML='<div class="list-empty">Aucune grille type.</div>'; return; }
+  el.innerHTML=gjGrillesType.map(function(g){
+    var nb=(g.rdvs||[]).length;
+    return '<div class="grille-row">'+
+      '<div><div class="grille-row-name">'+g.nom+'</div><div class="grille-row-meta">'+nb+' rdv'+(nb>1?'s':'')+'</div></div>'+
+      '<div class="grille-row-actions">'+
+        '<button class="anim-row-edit" onclick="gjOpenApplyGrille('+g.id+')">&#9654; Appliquer</button>'+
+        '<button class="anim-row-edit" onclick="openGjGrilleForm('+g.id+')">&#9998; Modifier</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function openGjGrilleForm(gtId){
+  editingGjGrilleId=gtId; gjEditingGrilleRdvs=[];
+  if(gtId===null){
+    document.getElementById('gj-gt-form-title').textContent='Nouvelle grille type';
+    document.getElementById('gj-gt-nom').value='';
+    document.getElementById('gj-gt-del-btn').style.display='none';
+  } else {
+    var g=gjGrillesType.find(function(x){ return x.id===gtId; });
+    if(!g) return;
+    document.getElementById('gj-gt-form-title').textContent='Modifier la grille';
+    document.getElementById('gj-gt-nom').value=g.nom;
+    document.getElementById('gj-gt-del-btn').style.display='inline-flex';
+    gjEditingGrilleRdvs=JSON.parse(JSON.stringify(g.rdvs||[]));
+  }
+  gjRefreshGtList();
+  closeModal('modal-gj-grilles-list');
+  openModal('modal-gj-grille-edit');
+}
+
+function gjImportWeekToGrille(){
+  var key=gjGetMondayKey(gjWeekOffset);
+  gjEditingGrilleRdvs=JSON.parse(JSON.stringify(gjRdvs.filter(function(r){ return r.weekKey===key; })));
+  gjRefreshGtList();
+}
+
+function gjRefreshGtList(){
+  var el=document.getElementById('gj-gt-em-list');
+  document.getElementById('gj-gt-em-count').textContent=gjEditingGrilleRdvs.length;
+  if(!gjEditingGrilleRdvs.length){ el.innerHTML='<span class="anim-empty">Aucun rendez-vous. Importez la semaine.</span>'; return; }
+  el.innerHTML=gjEditingGrilleRdvs.map(function(r){
+    var hd=String(Math.floor(r.hdebut)).padStart(2,'0')+'h'+(r.hdebut%1?'30':'00');
+    var hf=String(Math.floor(r.hfin)).padStart(2,'0')+'h'+(r.hfin%1?'30':'00');
+    return '<div class="gt-em-item" style="border-left:3px solid '+r.color+'">'+
+      '<span class="gt-em-title">'+JOURS_FULL[r.jour]+' — '+r.titre+'</span>'+
+      '<span class="gt-em-time">'+hd+' - '+hf+'</span></div>';
+  }).join('');
+}
+
+function saveGjGrilleType(){
+  var nom=document.getElementById('gj-gt-nom').value.trim();
+  if(!nom){ alert('Nom requis.'); return; }
+  if(editingGjGrilleId!==null){
+    var g=gjGrillesType.find(function(x){ return x.id===editingGjGrilleId; });
+    if(g){ g.nom=nom; g.rdvs=JSON.parse(JSON.stringify(gjEditingGrilleRdvs)); }
+  } else {
+    gjGrillesType.push({id:Date.now(),nom:nom,rdvs:JSON.parse(JSON.stringify(gjEditingGrilleRdvs))});
+  }
+  saveGjData(); closeModal('modal-gj-grille-edit'); openModal('modal-gj-grilles-list');
+}
+
+function deleteGjGrilleType(){
+  if(!confirm('Supprimer cette grille type ?')) return;
+  gjGrillesType=gjGrillesType.filter(function(g){ return g.id!==editingGjGrilleId; });
+  saveGjData(); closeModal('modal-gj-grille-edit'); openModal('modal-gj-grilles-list');
+}
+
+function gjUpdateWeekPreview(){
+  var wk=parseInt(document.getElementById('gj-apply-gt-week').value);
+  var yr=parseInt(document.getElementById('gj-apply-gt-year').value);
+  var preview=document.getElementById('gj-apply-week-preview');
+  var datesEl=document.getElementById('gj-apply-week-dates');
+  if(!wk||!yr||wk<1||wk>53||yr<2024){ preview.style.display='none'; return; }
+  var offset=getWeekOffset(wk,yr);
+  var days=getWeekDates(offset);
+  preview.style.display='block';
+  datesEl.innerHTML=JOURS_FULL.map(function(j,i){
+    var d=days[i];
+    return '<span style="display:inline-block;width:95px;color:rgba(255,255,255,.5);">'+j+'</span>'+
+      '<strong>'+d.getDate()+' '+MOIS_LONG[d.getMonth()]+' '+d.getFullYear()+'</strong><br>';
+  }).join('');
+}
+
+function gjOpenApplyGrille(gtId){
+  gjApplyingGrilleId=gtId;
+  var g=gjGrillesType.find(function(x){ return x.id===gtId; });
+  if(!g) return;
+  document.getElementById('gj-apply-gt-label').textContent=g.nom;
+  var days=getWeekDates(gjWeekOffset);
+  var jan1=new Date(days[0].getFullYear(),0,1);
+  var wk=Math.ceil(((days[0]-jan1)/86400000+jan1.getDay()+1)/7);
+  document.getElementById('gj-apply-gt-week').value=wk;
+  document.getElementById('gj-apply-gt-year').value=days[0].getFullYear();
+  document.getElementById('gj-apply-gt-replace').checked=false;
+  closeModal('modal-gj-grilles-list');
+  openModal('modal-gj-grille-apply');
+  setTimeout(gjUpdateWeekPreview,50);
+}
+
+function gjApplyGrilleType(){
+  var wk=parseInt(document.getElementById('gj-apply-gt-week').value);
+  var yr=parseInt(document.getElementById('gj-apply-gt-year').value);
+  var replace=document.getElementById('gj-apply-gt-replace').checked;
+  if(!wk||!yr){ alert('Semaine et annee requises.'); return; }
+  var g=gjGrillesType.find(function(x){ return x.id===gjApplyingGrilleId; });
+  if(!g) return;
+  var targetOffset=getWeekOffset(wk,yr);
+  var targetKey=getWeekDates(targetOffset)[0].toISOString().slice(0,10);
+  if(replace) gjRdvs=gjRdvs.filter(function(r){ return r.weekKey!==targetKey; });
+  (g.rdvs||[]).forEach(function(r){
+    var c=JSON.parse(JSON.stringify(r));
+    c.id=Date.now()+Math.random(); c.weekKey=targetKey;
+    gjRdvs.push(c);
+  });
+  saveGjData(); gjWeekOffset=targetOffset; closeModal('modal-gj-grille-apply'); gjRenderCalendar();
+}
+
+/* ── Calendrier GJ ── */
+function gjRenderCalendar(){
+  var days=getWeekDates(gjWeekOffset);
+  var today=new Date(); today.setHours(0,0,0,0);
+  document.getElementById('gj-week-label').textContent=
+    days[0].getDate()+' '+MOIS[days[0].getMonth()]+' - '+
+    days[6].getDate()+' '+MOIS[days[6].getMonth()]+' '+days[6].getFullYear();
+
+  var cal=document.getElementById('gj-calendar');
+  var html='<div class="gc-corner"></div>';
+
+  days.forEach(function(d,i){
+    var isToday=d.getTime()===today.getTime();
+    html+='<div class="gc-day-head'+(isToday?' today':'')+'" onclick="gjOpenDupModal('+i+')">'+
+      '<span class="gc-day-num">'+d.getDate()+'</span>'+
+      '<span class="gc-day-name">'+JOURS[i]+'</span>'+
+    '</div>';
+  });
+
+  for(var h=HOURS_START;h<HOURS_END;h++){
+    html+='<div class="gc-hour-label">'+String(h).padStart(2,'0')+'h</div>';
+    days.forEach(function(d,di){
+      var isToday=d.getTime()===today.getTime();
+      html+='<div class="gc-cell'+(isToday?' today-col':'')+
+        '" data-day="'+di+'" data-hour="'+h+'" onclick="gjHandleCellClick(event,'+di+','+h+')">'+
+        '<span class="gc-cell-hint">+</span></div>';
+    });
+  }
+  cal.innerHTML=html;
+
+  var key=gjGetMondayKey(gjWeekOffset);
+  gjRdvs.filter(function(r){ return r.weekKey===key; }).forEach(function(rdv){
+    var topOffset=(rdv.hdebut%1)*CELL_H;
+    var heightPx=(rdv.hfin-rdv.hdebut)*CELL_H-3;
+    var cells=cal.querySelectorAll('.gc-cell[data-day="'+rdv.jour+'"][data-hour="'+Math.floor(rdv.hdebut)+'"]');
+    if(!cells.length) return;
+    var jHtml='';
+    if(rdv.journalistes&&rdv.journalistes.length){
+      jHtml='<div class="gc-em-anims">'+rdv.journalistes.map(function(j){
+        return '<span class="gc-em-anim-chip" style="border-left:2px solid '+j.color+'">'+j.prenom+' '+j.nom+'</span>';
+      }).join('')+'</div>';
+    }
+    var div=document.createElement('div');
+    div.className='gc-emission';
+    div.style.cssText='background:'+hexAlpha(rdv.color,.28)+';border-left:3px solid '+rdv.color+';top:'+topOffset+'px;height:'+heightPx+'px;';
+    div.innerHTML='<div class="gc-em-title">'+rdv.titre+'</div>'+jHtml;
+    div.onclick=function(ev){ ev.stopPropagation(); openGjRdvEdit(rdv.id); };
+    cells[0].appendChild(div);
+  });
+
+  /* Timeline GJ */
+  gjUpdateTimeline(cal, days);
+}
+
+function gjHandleCellClick(e,dayIdx,hour){
+  if(e.target.closest('.gc-emission')) return;
+  openGjRdvModal(dayIdx,hour);
+}
+
+function gjUpdateTimeline(cal,days){
+  var old=cal.querySelector('.gc-timeline'); if(old) old.remove();
+  var todayCheck=new Date(); todayCheck.setHours(0,0,0,0);
+  var todayIdx=-1;
+  days.forEach(function(d,i){ if(d.getTime()===todayCheck.getTime()) todayIdx=i; });
+  if(todayIdx<0) return;
+  var now=new Date();
+  var h=now.getHours()+(now.getMinutes()/60)+(now.getSeconds()/3600);
+  if(h<HOURS_START||h>=HOURS_END) return;
+  var firstCell=cal.querySelector('.gc-cell[data-day="'+todayIdx+'"][data-hour="'+HOURS_START+'"]');
+  if(!firstCell) return;
+  var calRect=cal.getBoundingClientRect();
+  var cellRect=firstCell.getBoundingClientRect();
+  var tl=document.createElement('div');
+  tl.className='gc-timeline';
+  tl.style.cssText='top:'+((cellRect.top-calRect.top)+(h-HOURS_START)*CELL_H)+'px;left:'+(cellRect.left-calRect.left)+'px;right:0;';
+  cal.appendChild(tl);
+}
+
+/* Init GJ au chargement de la section */
+var _origShowSection=showSection;
+showSection=function(id,btn){
+  _origShowSection(id,btn);
+  if(id==='grille-antenne') gjRenderCalendar();
+};
+
 </script>
+
+<!-- MODAL : Liste journalistes -->
+<div class="modal-overlay" id="modal-journalistes-list">
+  <div class="modal" style="max-width:460px;">
+    <div class="modal-header"><span>Journalistes</span><button class="modal-close" onclick="closeModal('modal-journalistes-list')">&#10005;</button></div>
+    <div class="modal-body" style="padding:16px 24px;"><div id="journaliste-full-list" style="display:flex;flex-direction:column;gap:8px;min-height:40px;"></div></div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn ga-btn-primary" onclick="openJournalisteForm(null)">&#43; Nouveau journaliste</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL : Ajout/edition journaliste -->
+<div class="modal-overlay" id="modal-journaliste">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header"><span id="journaliste-form-title">Nouveau journaliste</span><button class="modal-close" onclick="closeModal('modal-journaliste')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-row-2">
+        <div class="form-group"><label>Prenom</label><input type="text" id="journaliste-prenom" placeholder="Marie"></div>
+        <div class="form-group"><label>Nom</label><input type="text" id="journaliste-nom" placeholder="Curie"></div>
+      </div>
+      <div class="form-group"><label>Couleur</label><input type="color" id="journaliste-color" value="#E87C3E"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="ga-btn ga-btn-danger" id="journaliste-del-btn" style="display:none" onclick="deleteJournaliste()">&#128465; Supprimer</button>
+      <div class="modal-footer-right">
+        <button class="ga-btn" onclick="closeModal('modal-journaliste');openModal('modal-journalistes-list')">Annuler</button>
+        <button class="ga-btn ga-btn-primary" onclick="saveJournaliste()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : Rendez-vous journaliste -->
+<div class="modal-overlay" id="modal-gj-rdv">
+  <div class="modal">
+    <div class="modal-header"><span id="modal-gj-rdv-title">Creer un rendez-vous</span><button class="modal-close" onclick="closeModal('modal-gj-rdv')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Titre</label><input type="text" id="gj-rdv-titre" placeholder="Ex : Edition du matin"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Jour</label>
+          <select id="gj-rdv-jour">
+            <option value="0">Lundi</option><option value="1">Mardi</option><option value="2">Mercredi</option>
+            <option value="3">Jeudi</option><option value="4">Vendredi</option><option value="5">Samedi</option><option value="6">Dimanche</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Debut</label><select id="gj-rdv-hdebut"></select></div>
+        <div class="form-group"><label>Fin</label><select id="gj-rdv-hfin"></select></div>
+      </div>
+      <div class="form-group"><label>Couleur</label><input type="color" id="gj-rdv-color" value="#E87C3E"></div>
+      <div class="form-group"><label>Journalistes</label><div class="anim-selector" id="gj-rdv-selector"></div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="ga-btn ga-btn-danger" id="gj-rdv-del-btn" style="display:none" onclick="deleteGjRdv()">&#128465; Supprimer</button>
+      <div class="modal-footer-right">
+        <button class="ga-btn" onclick="closeModal('modal-gj-rdv')">Annuler</button>
+        <button class="ga-btn ga-btn-primary" onclick="saveGjRdv()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : Dupliquer journee journaliste -->
+<div class="modal-overlay" id="modal-gj-dup">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header"><span>Dupliquer la journee</span><button class="modal-close" onclick="closeModal('modal-gj-dup')">&#10005;</button></div>
+    <div class="modal-body">
+      <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Copier les rendez-vous de <strong id="gj-dup-src-label" style="color:#fff;"></strong> vers :</p>
+      <div class="form-group">
+        <label>Jours de destination</label>
+        <div id="gj-dup-dest-days" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;"></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;margin-top:4px;">
+        <input type="checkbox" id="gj-dup-replace"> Remplacer les rendez-vous des jours cibles
+      </label>
+    </div>
+    <div class="modal-footer"><div></div>
+      <div class="modal-footer-right">
+        <button class="ga-btn" onclick="closeModal('modal-gj-dup')">Annuler</button>
+        <button class="ga-btn ga-btn-primary" onclick="gjDupDay()">Dupliquer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : Liste grilles type journaliste -->
+<div class="modal-overlay" id="modal-gj-grilles-list">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-header"><span>Grilles type Journaliste</span><button class="modal-close" onclick="closeModal('modal-gj-grilles-list')">&#10005;</button></div>
+    <div class="modal-body" style="padding:16px 24px;"><div id="gj-grilles-list" style="display:flex;flex-direction:column;gap:8px;min-height:40px;"></div></div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn ga-btn-primary" onclick="openGjGrilleForm(null)">&#43; Nouvelle grille</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL : Edition grille type journaliste -->
+<div class="modal-overlay" id="modal-gj-grille-edit">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-header"><span id="gj-gt-form-title">Nouvelle grille type</span><button class="modal-close" onclick="closeModal('modal-gj-grille-edit')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nom</label><input type="text" id="gj-gt-nom" placeholder="Ex : Grille semaine type"></div>
+      <div class="form-group">
+        <label>Rendez-vous (<span id="gj-gt-em-count">0</span>)</label>
+        <button class="ga-btn" style="align-self:flex-start;margin-bottom:8px;" onclick="gjImportWeekToGrille()">&#8659; Importer la semaine affichee</button>
+        <div class="gt-em-scroll" id="gj-gt-em-list"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="ga-btn ga-btn-danger" id="gj-gt-del-btn" style="display:none" onclick="deleteGjGrilleType()">&#128465; Supprimer</button>
+      <div class="modal-footer-right">
+        <button class="ga-btn" onclick="closeModal('modal-gj-grille-edit');openModal('modal-gj-grilles-list')">Annuler</button>
+        <button class="ga-btn ga-btn-primary" onclick="saveGjGrilleType()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : Appliquer grille type journaliste -->
+<div class="modal-overlay" id="modal-gj-grille-apply">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header"><span>Appliquer la grille</span><button class="modal-close" onclick="closeModal('modal-gj-grille-apply')">&#10005;</button></div>
+    <div class="modal-body">
+      <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Appliquer <strong id="gj-apply-gt-label" style="color:#fff;"></strong> a la semaine :</p>
+      <div class="form-row-2">
+        <div class="form-group"><label>Semaine</label><input type="number" id="gj-apply-gt-week" min="1" max="53" oninput="gjUpdateWeekPreview()"></div>
+        <div class="form-group"><label>Annee</label><input type="number" id="gj-apply-gt-year" min="2024" max="2035" oninput="gjUpdateWeekPreview()"></div>
+      </div>
+      <div id="gj-apply-week-preview" style="display:none;background:rgba(91,141,239,.12);border:1px solid rgba(91,141,239,.3);border-radius:6px;padding:10px 14px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px;">Dates de la semaine</div>
+        <div id="gj-apply-week-dates" style="font-family:'Barlow',sans-serif;font-size:13px;color:#fff;line-height:1.8;"></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;">
+        <input type="checkbox" id="gj-apply-gt-replace"> Remplacer les rendez-vous existants
+      </label>
+    </div>
+    <div class="modal-footer"><div></div>
+      <div class="modal-footer-right">
+        <button class="ga-btn" onclick="closeModal('modal-gj-grille-apply');openModal('modal-gj-grilles-list')">Annuler</button>
+        <button class="ga-btn ga-btn-primary" onclick="gjApplyGrilleType()">Appliquer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
