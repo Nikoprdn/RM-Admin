@@ -91,6 +91,23 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 }
 .gc-cell.today-col{background:rgba(91,141,239,.04);}
 
+/* TIMELINE */
+.gc-timeline{
+  position:absolute;left:0;right:0;
+  height:2px;
+  background:#ff4d4d;
+  z-index:10;
+  pointer-events:none;
+}
+.gc-timeline::before{
+  content:'';
+  position:absolute;left:-5px;top:-4px;
+  width:10px;height:10px;
+  background:#ff4d4d;
+  border-radius:50%;
+}
+
+
 /* EMISSIONS */
 .gc-emission{
   position:absolute;left:3px;right:3px;
@@ -110,6 +127,24 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   font-family:'Barlow',sans-serif;font-size:10px;font-weight:600;
   color:rgba(255,255,255,.9);background:rgba(0,0,0,.3);
   border-radius:3px;padding:1px 5px;white-space:nowrap;
+}
+
+
+/* TIMELINE */
+.gc-timeline{
+  position:absolute;
+  left:0;right:0;height:2px;
+  background:#ff4444;
+  z-index:20;pointer-events:none;
+}
+.gc-timeline::before{
+  content:'';
+  position:absolute;
+  left:-5px;top:50%;transform:translateY(-50%);
+  width:10px;height:10px;
+  background:#ff4444;
+  border-radius:50%;
+  box-shadow:0 0 6px rgba(255,68,68,.7);
 }
 
 /* MODALS */
@@ -540,6 +575,8 @@ function renderCalendar(){
     div.onclick=function(e){ e.stopPropagation(); openEmissionEdit(em.id); };
     cells[0].appendChild(div);
   });
+
+  updateTimeline();
 }
 
 function handleCellClick(e,dayIdx,hour){
@@ -553,6 +590,37 @@ function hexAlpha(hex,alpha){
 }
 
 renderCalendar();
+
+function updateTimeline(){
+  var calEl=document.getElementById('ga-calendar');
+  if(!calEl) return;
+  var CELL_H=38;
+  var days=getWeekDates(currentWeekOffset);
+  var todayCheck=new Date(); todayCheck.setHours(0,0,0,0);
+  var todayDayIdx=-1;
+  days.forEach(function(d,i){ if(d.getTime()===todayCheck.getTime()) todayDayIdx=i; });
+  var old=calEl.querySelector('.gc-timeline');
+  if(old) old.remove();
+  if(todayDayIdx<0) return;
+  var now2=new Date();
+  var currentH=now2.getHours()+(now2.getMinutes()/60)+(now2.getSeconds()/3600);
+  if(currentH<HOURS_START||currentH>=HOURS_END) return;
+  var firstCell=calEl.querySelector('.gc-cell[data-day="'+todayDayIdx+'"][data-hour="'+HOURS_START+'"]');
+  if(!firstCell) return;
+  var calRect=calEl.getBoundingClientRect();
+  var cellRect=firstCell.getBoundingClientRect();
+  var leftPx=cellRect.left-calRect.left;
+  var topPx=(cellRect.top-calRect.top)+(currentH-HOURS_START)*CELL_H;
+  var tl=document.createElement('div');
+  tl.className='gc-timeline';
+  tl.style.cssText='position:absolute;top:'+topPx+'px;left:'+leftPx+'px;right:0;';
+  calEl.style.position='relative';
+  calEl.appendChild(tl);
+}
+
+if(window._tlInterval) clearInterval(window._tlInterval);
+window._tlInterval=setInterval(updateTimeline, 30000);
+
 </script>
 </body>
 </html>
