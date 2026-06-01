@@ -91,6 +91,23 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 }
 .gc-cell.today-col{background:rgba(91,141,239,.04);}
 
+
+/* Liste animateurs dans modal */
+.anim-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:7px;
+  transition:background .15s;
+}
+.anim-row:hover{background:rgba(255,255,255,.09);}
+.anim-row-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.anim-row-name{flex:1;font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;color:#fff;}
+.anim-row-edit{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:5px 12px;border-radius:5px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.anim-row-edit:hover{background:rgba(255,255,255,.15);color:#fff;}
+.anim-list-empty{font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.3);font-style:italic;text-align:center;padding:16px 0;}
+
 /* TIMELINE */
 .gc-timeline{
   position:absolute;left:0;right:0;
@@ -129,6 +146,23 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   border-radius:3px;padding:1px 5px;white-space:nowrap;
 }
 
+
+
+/* Liste animateurs dans modal */
+.anim-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:7px;
+  transition:background .15s;
+}
+.anim-row:hover{background:rgba(255,255,255,.09);}
+.anim-row-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.anim-row-name{flex:1;font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;color:#fff;}
+.anim-row-edit{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:5px 12px;border-radius:5px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.anim-row-edit:hover{background:rgba(255,255,255,.15);color:#fff;}
+.anim-list-empty{font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.3);font-style:italic;text-align:center;padding:16px 0;}
 
 /* TIMELINE */
 .gc-timeline{
@@ -228,11 +262,10 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
       <button class="ga-btn" onclick="changeWeek(0)">Aujourd'hui</button>
       <button class="ga-btn" onclick="changeWeek(1)">Suiv. &#9654;</button>
       <div class="ga-sep"></div>
-      <button class="ga-btn ga-btn-primary" onclick="openModal('modal-animateur')">&#43; Animateur</button>
+      <button class="ga-btn ga-btn-primary" onclick="openModal('modal-animateurs-list')">&#43; Animateur</button>
       <button class="ga-btn ga-btn-primary" onclick="openEmissionModal()">&#43; Emission</button>
     </div>
   </div>
-  <div class="anim-list" id="anim-list"></div>
   <div class="ga-calendar-wrap">
     <div class="ga-calendar" id="ga-calendar"></div>
   </div>
@@ -248,11 +281,30 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   <div class="placeholder">[ Contenu Gestion des Incidents ]</div>
 </section>
 
-<!-- MODAL Animateur -->
-<div class="modal-overlay" id="modal-animateur">
-  <div class="modal">
+<!-- MODAL : Liste animateurs -->
+<div class="modal-overlay" id="modal-animateurs-list">
+  <div class="modal" style="max-width:480px;">
     <div class="modal-header">
-      <span>Ajouter un animateur</span>
+      <span>Animateurs</span>
+      <button class="modal-close" onclick="closeModal('modal-animateurs-list')">&#10005;</button>
+    </div>
+    <div class="modal-body" style="padding:16px 24px;">
+      <div id="anim-full-list" style="display:flex;flex-direction:column;gap:8px;min-height:40px;"></div>
+    </div>
+    <div class="modal-footer">
+      <div></div>
+      <div class="modal-footer-right">
+        <button class="ga-btn ga-btn-primary" onclick="openAnimForm(null)">&#43; Nouvel animateur</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : Ajout / Edition animateur -->
+<div class="modal-overlay" id="modal-animateur">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <span id="anim-form-title">Nouvel animateur</span>
       <button class="modal-close" onclick="closeModal('modal-animateur')">&#10005;</button>
     </div>
     <div class="modal-body">
@@ -272,9 +324,9 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
       </div>
     </div>
     <div class="modal-footer">
-      <div></div>
+      <button class="ga-btn ga-btn-danger" id="anim-del-btn" style="display:none" onclick="deleteAnimateur()">&#128465; Supprimer</button>
       <div class="modal-footer-right">
-        <button class="ga-btn" onclick="closeModal('modal-animateur')">Annuler</button>
+        <button class="ga-btn" onclick="closeModal('modal-animateur');openModal('modal-animateurs-list')">Annuler</button>
         <button class="ga-btn ga-btn-primary" onclick="saveAnimateur()">Enregistrer</button>
       </div>
     </div>
@@ -352,7 +404,10 @@ function showSection(id,btn){
 }
 
 /* ── Modals ── */
-function openModal(id){ document.getElementById(id).classList.add('open'); }
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  if(id==='modal-animateurs-list') refreshAnimFullList();
+}
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 window.addEventListener('click',function(e){
   if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('open');
@@ -394,28 +449,90 @@ document.getElementById('em-hfin').innerHTML=buildHourOptions();
 document.getElementById('em-hfin').value='1';
 
 /* ── Animateurs ── */
+var editingAnimId=null;
+
+function openAnimForm(animId){
+  editingAnimId=animId;
+  if(animId===null){
+    document.getElementById('anim-form-title').textContent='Nouvel animateur';
+    document.getElementById('anim-prenom').value='';
+    document.getElementById('anim-nom').value='';
+    document.getElementById('anim-color').value='#5B8DEF';
+    document.getElementById('anim-del-btn').style.display='none';
+  } else {
+    var a=null;
+    for(var i=0;i<animateurs.length;i++) if(animateurs[i].id===animId){a=animateurs[i];break;}
+    if(!a) return;
+    document.getElementById('anim-form-title').textContent='Modifier l animateur';
+    document.getElementById('anim-prenom').value=a.prenom;
+    document.getElementById('anim-nom').value=a.nom;
+    document.getElementById('anim-color').value=a.color;
+    document.getElementById('anim-del-btn').style.display='inline-flex';
+  }
+  closeModal('modal-animateurs-list');
+  openModal('modal-animateur');
+}
+
 function saveAnimateur(){
   var p=document.getElementById('anim-prenom').value.trim();
   var n=document.getElementById('anim-nom').value.trim();
   var c=document.getElementById('anim-color').value;
   if(!p && !n){ alert('Veuillez entrer un nom.'); return; }
-  animateurs.push({id:Date.now(),prenom:p,nom:n,color:c});
-  document.getElementById('anim-prenom').value='';
-  document.getElementById('anim-nom').value='';
+  if(editingAnimId!==null){
+    for(var i=0;i<animateurs.length;i++){
+      if(animateurs[i].id===editingAnimId){
+        animateurs[i].prenom=p; animateurs[i].nom=n; animateurs[i].color=c;
+        /* Mettre a jour les references dans les emissions */
+        emissions.forEach(function(em){
+          if(em.anims) em.anims.forEach(function(a,idx){
+            if(a.id===editingAnimId){ em.anims[idx].prenom=p; em.anims[idx].nom=n; em.anims[idx].color=c; }
+          });
+        });
+        break;
+      }
+    }
+  } else {
+    animateurs.push({id:Date.now(),prenom:p,nom:n,color:c});
+  }
   saveData();
-  refreshAnimList();
+  refreshAnimFullList();
   closeModal('modal-animateur');
+  openModal('modal-animateurs-list');
+  renderCalendar();
 }
 
-function refreshAnimList(){
-  var el=document.getElementById('anim-list');
-  if(!animateurs.length){ el.innerHTML=''; return; }
+function deleteAnimateur(){
+  if(editingAnimId===null) return;
+  if(!confirm('Supprimer cet animateur ?')) return;
+  animateurs=animateurs.filter(function(a){ return a.id!==editingAnimId; });
+  /* Retirer des emissions */
+  emissions.forEach(function(em){
+    em.animIds=(em.animIds||[]).filter(function(id){ return id!==editingAnimId; });
+    em.anims=(em.anims||[]).filter(function(a){ return a.id!==editingAnimId; });
+  });
+  saveData();
+  closeModal('modal-animateur');
+  openModal('modal-animateurs-list');
+  refreshAnimFullList();
+  renderCalendar();
+}
+
+function refreshAnimFullList(){
+  var el=document.getElementById('anim-full-list');
+  if(!el) return;
+  if(!animateurs.length){
+    el.innerHTML='<div class="anim-list-empty">Aucun animateur pour le moment.</div>'; return;
+  }
   el.innerHTML=animateurs.map(function(a){
-    return '<div class="anim-chip" style="background:'+hexAlpha(a.color,.2)+';border:1px solid '+hexAlpha(a.color,.45)+'">'+
-      '<span class="anim-dot" style="background:'+a.color+'"></span>'+
-      '<span style="color:'+a.color+'">'+a.prenom+' '+a.nom+'</span></div>';
+    return '<div class="anim-row">'+
+      '<span class="anim-row-dot" style="background:'+a.color+'"></span>'+
+      '<span class="anim-row-name">'+a.prenom+' '+a.nom+'</span>'+
+      '<button class="anim-row-edit" onclick="openAnimForm('+a.id+')">&#9998; Modifier</button>'+
+      '</div>';
   }).join('');
 }
+
+function refreshAnimList(){ /* kept for compat */ }
 
 /* ── Selecteur multi-animateurs ── */
 function buildAnimSelector(){
