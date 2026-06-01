@@ -69,6 +69,23 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .gc-em-anims{display:flex;flex-wrap:wrap;gap:2px;margin-top:2px;}
 .gc-em-anim-chip{font-family:'Barlow',sans-serif;font-size:9px;font-weight:600;color:rgba(255,255,255,.9);background:rgba(0,0,0,.3);border-radius:3px;padding:1px 4px;white-space:nowrap;}
 
+
+/* TEAMS */
+.team-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:7px;transition:background .15s;flex-wrap:wrap;}
+.team-row:hover{background:rgba(255,255,255,.09);}
+.team-row-name{flex:1;font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;color:#fff;}
+.team-members{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;width:100%;}
+.team-member-chip{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:12px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;}
+
+/* LISTE EMISSIONS */
+.em-list-item{display:flex;align-items:center;gap:10px;padding:9px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:7px;transition:background .15s;}
+.em-list-item:hover{background:rgba(255,255,255,.09);}
+.em-list-bar{width:4px;height:32px;border-radius:2px;flex-shrink:0;}
+.em-list-info{flex:1;}
+.em-list-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#fff;}
+.em-list-meta{font-family:'Barlow',sans-serif;font-size:11px;color:rgba(255,255,255,.4);margin-top:1px;}
+.em-list-actions{display:flex;gap:6px;}
+
 /* TIMELINE */
 .gc-timeline{position:absolute;height:2px;background:#ff4444;z-index:20;pointer-events:none;}
 .gc-timeline::before{content:'';position:absolute;left:-5px;top:50%;transform:translateY(-50%);width:10px;height:10px;background:#ff4444;border-radius:50%;box-shadow:0 0 6px rgba(255,68,68,.7);}
@@ -155,7 +172,9 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
       <button class="ga-btn" onclick="changeWeek(1)">Suiv. &#9654;</button>
       <div class="ga-sep"></div>
       <button class="ga-btn ga-btn-primary" onclick="openModal('modal-animateurs-list')">&#43; Animateur</button>
+      <button class="ga-btn" onclick="openModal('modal-teams-list')">&#128101; Teams</button>
       <button class="ga-btn ga-btn-primary" onclick="openEmissionModal()">&#43; Emission</button>
+      <button class="ga-btn" onclick="openEmissionsList()">&#9776; Emissions</button>
       <div class="ga-sep"></div>
       <button class="ga-btn" onclick="openModal('modal-grilles-list')">&#9776; Grilles type</button>
     </div>
@@ -800,7 +819,7 @@ function renderCalendar(){
     cells[0].appendChild(div);
   });
 
-  updateTimeline();
+  requestAnimationFrame(updateTimeline);
 }
 
 function handleCellClick(e,dayIdx,hour){
@@ -833,7 +852,11 @@ function updateTimeline(){
   cal.appendChild(tl);
 }
 if(window._tlInterval) clearInterval(window._tlInterval);
-window._tlInterval=setInterval(updateTimeline,30000);
+window._tlInterval=setInterval(function(){
+  updateTimeline();
+  var cal2=document.getElementById('gj-calendar');
+  if(cal2){ var days2=getWeekDates(currentWeekOffset); gjUpdateTimeline(cal2,days2); }
+},30000);
 
 /* ── Utilitaire ──────────────────────────────────────────────────── */
 function hexAlpha(hex,alpha){
@@ -1229,7 +1252,7 @@ function gjRenderCalendar(){
   });
 
   /* Timeline GJ */
-  gjUpdateTimeline(cal, days);
+  var _days=days; requestAnimationFrame(function(){ gjUpdateTimeline(cal, _days); });
 }
 
 function gjHandleCellClick(e,dayIdx,hour){
@@ -1257,6 +1280,161 @@ function gjUpdateTimeline(cal,days){
 }
 
 
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   TEAMS
+═══════════════════════════════════════════════════════════════════ */
+var teams=[];
+var editingTeamId=null;
+var selectedTeamMemberIds=[];
+
+function loadTeams(){
+  try{ var t=localStorage.getItem('at_teams'); if(t) teams=JSON.parse(t); }catch(e){}
+}
+function saveTeams(){
+  localStorage.setItem('at_teams', JSON.stringify(teams));
+}
+loadTeams();
+
+/* Étendre openModal pour teams */
+var _omTeams=openModal;
+openModal=function(id){
+  _omTeams(id);
+  if(id==='modal-teams-list') refreshTeamsList();
+  if(id==='modal-emissions-list') refreshEmissionsList();
+};
+
+function refreshTeamsList(){
+  var el=document.getElementById('teams-full-list');
+  if(!el) return;
+  if(!teams.length){ el.innerHTML='<div class="list-empty">Aucune team.</div>'; return; }
+  el.innerHTML=teams.map(function(t){
+    var members=animateurs.filter(function(a){ return (t.memberIds||[]).indexOf(a.id)>=0; });
+    var chips=members.map(function(a){
+      return '<span class="team-member-chip" style="background:'+hexAlpha(a.color,.2)+';border:1px solid '+hexAlpha(a.color,.4)+'">'+
+        '<span style="width:6px;height:6px;border-radius:50%;background:'+a.color+';display:inline-block;"></span> '+
+        a.prenom+' '+a.nom+'</span>';
+    }).join('');
+    return '<div class="team-row">'+
+      '<div style="flex:1;">'+
+        '<div style="display:flex;align-items:center;justify-content:space-between;">'+
+          '<span class="team-row-name">&#128101; '+t.nom+'</span>'+
+          '<button class="anim-row-edit" onclick="openTeamForm('+t.id+')">&#9998; Modifier</button>'+
+        '</div>'+
+        (chips?'<div class="team-members">'+chips+'</div>':'<div class="team-members"><span class="anim-empty">Aucun membre</span></div>')+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function openTeamForm(teamId){
+  editingTeamId=teamId;
+  selectedTeamMemberIds=[];
+  if(teamId===null){
+    document.getElementById('team-form-title').textContent='Nouvelle team';
+    document.getElementById('team-nom').value='';
+    document.getElementById('team-del-btn').style.display='none';
+  } else {
+    var t=teams.find(function(x){ return x.id===teamId; });
+    if(!t) return;
+    document.getElementById('team-form-title').textContent='Modifier la team';
+    document.getElementById('team-nom').value=t.nom;
+    document.getElementById('team-del-btn').style.display='inline-flex';
+    selectedTeamMemberIds=(t.memberIds||[]).slice();
+  }
+  buildTeamMembersSelector();
+  closeModal('modal-teams-list');
+  openModal('modal-team-edit');
+}
+
+function buildTeamMembersSelector(){
+  var el=document.getElementById('team-members-selector');
+  if(!animateurs.length){ el.innerHTML='<span class="anim-empty">Aucun animateur cree</span>'; return; }
+  el.innerHTML=animateurs.map(function(a){
+    var sel=selectedTeamMemberIds.indexOf(a.id)>=0;
+    var sty=sel?'background:'+hexAlpha(a.color,.3)+';border-color:'+hexAlpha(a.color,.75)+';color:#fff':'';
+    return '<button type="button" class="anim-toggle'+(sel?' selected':'')+'" style="'+sty+'" onclick="toggleTeamMember('+a.id+')">'+
+      '<span class="anim-toggle-dot" style="background:'+a.color+'"></span>'+a.prenom+' '+a.nom+'</button>';
+  }).join('');
+}
+
+function toggleTeamMember(id){
+  var idx=selectedTeamMemberIds.indexOf(id);
+  if(idx>=0) selectedTeamMemberIds.splice(idx,1); else selectedTeamMemberIds.push(id);
+  buildTeamMembersSelector();
+}
+
+function saveTeam(){
+  var nom=document.getElementById('team-nom').value.trim();
+  if(!nom){ alert('Nom requis.'); return; }
+  if(editingTeamId!==null){
+    var t=teams.find(function(x){ return x.id===editingTeamId; });
+    if(t){ t.nom=nom; t.memberIds=selectedTeamMemberIds.slice(); }
+  } else {
+    teams.push({id:Date.now(),nom:nom,memberIds:selectedTeamMemberIds.slice()});
+  }
+  saveTeams();
+  closeModal('modal-team-edit');
+  openModal('modal-teams-list');
+}
+
+function deleteTeam(){
+  if(!confirm('Supprimer cette team ?')) return;
+  teams=teams.filter(function(t){ return t.id!==editingTeamId; });
+  saveTeams();
+  closeModal('modal-team-edit');
+  openModal('modal-teams-list');
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LISTE DES EMISSIONS
+═══════════════════════════════════════════════════════════════════ */
+function openEmissionsList(){
+  openModal('modal-emissions-list');
+}
+
+function refreshEmissionsList(){
+  var el=document.getElementById('em-full-list');
+  if(!el) return;
+  var key=getMondayKey(currentWeekOffset);
+  var week=emissions.filter(function(e){ return e.weekKey===key; });
+  if(!week.length){ el.innerHTML='<div class="list-empty">Aucune emission cette semaine.</div>'; return; }
+
+  // Trier par jour puis par heure
+  week.sort(function(a,b){ return a.jour!==b.jour ? a.jour-b.jour : a.hdebut-b.hdebut; });
+
+  el.innerHTML=week.map(function(em){
+    var hd=String(Math.floor(em.hdebut)).padStart(2,'0')+'h'+(em.hdebut%1?'30':'00');
+    var hf=String(Math.floor(em.hfin)).padStart(2,'0')+'h'+(em.hfin%1?'30':'00');
+    var animNames=(em.anims&&em.anims.length)?em.anims.map(function(a){ return a.prenom+' '+a.nom; }).join(', '):'Aucun animateur';
+    return '<div class="em-list-item">'+
+      '<div class="em-list-bar" style="background:'+em.color+'"></div>'+
+      '<div class="em-list-info">'+
+        '<div class="em-list-title">'+em.titre+'</div>'+
+        '<div class="em-list-meta">'+JOURS_FULL[em.jour]+' &bull; '+hd+' - '+hf+' &bull; '+animNames+'</div>'+
+      '</div>'+
+      '<div class="em-list-actions">'+
+        '<button class="anim-row-edit" onclick="editEmFromList('+em.id+')">&#9998;</button>'+
+        '<button class="anim-row-edit" style="color:#f7a0a0;border-color:rgba(220,60,60,.3);" onclick="deleteEmFromList('+em.id+')">&#128465;</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function editEmFromList(emId){
+  closeModal('modal-emissions-list');
+  openEmissionEdit(emId);
+}
+
+function deleteEmFromList(emId){
+  if(!confirm('Supprimer cette emission ?')) return;
+  emissions=emissions.filter(function(e){ return e.id!==emId; });
+  saveData();
+  renderCalendar();
+  gjRenderCalendar();
+  refreshEmissionsList();
+}
 
 </script>
 
@@ -1395,6 +1573,48 @@ function gjUpdateTimeline(cal,days){
       <div class="modal-footer-right">
         <button class="ga-btn" onclick="closeModal('modal-gj-grille-apply');openModal('modal-gj-grilles-list')">Annuler</button>
         <button class="ga-btn ga-btn-primary" onclick="gjApplyGrilleType()">Appliquer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL : Liste emissions -->
+<div class="modal-overlay" id="modal-emissions-list">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-header"><span>Emissions de la semaine</span><button class="modal-close" onclick="closeModal('modal-emissions-list')">&#10005;</button></div>
+    <div class="modal-body" style="padding:16px 24px;">
+      <div id="em-full-list" style="display:flex;flex-direction:column;gap:7px;min-height:40px;max-height:420px;overflow-y:auto;"></div>
+    </div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-emissions-list')">Fermer</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL : Liste teams -->
+<div class="modal-overlay" id="modal-teams-list">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-header"><span>Teams</span><button class="modal-close" onclick="closeModal('modal-teams-list')">&#10005;</button></div>
+    <div class="modal-body" style="padding:16px 24px;"><div id="teams-full-list" style="display:flex;flex-direction:column;gap:8px;min-height:40px;"></div></div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn ga-btn-primary" onclick="openTeamForm(null)">&#43; Nouvelle team</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL : Ajout/edition team -->
+<div class="modal-overlay" id="modal-team-edit">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header"><span id="team-form-title">Nouvelle team</span><button class="modal-close" onclick="closeModal('modal-team-edit')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nom de la team</label><input type="text" id="team-nom" placeholder="Ex : Morning Team"></div>
+      <div class="form-group">
+        <label>Membres (selection multiple)</label>
+        <div class="anim-selector" id="team-members-selector"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="ga-btn ga-btn-danger" id="team-del-btn" style="display:none" onclick="deleteTeam()">&#128465; Supprimer</button>
+      <div class="modal-footer-right">
+        <button class="ga-btn" onclick="closeModal('modal-team-edit');openModal('modal-teams-list')">Annuler</button>
+        <button class="ga-btn ga-btn-primary" onclick="saveTeam()">Enregistrer</button>
       </div>
     </div>
   </div>
