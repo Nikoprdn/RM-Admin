@@ -295,6 +295,12 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
         <div class="form-group"><label>Fin</label><select id="em-hfin"></select></div>
       </div>
       <div class="form-group"><label>Couleur</label><input type="color" id="em-color" value="#5B8DEF"></div>
+      <div class="form-group">
+        <label>Appliquer une team</label>
+        <select id="em-team-select" onchange="applyTeamToEmission()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:9px 12px;color:#fff;font-family:'Barlow',sans-serif;font-size:14px;outline:none;">
+          <option value="">— Aucune team —</option>
+        </select>
+      </div>
       <div class="form-group"><label>Animateurs</label><div class="anim-selector" id="em-anim-selector"></div></div>
     </div>
     <div class="modal-footer">
@@ -832,6 +838,33 @@ function delEmFromPanel(e,emId){
   saveData(); renderCalendar(); gjRenderCalendar(); refreshEmissionsPanel();
 }
 
+
+/* ── Team selector dans formulaire emission ── */
+function buildTeamSelect(){
+  var sel=document.getElementById('em-team-select');
+  if(!sel) return;
+  sel.innerHTML='<option value="">— Aucune team —</option>'+
+    teams.map(function(t){
+      return '<option value="'+t.id+'">&#128101; '+t.nom+'</option>';
+    }).join('');
+  sel.value='';
+}
+
+function applyTeamToEmission(){
+  var sel=document.getElementById('em-team-select');
+  var teamId=parseInt(sel.value);
+  if(!teamId) return;
+  var t=teams.find(function(x){ return x.id===teamId; });
+  if(!t) return;
+  /* Ajouter les membres de la team aux animateurs sélectionnés (sans doublon) */
+  (t.memberIds||[]).forEach(function(id){
+    if(selectedAnimIds.indexOf(id)<0) selectedAnimIds.push(id);
+  });
+  buildAnimSelector();
+  /* Remettre le select sur "Aucune" après application */
+  sel.value='';
+}
+
 /* ── Selector multi-animateurs (formulaire emission) ── */
 function buildAnimSelector(){
   var el=document.getElementById('em-anim-selector');
@@ -860,6 +893,7 @@ function openEmissionModal(jour,hdebut){
   document.getElementById('em-color').value='#5B8DEF';
   document.getElementById('modal-del-btn').style.display='none';
   selectedAnimIds=[];
+  buildTeamSelect();
   buildAnimSelector();
   openModal('modal-emission');
 }
@@ -875,6 +909,7 @@ function openEmissionEdit(emId){
   document.getElementById('em-color').value=em.color;
   document.getElementById('modal-del-btn').style.display='inline-flex';
   selectedAnimIds=em.animIds?em.animIds.slice():[];
+  buildTeamSelect();
   buildAnimSelector();
   openModal('modal-emission');
 }
@@ -923,13 +958,20 @@ function dupDay(){
   if(!dupDestDays.length){ alert('Selectionnez au moins un jour.'); return; }
   var replace=document.getElementById('dup-replace').checked;
   var key=getMondayKey(currentWeekOffset);
-  var src=emissions.filter(function(e){ return e.jour===dupSrcDay && e.weekKey===key; });
+  /* Chercher les emissions du jour source pour la semaine courante */
+  var src=emissions.filter(function(e){
+    return e.jour===dupSrcDay && (!e.weekKey || e.weekKey===key);
+  });
   if(!src.length){ alert('Aucune emission ce jour-la.'); return; }
   dupDestDays.forEach(function(dest){
-    if(replace) emissions=emissions.filter(function(e){ return !(e.jour===dest && e.weekKey===key); });
+    if(replace) emissions=emissions.filter(function(e){
+      return !(e.jour===dest && (!e.weekKey||e.weekKey===key));
+    });
     src.forEach(function(e){
       var c=JSON.parse(JSON.stringify(e));
-      c.id=Date.now()+Math.random(); c.jour=dest; c.weekKey=key;
+      c.id=Date.now()+Math.random();
+      c.jour=dest;
+      c.weekKey=key;
       emissions.push(c);
     });
   });
