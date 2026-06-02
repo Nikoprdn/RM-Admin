@@ -44,7 +44,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .ga-btn-danger:hover{background:rgba(220,60,60,.4);color:#fff;}
 
 .ga-calendar-wrap{overflow-x:auto;border-radius:8px;border:1px solid rgba(255,255,255,.1);}
-.ga-calendar{position:relative;display:grid;grid-template-columns:54px repeat(7,1fr);min-width:860px;background:var(--card2);}
+.ga-calendar{position:relative;display:grid;grid-template-columns:54px repeat(5,1fr);min-width:680px;background:var(--card2);}
 .gc-corner{background:#201e28;border-bottom:2px solid rgba(255,255,255,.12);border-right:1px solid rgba(255,255,255,.1);}
 .gc-day-head{background:#201e28;padding:8px 6px;text-align:center;border-bottom:2px solid rgba(255,255,255,.12);border-left:1px solid rgba(255,255,255,.08);cursor:pointer;transition:background .15s;}
 .gc-day-head:hover{background:#2e2b39;}
@@ -64,8 +64,8 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 
 /* GRILLE JOURNALISTE — cartes */
 .gj-grid{display:flex;flex-direction:column;gap:2px;}
-.gj-slot-row{display:grid;grid-template-columns:80px repeat(7,1fr);gap:2px;align-items:stretch;}
-.gj-slot-header{display:grid;grid-template-columns:80px repeat(7,1fr);gap:2px;margin-bottom:4px;}
+.gj-slot-row{display:grid;grid-template-columns:80px repeat(5,1fr);gap:2px;align-items:stretch;}
+.gj-slot-header{display:grid;grid-template-columns:80px repeat(5,1fr);gap:2px;margin-bottom:4px;}
 .gj-slot-day-head{
   text-align:center;padding:8px 4px;
   font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;
@@ -1337,6 +1337,7 @@ function renderCalendar(){
   var cal=document.getElementById('ga-calendar');if(!cal)return;
   var html='<div class="gc-corner"></div>';
   days.forEach(function(d,i){
+    if(i>=5)return;
     var isT=d.getTime()===today.getTime();
     html+='<div class="gc-day-head'+(isT?' today':'')+'" onclick="openDupModal('+i+')">'+
       '<span class="gc-day-num">'+d.getDate()+'</span><span class="gc-day-name">'+JOURS[i]+'</span></div>';
@@ -1344,6 +1345,7 @@ function renderCalendar(){
   for(var h=HOURS_START;h<HOURS_END;h++){
     html+='<div class="gc-hour-label">'+String(h).padStart(2,'0')+'h</div>';
     days.forEach(function(d,di){
+      if(di>=5)return;
       var isT=d.getTime()===today.getTime();
       html+='<div class="gc-cell'+(isT?' today-col':'')+'" data-day="'+di+'" data-hour="'+h+'" onclick="handleCellClick(event,'+di+','+h+')"><span class="gc-cell-hint">+</span></div>';
     });
@@ -1381,6 +1383,7 @@ function gjRenderCards(){
   var headerHtml='<div class="gj-slot-header">';
   headerHtml+='<div></div>';
   days.forEach(function(d,i){
+    if(i>=5)return;
     var isT=d.getTime()===today.getTime();
     headerHtml+='<div class="gj-slot-day-head'+(isT?' today':'')+'">'+
       '<span class="gj-day-num">'+d.getDate()+'</span>'+JOURS[i]+'</div>';
@@ -1394,6 +1397,7 @@ function gjRenderCards(){
     rowsHtml+='<div class="gj-time-label">'+slot.l+'</div>';
 
     days.forEach(function(d,di){
+      if(di>=5)return;
       var isT=d.getTime()===today.getTime();
       /* Trouver les RDV sur ce créneau ce jour */
       var rdvs=gjRdvs.filter(function(r){
