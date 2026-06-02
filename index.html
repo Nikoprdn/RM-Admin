@@ -61,6 +61,57 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .gc-emission{position:absolute;left:2px;right:2px;border-radius:4px;padding:3px 6px;overflow:hidden;cursor:pointer;z-index:2;transition:filter .15s,box-shadow .15s;}
 .gc-emission:hover{filter:brightness(1.18);box-shadow:0 2px 10px rgba(0,0,0,.4);}
 .gc-em-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,.5);}
+
+/* GRILLE JOURNALISTE — cartes */
+.gj-grid{display:flex;flex-direction:column;gap:2px;}
+.gj-slot-row{display:grid;grid-template-columns:80px repeat(7,1fr);gap:2px;align-items:stretch;}
+.gj-slot-header{display:grid;grid-template-columns:80px repeat(7,1fr);gap:2px;margin-bottom:4px;}
+.gj-slot-day-head{
+  text-align:center;padding:8px 4px;
+  font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;
+  letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);
+  background:#201e28;border-radius:6px;
+}
+.gj-slot-day-head.today{color:#7aabff;background:rgba(91,141,239,.12);}
+.gj-slot-day-head .gj-day-num{display:block;font-size:18px;font-weight:800;color:#fff;line-height:1.1;}
+.gj-slot-day-head.today .gj-day-num{color:#7aabff;}
+.gj-time-label{
+  display:flex;align-items:center;justify-content:flex-end;
+  padding-right:10px;
+  font-family:'Share Tech Mono',monospace;font-size:13px;font-weight:700;
+  color:rgba(255,255,255,.5);
+}
+.gj-card{
+  min-height:52px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:6px;
+  padding:6px 10px;
+  cursor:pointer;
+  transition:background .15s,border-color .15s;
+  display:flex;flex-direction:column;justify-content:center;gap:3px;
+  position:relative;
+}
+.gj-card:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);}
+.gj-card.has-rdv{border-left:3px solid var(--gj-color,#E87C3E);}
+.gj-card.today-col{background:rgba(91,141,239,.05);}
+.gj-card-empty{
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;
+  color:rgba(255,255,255,.15);letter-spacing:.06em;text-transform:uppercase;
+  text-align:center;
+}
+.gj-card-name{
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;
+  letter-spacing:.04em;text-transform:uppercase;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  line-height:1.2;
+}
+.gj-card-rdv{
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+  color:rgba(255,255,255,.5);letter-spacing:.04em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
 .gc-em-anims{display:flex;flex-wrap:wrap;gap:2px;margin-top:2px;}
 .gc-em-anim-chip{font-family:'Barlow',sans-serif;font-size:9px;font-weight:600;color:rgba(255,255,255,.9);background:rgba(0,0,0,.3);border-radius:3px;padding:1px 4px;white-space:nowrap;}
 .gc-timeline{position:absolute;height:2px;background:#ff4444;z-index:20;pointer-events:none;}
@@ -198,7 +249,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
         <button class="ga-btn" onclick="openModal('modal-gj-grilles-list')">&#9776; Grilles type</button>
       </div>
     </div>
-    <div class="ga-calendar-wrap"><div class="ga-calendar" id="gj-calendar"></div></div>
+    <div id="gj-cards-grid"></div>
   </div>
 </section>
 
@@ -633,7 +684,7 @@ function getWeekDates(offset){
 function getMondayKey(offset){return getWeekDates(offset)[0].toISOString().slice(0,10);}
 function changeWeek(dir){
   if(dir===0)currentWeekOffset=0;else currentWeekOffset+=dir;
-  renderCalendar();gjRenderCalendar();
+  renderCalendar();gjRenderCards();
 }
 function getWeekOffset(wk,yr){
   var now=new Date();now.setHours(0,0,0,0);
@@ -1317,39 +1368,55 @@ function renderCalendar(){
   requestAnimationFrame(function(){updateTimeline(cal,days);});
 }
 
-function gjRenderCalendar(){
+function gjRenderCalendar(){ gjRenderCards(); }
+
+function gjRenderCards(){
+  var container=document.getElementById('gj-cards-grid');
+  if(!container)return;
   var days=getWeekDates(currentWeekOffset);
   var today=new Date();today.setHours(0,0,0,0);
-  var cal=document.getElementById('gj-calendar');if(!cal)return;
-  var html='<div class="gc-corner"></div>';
+  var key=getMondayKey(currentWeekOffset);
+
+  /* En-tête : jours */
+  var headerHtml='<div class="gj-slot-header">';
+  headerHtml+='<div></div>';
   days.forEach(function(d,i){
     var isT=d.getTime()===today.getTime();
-    html+='<div class="gc-day-head'+(isT?' today':'')+'" onclick="gjOpenDupModal('+i+')">'+
-      '<span class="gc-day-num">'+d.getDate()+'</span><span class="gc-day-name">'+JOURS[i]+'</span></div>';
+    headerHtml+='<div class="gj-slot-day-head'+(isT?' today':'')+'">'+
+      '<span class="gj-day-num">'+d.getDate()+'</span>'+JOURS[i]+'</div>';
   });
-  for(var h=HOURS_START;h<HOURS_END;h++){
-    html+='<div class="gc-hour-label">'+String(h).padStart(2,'0')+'h</div>';
+  headerHtml+='</div>';
+
+  /* Lignes : un créneau par ligne */
+  var rowsHtml='<div class="gj-grid">';
+  GJ_SLOTS.forEach(function(slot){
+    rowsHtml+='<div class="gj-slot-row">';
+    rowsHtml+='<div class="gj-time-label">'+slot.l+'</div>';
+
     days.forEach(function(d,di){
       var isT=d.getTime()===today.getTime();
-      html+='<div class="gc-cell'+(isT?' today-col':'')+'" data-day="'+di+'" data-hour="'+h+'" onclick="gjHandleCellClick(event,'+di+','+h+')"><span class="gc-cell-hint">+</span></div>';
+      /* Trouver les RDV sur ce créneau ce jour */
+      var rdvs=gjRdvs.filter(function(r){
+        return(!r.weekKey||r.weekKey===key)&&r.jour===di&&r.hdebut===slot.v;
+      });
+
+      if(!rdvs.length){
+        rowsHtml+='<div class="gj-card'+(isT?' today-col':'')+'" onclick="openGjRdvModal('+di+','+slot.v+')">'+
+          '<span class="gj-card-empty">+</span></div>';
+      } else {
+        var r=rdvs[0];
+        var names=(r.journalistes||[]).map(function(j){return j.prenom+' '+j.nom.toUpperCase();}).join(', ')||'—';
+        rowsHtml+='<div class="gj-card has-rdv'+(isT?' today-col':'')+'" style="--gj-color:'+r.color+'" onclick="openGjRdvEdit('+r.id+')">'+
+          '<div class="gj-card-rdv">'+r.titre+'</div>'+
+          '<div class="gj-card-name">'+names+'</div>'+
+          '</div>';
+      }
     });
-  }
-  cal.innerHTML=html;
-  var key=getMondayKey(currentWeekOffset);
-  gjRdvs.filter(function(r){return!r.weekKey||r.weekKey===key;}).forEach(function(rdv){
-    var cells=cal.querySelectorAll('.gc-cell[data-day="'+rdv.jour+'"][data-hour="'+Math.floor(rdv.hdebut)+'"]');
-    if(!cells.length)return;
-    var div=document.createElement('div');
-    div.className='gc-emission';
-    div.style.cssText='background:'+hexAlpha(rdv.color,.28)+';border-left:3px solid '+rdv.color+';top:'+((rdv.hdebut%1)*CELL_H)+'px;height:'+((rdv.hfin-rdv.hdebut)*CELL_H-3)+'px;';
-    div.innerHTML='<div class="gc-em-title">'+rdv.titre+'</div>'+
-      (rdv.journalistes&&rdv.journalistes.length?'<div class="gc-em-anims">'+rdv.journalistes.map(function(j){
-        return'<div class="gc-em-anim-chip" style="border-left:2px solid '+j.color+'">'+j.prenom+' '+j.nom.toUpperCase()+'</div>';
-      }).join('')+'</div>':'');
-    div.onclick=function(ev){ev.stopPropagation();openGjRdvEdit(rdv.id);};
-    cells[0].appendChild(div);
+    rowsHtml+='</div>';
   });
-  requestAnimationFrame(function(){updateTimeline(cal,days);});
+  rowsHtml+='</div>';
+
+  container.innerHTML=headerHtml+rowsHtml;
 }
 
 function handleCellClick(e,dayIdx,hour){
