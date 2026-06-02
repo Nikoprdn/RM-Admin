@@ -182,6 +182,8 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
       <button class="ga-btn ga-btn-primary" onclick="openEmissionsPanel()">&#43; Emission</button>
       <div class="ga-sep"></div>
       <button class="ga-btn" onclick="openModal('modal-grilles-list')">&#9776; Grilles type</button>
+      <div class="ga-sep"></div>
+      <button class="ga-btn" style="background:rgba(46,204,113,.2);border-color:rgba(46,204,113,.4);color:#2ecc71;" onclick="openModal('modal-publish')">&#128225; Publier</button>
     </div>
   </div>
   <div class="ga-calendar-wrap"><div class="ga-calendar" id="ga-calendar"></div></div>
@@ -1389,6 +1391,196 @@ function hexAlpha(hex,alpha){
 
 renderCalendar();
 gjRenderCalendar();
+/* Pré-charger l'URL Worker */
+(function(){ if(!localStorage.getItem('at_worker_url')) localStorage.setItem('at_worker_url','https://adminsend.nicolas7lejeune.workers.dev/broadcast'); })();
+
+/* ═══ PUBLICATION VERS CLOUDFLARE ═══════════════════════════════════
+   Extrait les tranches 6h-9h et 16h-19h pour chaque jour de la semaine
+   avec animateurs (grille antenne) et journalistes (grille journaliste)
+═══════════════════════════════════════════════════════════════════ */
+
+var WORKER_URL_KEY = 'at_worker_url';
+
+function loadWorkerUrl(){
+  var saved = localStorage.getItem(WORKER_URL_KEY);
+  if(saved){
+    var el = document.getElementById('worker-url');
+    if(el) el.value = saved;
+  }
+}
+
+/* Appelé à chaque ouverture du modal */
+var _origOpenModal2 = openModal;
+openModal = function(id){
+  _origOpenModal2(id);
+  if(id === 'modal-publish'){
+    loadWorkerUrl();
+    var ps = document.getElementById('publish-status');
+    if(ps) ps.style.display = 'none';
+  }
+};
+
+function buildBroadcastPayload(){
+  var key = getMondayKey(currentWeekOffset);
+  var weekDates = getWeekDates(currentWeekOffset);
+
+  /* Pour chaque jour (0=lun ... 6=dim) construire les tranches */
+  var days = weekDates.map(function(date, dayIdx){
+
+    /* ── Tranche matin 6h-9h ── */
+    var matinSlots = affectations
+      .filter(function(a){
+        return (!a.weekKey || a.weekKey === key) &&
+               a.jour === dayIdx &&
+               a.hdebut >= 6 && a.hdebut < 9;
+      })
+      .sort(function(a,b){ return a.hdebut - b.hdebut; })
+      .map(function(a){
+        var t = catalogue.find(function(x){ return x.id === a.typeId; });
+        /* Journalistes sur ce créneau */
+        var rdvsOnSlot = gjRdvs.filter(function(r){
+          return (!r.weekKey || r.weekKey === key) &&
+                 r.jour === dayIdx &&
+                 r.hdebut >= 6 && r.hdebut < 9 &&
+                 r.hdebut >= a.hdebut && r.hdebut < a.hfin;
+        });
+        var journalistesOnSlot = [];
+        rdvsOnSlot.forEach(function(r){
+          (r.journalistes||[]).forEach(function(j){
+            if(!journalistesOnSlot.find(function(x){ return x.id===j.id; }))
+              journalistesOnSlot.push(j);
+          });
+        });
+        return {
+          hdebut: a.hdebut,
+          hfin: a.hfin,
+          emission: a.nom || (t?t.nom:'?'),
+          color: a.color,
+          animateurs: (a.anims||[]).map(function(x){ return {id:x.id,prenom:x.prenom,nom:x.nom,color:x.color}; }),
+          journalistes: journalistesOnSlot.map(function(x){ return {id:x.id,prenom:x.prenom,nom:x.nom,color:x.color}; })
+        };
+      });
+
+    /* ── Tranche soir 16h-19h ── */
+    var soirSlots = affectations
+      .filter(function(a){
+        return (!a.weekKey || a.weekKey === key) &&
+               a.jour === dayIdx &&
+               a.hdebut >= 16 && a.hdebut < 19;
+      })
+      .sort(function(a,b){ return a.hdebut - b.hdebut; })
+      .map(function(a){
+        var t = catalogue.find(function(x){ return x.id === a.typeId; });
+        var rdvsOnSlot = gjRdvs.filter(function(r){
+          return (!r.weekKey || r.weekKey === key) &&
+                 r.jour === dayIdx &&
+                 r.hdebut >= 16 && r.hdebut < 19 &&
+                 r.hdebut >= a.hdebut && r.hdebut < a.hfin;
+        });
+        var journalistesOnSlot = [];
+        rdvsOnSlot.forEach(function(r){
+          (r.journalistes||[]).forEach(function(j){
+            if(!journalistesOnSlot.find(function(x){ return x.id===j.id; }))
+              journalistesOnSlot.push(j);
+          });
+        });
+        return {
+          hdebut: a.hdebut,
+          hfin: a.hfin,
+          emission: a.nom || (t?t.nom:'?'),
+          color: a.color,
+          animateurs: (a.anims||[]).map(function(x){ return {id:x.id,prenom:x.prenom,nom:x.nom,color:x.color}; }),
+          journalistes: journalistesOnSlot.map(function(x){ return {id:x.id,prenom:x.prenom,nom:x.nom,color:x.color}; })
+        };
+      });
+
+    return {
+      dayIdx: dayIdx,
+      date: date.getDate(),
+      mois: date.getMonth(),
+      annee: date.getFullYear(),
+      isoDate: date.toISOString().slice(0,10),
+      matin: { slots: matinSlots },
+      soir:  { slots: soirSlots }
+    };
+  });
+
+  return {
+    weekKey: key,
+    publishedAt: new Date().toISOString(),
+    days: days
+  };
+}
+
+async function publishData(){
+  var urlEl = document.getElementById('worker-url');
+  var url = urlEl ? urlEl.value.trim() : '';
+  if(!url){ alert('Entrez l URL du Worker Cloudflare.'); return; }
+
+  /* Sauvegarder l'URL pour la prochaine fois */
+  localStorage.setItem(WORKER_URL_KEY, url);
+
+  var statusEl = document.getElementById('publish-status');
+  statusEl.style.display = 'block';
+  statusEl.style.background = 'rgba(255,255,255,.05)';
+  statusEl.style.border = '1px solid rgba(255,255,255,.1)';
+  statusEl.style.color = 'rgba(255,255,255,.6)';
+  statusEl.textContent = 'Publication en cours...';
+
+  try {
+    var payload = buildBroadcastPayload();
+    var res = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    var data = await res.json();
+
+    statusEl.style.background = 'rgba(46,204,113,.1)';
+    statusEl.style.border = '1px solid rgba(46,204,113,.3)';
+    statusEl.style.color = '#2ecc71';
+    statusEl.textContent = '✓ Publie avec succes — ' + (data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) : '');
+
+  } catch(e) {
+    statusEl.style.background = 'rgba(231,76,60,.1)';
+    statusEl.style.border = '1px solid rgba(231,76,60,.3)';
+    statusEl.style.color = '#e74c3c';
+    statusEl.textContent = 'Erreur : ' + e.message;
+  }
+}
+
 </script>
+
+<!-- MODAL : Publier vers l'antenne -->
+<div class="modal-overlay" id="modal-publish">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <span>&#128225; Publier vers l'antenne</span>
+      <button class="modal-close" onclick="closeModal('modal-publish')">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>URL du Worker Cloudflare</label>
+        <input type="text" id="worker-url" value="https://adminsend.nicolas7lejeune.workers.dev/broadcast"
+          style="font-family:'Share Tech Mono',monospace;font-size:12px;">
+      </div>
+      <div id="publish-status" style="display:none;padding:10px 14px;border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;margin-top:4px;"></div>
+      <div style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);line-height:1.6;margin-top:4px;">
+        Publie les tranches <strong style="color:rgba(255,255,255,.6);">6h-9h</strong> et <strong style="color:rgba(255,255,255,.6);">16h-19h</strong> 
+        de toute la semaine affichee avec animateurs et journalistes.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div></div>
+      <div class="modal-footer-right">
+        <button class="ga-btn" onclick="closeModal('modal-publish')">Annuler</button>
+        <button class="ga-btn" style="background:rgba(46,204,113,.2);border-color:rgba(46,204,113,.4);color:#2ecc71;" onclick="publishData()">&#128225; Publier maintenant</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
