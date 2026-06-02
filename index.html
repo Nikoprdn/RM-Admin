@@ -113,6 +113,68 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 }
 
 
+
+/* JEU ANTENNE */
+.jeu-emission-card{
+  background:#2a2733;border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;overflow:hidden;
+}
+.jeu-emission-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;
+  background:#37333E;border-bottom:3px solid #E4032E;
+}
+.jeu-emission-name{
+  font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;
+  letter-spacing:.1em;text-transform:uppercase;color:#fff;
+}
+.jeu-emission-tranche{
+  font-family:'Share Tech Mono',monospace;font-size:13px;color:rgba(255,255,255,.4);
+}
+.jeu-week-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:0;
+}
+.jeu-day-col{
+  border-right:1px solid rgba(255,255,255,.06);
+}
+.jeu-day-col:last-child{border-right:none;}
+.jeu-day-head{
+  padding:8px 12px;text-align:center;
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.35);
+  background:rgba(0,0,0,.15);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.jeu-day-head .jeu-day-num{display:block;font-size:16px;font-weight:800;color:#fff;line-height:1;}
+.jeu-day-head.today .jeu-day-num{color:#7aabff;}
+.jeu-day-head.today{color:#7aabff;}
+.jeu-day-head.past{opacity:.4;}
+.jeu-day-body{
+  padding:12px;min-height:90px;
+  cursor:pointer;transition:background .15s;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.jeu-day-body:hover{background:rgba(255,255,255,.04);}
+.jeu-day-body.past{opacity:.35;pointer-events:none;}
+.jeu-day-body.has-jeu{border-left:3px solid #F5C518;}
+.jeu-empty{
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;
+  color:rgba(255,255,255,.15);text-transform:uppercase;letter-spacing:.06em;
+  text-align:center;
+}
+.jeu-card-nom{
+  font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;
+  color:#fff;letter-spacing:.04em;margin-bottom:3px;
+}
+.jeu-card-heure{
+  font-family:'Share Tech Mono',monospace;font-size:11px;color:#F5C518;margin-bottom:4px;
+}
+.jeu-card-gain{
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;
+  color:rgba(255,255,255,.5);
+}
+
 .gc-day-past{opacity:.35;}
 .gc-cell-past{opacity:.3;pointer-events:none;}
 .gj-slot-day-head.gc-day-past{opacity:.35;}
@@ -258,7 +320,30 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   </div>
 </section>
 
-<section id="jeu-antenne" class="section"><div class="placeholder">[ Jeu Antenne ]</div></section>
+<section id="jeu-antenne" class="section">
+
+  <!-- Toolbar -->
+  <div class="ga-toolbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div>
+        <div class="ga-title">Jeu Antenne</div>
+        <div class="ga-sub">Semaine du <span id="jeu-week-label">-</span></div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="ga-btn" onclick="jeuChangeWeek(-1)">&#9664;</button>
+        <button class="ga-btn" onclick="jeuChangeWeek(0)">Auj.</button>
+        <button class="ga-btn" onclick="jeuChangeWeek(1)">&#9654;</button>
+      </div>
+    </div>
+    <div class="ga-toolbar-right">
+      <button class="ga-btn ga-btn-primary" onclick="openJeuForm(null)">&#43; Nouveau jeu</button>
+    </div>
+  </div>
+
+  <!-- Grille : une carte par émission -->
+  <div id="jeu-grid" style="display:flex;flex-direction:column;gap:16px;"></div>
+
+</section>
 <section id="commercial" class="section"><div class="placeholder">[ Commercial Editor ]</div></section>
 <section id="incidents" class="section"><div class="placeholder">[ Gestion des Incidents ]</div></section>
 
@@ -1470,6 +1555,194 @@ function hexAlpha(hex,alpha){
 
 renderCalendar();
 gjRenderCalendar();
+
+/* ═══════════════════════════════════════════════════════════════════
+   JEU ANTENNE
+═══════════════════════════════════════════════════════════════════ */
+var jeux = [];           // [{id, nom, gain, desc, emissionId, heure, weekKey}]
+var editingJeuId = null;
+var jeuWeekOffset = 0;
+
+function saveJeux(){ localStorage.setItem('at_jeux', JSON.stringify(jeux)); }
+function loadJeux(){ try{ var v=localStorage.getItem('at_jeux'); if(v) jeux=JSON.parse(v); }catch(e){} }
+loadJeux();
+
+/* Navigation semaine */
+function jeuChangeWeek(dir){
+  if(dir===0) jeuWeekOffset=0; else jeuWeekOffset+=dir;
+  jeuRender();
+}
+
+/* Ouvrir modal formulaire */
+function openJeuForm(jeuId, emissionId, dayIdx){ if(!jeuId){ openJeuNew(emissionId||0,''); return; }
+  editingJeuId = jeuId;
+  var isNew = jeuId === null;
+  var j = isNew ? null : jeux.find(function(x){ return x.id===jeuId; });
+
+  document.getElementById('jeu-form-title').textContent = isNew ? 'Nouveau jeu' : 'Modifier le jeu';
+  document.getElementById('jeu-nom').value   = j ? j.nom   : '';
+  document.getElementById('jeu-gain').value  = j ? j.gain  : '';
+  document.getElementById('jeu-desc').value  = j ? j.desc  : '';
+  document.getElementById('jeu-del-btn').style.display = isNew ? 'none' : 'inline-flex';
+
+  /* Remplir le select des émissions depuis le catalogue */
+  var sel = document.getElementById('jeu-emission');
+  sel.innerHTML = '<option value="">— Choisir une emission —</option>' +
+    catalogue.map(function(t){
+      return '<option value="'+t.id+'">'+t.nom+'</option>';
+    }).join('');
+  sel.value = j ? j.emissionId : (emissionId || '');
+
+  /* Remplir le select des heures */
+  var hSel = document.getElementById('jeu-heure');
+  hSel.innerHTML = buildHourOptions();
+  hSel.value = j ? j.heure : (typeof dayIdx !== 'undefined' ? '' : '8');
+
+  openModal('modal-jeu');
+}
+
+function saveJeu(){
+  var nom   = document.getElementById('jeu-nom').value.trim();
+  var emId  = parseInt(document.getElementById('jeu-emission').value);
+  var heure = parseFloat(document.getElementById('jeu-heure').value);
+  var gain  = document.getElementById('jeu-gain').value.trim();
+  var desc  = document.getElementById('jeu-desc').value.trim();
+  var dayKey= document.getElementById('modal-jeu').dataset.dayKey || '';
+  if(!nom){ alert('Nom du jeu requis.'); return; }
+  if(!emId){ alert('Choisissez une emission.'); return; }
+  if(editingJeuId !== null){
+    var j = jeux.find(function(x){ return x.id===editingJeuId; });
+    if(j){ j.nom=nom; j.emissionId=emId; j.heure=heure; j.gain=gain; j.desc=desc; }
+  } else {
+    jeux.push({id:Date.now(), nom:nom, emissionId:emId, heure:heure, gain:gain, desc:desc, dayKey:dayKey});
+  }
+  saveJeux(); closeModal('modal-jeu'); jeuRender();
+  if(localStorage.getItem('at_worker_url')) publishData();
+}
+
+function deleteJeu(){
+  if(!confirm('Supprimer ce jeu ?')) return;
+  jeux = jeux.filter(function(j){ return j.id !== editingJeuId; });
+  saveJeux(); closeModal('modal-jeu'); jeuRender();
+  if(localStorage.getItem('at_worker_url')) publishData();
+}
+
+/* Rendu principal */
+function jeuFmtH(h){ return h==null?'--':String(Math.floor(h)).padStart(2,'0')+'h'+(h%1?'30':'00'); }
+
+function jeuRender(){
+  var container = document.getElementById('jeu-grid');
+  if(!container) return;
+
+  var days  = getWeekDates(jeuWeekOffset);
+  var today = new Date(); today.setHours(0,0,0,0);
+  var JOURS5 = ['Lun','Mar','Mer','Jeu','Ven'];
+
+  /* Label semaine */
+  var lbl = document.getElementById('jeu-week-label');
+  if(lbl) lbl.textContent = days[0].getDate()+' '+MOIS[days[0].getMonth()]+' - '+days[4].getDate()+' '+MOIS[days[4].getMonth()]+' '+days[4].getFullYear();
+
+  /* Utiliser le catalogue comme liste d'émissions */
+  var emissions = catalogue.slice();
+  if(!emissions.length){
+    container.innerHTML = '<div class="placeholder">Aucune emission dans le catalogue. Creez des emissions dans "+ Emission".</div>';
+    return;
+  }
+
+  container.innerHTML = emissions.map(function(em){
+    var html = '<div class="jeu-emission-card">';
+    /* En-tête */
+    html += '<div class="jeu-emission-header" style="border-bottom-color:'+(em.color||'#E4032E')+'">';
+    html += '<span class="jeu-emission-name">'+em.nom+'</span>';
+    if(em.desc) html += '<span class="jeu-emission-tranche">'+em.desc+'</span>';
+    html += '</div>';
+
+    /* 5 colonnes jours */
+    html += '<div class="jeu-week-grid">';
+    for(var i=0;i<5;i++){
+      var d = days[i];
+      var dKey = d.toISOString().slice(0,10);
+      var isToday = d.getTime()===today.getTime();
+      var isPast  = d.getTime()<today.getTime();
+
+      /* Chercher le jeu de ce jour pour cette émission */
+      var j = jeux.find(function(x){ return x.emissionId===em.id && x.dayKey===dKey; });
+      var captured_i = i; // closure
+      var captured_emId = em.id;
+      var captured_dKey = dKey;
+
+      html += '<div class="jeu-day-col">';
+      /* En-tête jour */
+      html += '<div class="jeu-day-head'+(isToday?' today':'')+(isPast?' past':'')+'">';
+      html += '<span class="jeu-day-num">'+d.getDate()+'</span>'+JOURS5[i];
+      html += '</div>';
+      /* Corps carte */
+      if(j){
+        html += '<div class="jeu-day-body has-jeu'+(isPast?' past':'')+'" onclick="openJeuEditByKey(''+captured_dKey+'','+captured_emId+')">';
+        html += '<div class="jeu-card-heure">'+jeuFmtH(j.heure)+'</div>';
+        html += '<div class="jeu-card-nom">'+j.nom+'</div>';
+        if(j.gain) html += '<div class="jeu-card-gain">&#127941; '+j.gain+'</div>';
+        html += '</div>';
+      } else {
+        html += '<div class="jeu-day-body'+(isPast?' past':'')+'" onclick="openJeuNew('+captured_emId+',''+captured_dKey+'')">';
+        html += '<div class="jeu-empty">+</div>';
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+    html += '</div></div>';
+    return html;
+  }).join('');
+}
+
+function openJeuNew(emissionId, dayKey){
+  editingJeuId = null;
+  var t = catalogue.find(function(x){ return x.id===emissionId; });
+  document.getElementById('jeu-form-title').textContent = 'Nouveau jeu';
+  document.getElementById('jeu-nom').value  = '';
+  document.getElementById('jeu-gain').value = '';
+  document.getElementById('jeu-desc').value = '';
+  document.getElementById('jeu-del-btn').style.display = 'none';
+  /* Pré-remplir l'émission */
+  var sel = document.getElementById('jeu-emission');
+  sel.innerHTML = '<option value="">— Choisir —</option>'+
+    catalogue.map(function(c){ return '<option value="'+c.id+'">'+c.nom+'</option>'; }).join('');
+  sel.value = emissionId;
+  /* Stocker le dayKey pour la sauvegarde */
+  document.getElementById('modal-jeu').dataset.dayKey = dayKey;
+  var hSel = document.getElementById('jeu-heure');
+  hSel.innerHTML = buildHourOptions();
+  hSel.value = '8';
+  openModal('modal-jeu');
+}
+
+function openJeuEditByKey(dayKey, emissionId){
+  var j = jeux.find(function(x){ return x.emissionId===emissionId && x.dayKey===dayKey; });
+  if(!j) return;
+  editingJeuId = j.id;
+  document.getElementById('jeu-form-title').textContent = 'Modifier le jeu';
+  document.getElementById('jeu-nom').value  = j.nom;
+  document.getElementById('jeu-gain').value = j.gain||'';
+  document.getElementById('jeu-desc').value = j.desc||'';
+  document.getElementById('jeu-del-btn').style.display = 'inline-flex';
+  var sel = document.getElementById('jeu-emission');
+  sel.innerHTML = '<option value="">— Choisir —</option>'+
+    catalogue.map(function(c){ return '<option value="'+c.id+'">'+c.nom+'</option>'; }).join('');
+  sel.value = j.emissionId;
+  document.getElementById('modal-jeu').dataset.dayKey = dayKey;
+  var hSel = document.getElementById('jeu-heure');
+  hSel.innerHTML = buildHourOptions();
+  hSel.value = j.heure||'8';
+  openModal('modal-jeu');
+}
+
+/* Sync avec showSection */
+var _jeuOrigShow = showSection;
+showSection = function(id, btn){
+  _jeuOrigShow(id, btn);
+  if(id==='jeu-antenne') jeuRender();
+};
+
 /* Pré-charger l'URL Worker */
 (function(){ if(!localStorage.getItem('at_worker_url')) localStorage.setItem('at_worker_url','https://adminsend.nicolas7lejeune.workers.dev/broadcast'); })();
 
@@ -1505,6 +1778,7 @@ function buildBroadcastPayload(){
 
   /* Pour chaque jour (0=lun ... 6=dim) construire les tranches */
   var days = weekDates.map(function(date, dayIdx){
+    var dKey = date.toISOString().slice(0,10);
 
     /* ── Tranche matin 6h-9h ── */
     var matinSlots = affectations
@@ -1584,10 +1858,21 @@ function buildBroadcastPayload(){
     };
   });
 
+  /* Ajouter les jeux — indexés par dayKey+emissionId */
+  var jeuxPayload = {};
+  var weekDayKeys = weekDates.map(function(d){ return d.toISOString().slice(0,10); });
+  jeux.filter(function(j){ return weekDayKeys.indexOf(j.dayKey) >= 0; }).forEach(function(j){
+    var t = catalogue.find(function(x){ return x.id===j.emissionId; });
+    var emNom = t ? t.nom : '';
+    var k = j.dayKey + '_' + j.emissionId;
+    jeuxPayload[k] = { dayKey:j.dayKey, emissionId:j.emissionId, emissionNom:emNom, nom:j.nom, gain:j.gain, desc:j.desc, heure:j.heure };
+  });
+
   return {
     weekKey: key,
     publishedAt: new Date().toISOString(),
-    days: days
+    days: days,
+    jeux: jeuxPayload
   };
 }
 
@@ -1656,6 +1941,50 @@ async function publishData(){
       <div class="modal-footer-right">
         <button class="ga-btn" onclick="closeModal('modal-publish')">Annuler</button>
         <button class="ga-btn" style="background:rgba(46,204,113,.2);border-color:rgba(46,204,113,.4);color:#2ecc71;" onclick="publishData()">&#128225; Publier maintenant</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL : Jeu Antenne -->
+<div class="modal-overlay" id="modal-jeu">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <span id="jeu-form-title">Nouveau jeu</span>
+      <button class="modal-close" onclick="closeModal('modal-jeu')">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Nom du jeu</label>
+        <input type="text" id="jeu-nom" placeholder="Ex : La Minute Gagnante">
+      </div>
+      <div class="form-group">
+        <label>Emission</label>
+        <select id="jeu-emission">
+          <option value="">— Choisir une emission —</option>
+        </select>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Heure de passage</label>
+          <select id="jeu-heure"></select>
+        </div>
+        <div class="form-group">
+          <label>Gain</label>
+          <input type="text" id="jeu-gain" placeholder="Ex : 500€ en bons cadeaux">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description (optionnel)</label>
+        <input type="text" id="jeu-desc" placeholder="Ex : Trouver l'artiste mystere">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="ga-btn ga-btn-danger" id="jeu-del-btn" style="display:none" onclick="deleteJeu()">&#128465; Supprimer</button>
+      <div class="modal-footer-right">
+        <button class="ga-btn" onclick="closeModal('modal-jeu')">Annuler</button>
+        <button class="ga-btn ga-btn-primary" onclick="saveJeu()">Enregistrer</button>
       </div>
     </div>
   </div>
