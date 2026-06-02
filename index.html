@@ -436,10 +436,9 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Inter',sans-
     <div class="modal-header"><span id="modal-gj-rdv-title">Creer un rendez-vous</span><button class="modal-close" onclick="closeModal('modal-gj-rdv')">&#10005;</button></div>
     <div class="modal-body">
       <div class="form-group"><label>Titre</label><input type="text" id="gj-rdv-titre" placeholder="Ex : Edition du matin"></div>
-      <div class="form-row">
+      <div class="form-row-2">
         <div class="form-group"><label>Jour</label><select id="gj-rdv-jour"><option value="0">Lundi</option><option value="1">Mardi</option><option value="2">Mercredi</option><option value="3">Jeudi</option><option value="4">Vendredi</option><option value="5">Samedi</option><option value="6">Dimanche</option></select></div>
-        <div class="form-group"><label>Debut</label><select id="gj-rdv-hdebut"></select></div>
-        <div class="form-group"><label>Fin</label><select id="gj-rdv-hfin"></select></div>
+        <div class="form-group"><label>Heure du rendez-vous</label><select id="gj-rdv-hdebut"></select></div>
       </div>
       <div class="form-group"><label>Couleur</label><input type="color" id="gj-rdv-color" value="#E87C3E"></div>
       <div class="form-group"><label>Journalistes</label><div class="anim-selector" id="gj-rdv-selector"></div></div>
@@ -639,7 +638,7 @@ function buildGjSlotOptions(){
   return GJ_SLOTS.map(function(s){ return '<option value="'+s.v+'">'+s.l+'</option>'; }).join('');
 }
 var gjh=document.getElementById('gj-rdv-hdebut'); if(gjh) gjh.innerHTML=buildGjSlotOptions();
-var gjf=document.getElementById('gj-rdv-hfin');   if(gjf){ gjf.innerHTML=buildGjSlotOptions(); gjf.value='6.5'; }
+
 
 /* ═══ SEMAINE ════════════════════════════════════════════════════════ */
 function getWeekDates(offset){
@@ -1123,12 +1122,8 @@ function openGjRdvModal(jour,hdebut){
   document.getElementById('gj-rdv-jour').value=jour!==undefined?jour:0;
   var gjSlots=[6,6.5,7,7.5,8,8.5,9,12,17,18,19];
   var gjDefaultH=hdebut!==undefined?hdebut:8;
-  /* Trouver la valeur la plus proche dans les slots */
   var gjClosest=gjSlots.reduce(function(a,b){ return Math.abs(b-gjDefaultH)<Math.abs(a-gjDefaultH)?b:a; });
-  var gjNextIdx=gjSlots.indexOf(gjClosest)+1;
-  var gjNextH=gjNextIdx<gjSlots.length?gjSlots[gjNextIdx]:gjSlots[gjSlots.length-1];
   document.getElementById('gj-rdv-hdebut').value=gjClosest;
-  document.getElementById('gj-rdv-hfin').value=gjNextH;
   document.getElementById('gj-rdv-color').value='#E87C3E';
   document.getElementById('gj-rdv-del-btn').style.display='none';
   selectedJournalisteIds=[]; gjBuildSelector(); openModal('modal-gj-rdv');
@@ -1140,7 +1135,6 @@ function openGjRdvEdit(rdvId){
   document.getElementById('gj-rdv-titre').value=r.titre;
   document.getElementById('gj-rdv-jour').value=r.jour;
   document.getElementById('gj-rdv-hdebut').value=r.hdebut;
-  document.getElementById('gj-rdv-hfin').value=r.hfin;
   document.getElementById('gj-rdv-color').value=r.color;
   document.getElementById('gj-rdv-del-btn').style.display='inline-flex';
   selectedJournalisteIds=r.journalisteIds?r.journalisteIds.slice():[]; gjBuildSelector(); openModal('modal-gj-rdv');
@@ -1149,10 +1143,9 @@ function saveGjRdv(){
   var titre=document.getElementById('gj-rdv-titre').value.trim();
   var jour=parseInt(document.getElementById('gj-rdv-jour').value);
   var hdebut=parseFloat(document.getElementById('gj-rdv-hdebut').value);
-  var hfin=parseFloat(document.getElementById('gj-rdv-hfin').value);
+  var hfin=hdebut+0.5;
   var color=document.getElementById('gj-rdv-color').value;
   if(!titre){ alert('Titre requis.'); return; }
-  if(hfin<=hdebut){ alert('Heure de fin invalide.'); return; }
   var jObjs=journalistes.filter(function(j){return selectedJournalisteIds.indexOf(j.id)>=0;});
   var key=getMondayKey(currentWeekOffset);
   if(editingGjRdvId!==null){
