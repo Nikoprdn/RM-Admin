@@ -112,6 +112,11 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 
+
+.gc-day-past{opacity:.35;}
+.gc-cell-past{opacity:.3;pointer-events:none;}
+.gj-slot-day-head.gc-day-past{opacity:.35;}
+
 .gc-em-anims{display:flex;flex-wrap:wrap;gap:2px;margin-top:2px;}
 .gc-em-anim-chip{font-family:'Barlow',sans-serif;font-size:9px;font-weight:600;color:rgba(255,255,255,.9);background:rgba(0,0,0,.3);border-radius:3px;padding:1px 4px;white-space:nowrap;}
 .gc-timeline{position:absolute;height:2px;background:#ff4444;z-index:20;pointer-events:none;}
@@ -1339,7 +1344,8 @@ function renderCalendar(){
   days.forEach(function(d,i){
     if(i>=5)return;
     var isT=d.getTime()===today.getTime();
-    html+='<div class="gc-day-head'+(isT?' today':'')+'" onclick="openDupModal('+i+')">'+
+    var isPast=d.getTime()<today.getTime();
+    html+='<div class="gc-day-head'+(isT?' today':'')+(isPast?' gc-day-past':'')+'" onclick="openDupModal('+i+')">'+
       '<span class="gc-day-num">'+d.getDate()+'</span><span class="gc-day-name">'+JOURS[i]+'</span></div>';
   });
   for(var h=HOURS_START;h<HOURS_END;h++){
@@ -1347,7 +1353,8 @@ function renderCalendar(){
     days.forEach(function(d,di){
       if(di>=5)return;
       var isT=d.getTime()===today.getTime();
-      html+='<div class="gc-cell'+(isT?' today-col':'')+'" data-day="'+di+'" data-hour="'+h+'" onclick="handleCellClick(event,'+di+','+h+')"><span class="gc-cell-hint">+</span></div>';
+      var isPast=d.getTime()<today.getTime();
+      html+='<div class="gc-cell'+(isT?' today-col':'')+(isPast?' gc-cell-past':'')+'" data-day="'+di+'" data-hour="'+h+'" onclick="handleCellClick(event,'+di+','+h+')"><span class="gc-cell-hint">+</span></div>';
     });
   }
   cal.innerHTML=html;
@@ -1385,8 +1392,8 @@ function gjRenderCards(){
   days.forEach(function(d,i){
     if(i>=5)return;
     var isT=d.getTime()===today.getTime();
-    headerHtml+='<div class="gj-slot-day-head'+(isT?' today':'')+'">'+
-      '<span class="gj-day-num">'+d.getDate()+'</span>'+JOURS[i]+'</div>';
+    var isPast=d.getTime()<today.getTime();
+    headerHtml+='<div class="gj-slot-day-head'+(isT?' today':'')+(isPast?' gc-day-past':'')+'">'+'<span class="gj-day-num">'+d.getDate()+'</span>'+JOURS[i]+'</div>';
   });
   headerHtml+='</div>';
 
@@ -1399,6 +1406,7 @@ function gjRenderCards(){
     days.forEach(function(d,di){
       if(di>=5)return;
       var isT=d.getTime()===today.getTime();
+      var isPast=d.getTime()<today.getTime();
       /* Trouver les RDV sur ce créneau ce jour */
       var rdvs=gjRdvs.filter(function(r){
         return(!r.weekKey||r.weekKey===key)&&r.jour===di&&r.hdebut===slot.v;
