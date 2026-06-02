@@ -619,11 +619,27 @@ function buildHourOptions(){
   }
   return o;
 }
-['em-hdebut','em-hfin','gj-rdv-hdebut','gj-rdv-hfin'].forEach(function(id){
+['em-hdebut','em-hfin'].forEach(function(id){
   var el=document.getElementById(id); if(el) el.innerHTML=buildHourOptions();
 });
 var ef=document.getElementById('em-hfin'); if(ef) ef.value='1';
-var gf=document.getElementById('gj-rdv-hfin'); if(gf) gf.value='1';
+
+/* Créneaux prédéfinis journaliste */
+var GJ_SLOTS=[
+  {v:6,   l:'06h00'}, {v:6.5, l:'06h30'},
+  {v:7,   l:'07h00'}, {v:7.5, l:'07h30'},
+  {v:8,   l:'08h00'}, {v:8.5, l:'08h30'},
+  {v:9,   l:'09h00'},
+  {v:12,  l:'12h00'},
+  {v:17,  l:'17h00'},
+  {v:18,  l:'18h00'},
+  {v:19,  l:'19h00'}
+];
+function buildGjSlotOptions(){
+  return GJ_SLOTS.map(function(s){ return '<option value="'+s.v+'">'+s.l+'</option>'; }).join('');
+}
+var gjh=document.getElementById('gj-rdv-hdebut'); if(gjh) gjh.innerHTML=buildGjSlotOptions();
+var gjf=document.getElementById('gj-rdv-hfin');   if(gjf){ gjf.innerHTML=buildGjSlotOptions(); gjf.value='6.5'; }
 
 /* ═══ SEMAINE ════════════════════════════════════════════════════════ */
 function getWeekDates(offset){
@@ -1105,8 +1121,14 @@ function openGjRdvModal(jour,hdebut){
   document.getElementById('modal-gj-rdv-title').textContent='Creer un rendez-vous';
   document.getElementById('gj-rdv-titre').value='';
   document.getElementById('gj-rdv-jour').value=jour!==undefined?jour:0;
-  document.getElementById('gj-rdv-hdebut').value=hdebut!==undefined?hdebut:8;
-  document.getElementById('gj-rdv-hfin').value=hdebut!==undefined?(parseFloat(hdebut)+1):9;
+  var gjSlots=[6,6.5,7,7.5,8,8.5,9,12,17,18,19];
+  var gjDefaultH=hdebut!==undefined?hdebut:8;
+  /* Trouver la valeur la plus proche dans les slots */
+  var gjClosest=gjSlots.reduce(function(a,b){ return Math.abs(b-gjDefaultH)<Math.abs(a-gjDefaultH)?b:a; });
+  var gjNextIdx=gjSlots.indexOf(gjClosest)+1;
+  var gjNextH=gjNextIdx<gjSlots.length?gjSlots[gjNextIdx]:gjSlots[gjSlots.length-1];
+  document.getElementById('gj-rdv-hdebut').value=gjClosest;
+  document.getElementById('gj-rdv-hfin').value=gjNextH;
   document.getElementById('gj-rdv-color').value='#E87C3E';
   document.getElementById('gj-rdv-del-btn').style.display='none';
   selectedJournalisteIds=[]; gjBuildSelector(); openModal('modal-gj-rdv');
