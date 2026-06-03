@@ -44,7 +44,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .ga-btn-danger:hover{background:rgba(220,60,60,.4);color:#fff;}
 
 .ga-calendar-wrap{overflow-x:auto;border-radius:8px;border:1px solid rgba(255,255,255,.1);}
-.ga-calendar{position:relative;display:grid;grid-template-columns:54px repeat(5,1fr);min-width:680px;background:var(--card2);}
+.ga-calendar{position:relative;display:grid;grid-template-columns:54px repeat(7,1fr);min-width:860px;background:var(--card2);}
 .gc-corner{background:#201e28;border-bottom:2px solid rgba(255,255,255,.12);border-right:1px solid rgba(255,255,255,.1);}
 .gc-day-head{background:#201e28;padding:8px 6px;text-align:center;border-bottom:2px solid rgba(255,255,255,.12);border-left:1px solid rgba(255,255,255,.08);cursor:pointer;transition:background .15s;}
 .gc-day-head:hover{background:#2e2b39;}
@@ -61,124 +61,6 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .gc-emission{position:absolute;left:2px;right:2px;border-radius:4px;padding:3px 6px;overflow:hidden;cursor:pointer;z-index:2;transition:filter .15s,box-shadow .15s;}
 .gc-emission:hover{filter:brightness(1.18);box-shadow:0 2px 10px rgba(0,0,0,.4);}
 .gc-em-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,.5);}
-
-/* GRILLE JOURNALISTE — cartes */
-.gj-grid{display:flex;flex-direction:column;gap:2px;}
-.gj-slot-row{display:grid;grid-template-columns:80px repeat(5,1fr);gap:2px;align-items:stretch;}
-.gj-slot-header{display:grid;grid-template-columns:80px repeat(5,1fr);gap:2px;margin-bottom:4px;}
-.gj-slot-day-head{
-  text-align:center;padding:8px 4px;
-  font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;
-  letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);
-  background:#201e28;border-radius:6px;
-}
-.gj-slot-day-head.today{color:#7aabff;background:rgba(91,141,239,.12);}
-.gj-slot-day-head .gj-day-num{display:block;font-size:18px;font-weight:800;color:#fff;line-height:1.1;}
-.gj-slot-day-head.today .gj-day-num{color:#7aabff;}
-.gj-time-label{
-  display:flex;align-items:center;justify-content:flex-end;
-  padding-right:10px;
-  font-family:'Share Tech Mono',monospace;font-size:13px;font-weight:700;
-  color:rgba(255,255,255,.5);
-}
-.gj-card{
-  min-height:52px;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:6px;
-  padding:6px 10px;
-  cursor:pointer;
-  transition:background .15s,border-color .15s;
-  display:flex;flex-direction:column;justify-content:center;gap:3px;
-  position:relative;
-}
-.gj-card:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);}
-.gj-card.has-rdv{border-left:3px solid var(--gj-color,#E87C3E);}
-.gj-card.today-col{background:rgba(91,141,239,.05);}
-.gj-card-empty{
-  font-family:'Barlow Condensed',sans-serif;font-size:11px;
-  color:rgba(255,255,255,.15);letter-spacing:.06em;text-transform:uppercase;
-  text-align:center;
-}
-.gj-card-name{
-  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;
-  letter-spacing:.04em;text-transform:uppercase;color:#fff;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  line-height:1.2;
-}
-.gj-card-rdv{
-  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
-  color:rgba(255,255,255,.5);letter-spacing:.04em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-
-
-
-/* JEU ANTENNE */
-.jeu-emission-card{
-  background:#2a2733;border:1px solid rgba(255,255,255,.08);
-  border-radius:10px;overflow:hidden;
-}
-.jeu-emission-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 20px;
-  background:#37333E;border-bottom:3px solid #E4032E;
-}
-.jeu-emission-name{
-  font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;
-  letter-spacing:.1em;text-transform:uppercase;color:#fff;
-}
-.jeu-emission-tranche{
-  font-family:'Share Tech Mono',monospace;font-size:13px;color:rgba(255,255,255,.4);
-}
-.jeu-week-grid{
-  display:grid;grid-template-columns:repeat(5,1fr);gap:0;
-}
-.jeu-day-col{
-  border-right:1px solid rgba(255,255,255,.06);
-}
-.jeu-day-col:last-child{border-right:none;}
-.jeu-day-head{
-  padding:8px 12px;text-align:center;
-  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;
-  letter-spacing:.1em;text-transform:uppercase;
-  color:rgba(255,255,255,.35);
-  background:rgba(0,0,0,.15);
-  border-bottom:1px solid rgba(255,255,255,.06);
-}
-.jeu-day-head .jeu-day-num{display:block;font-size:16px;font-weight:800;color:#fff;line-height:1;}
-.jeu-day-head.today .jeu-day-num{color:#7aabff;}
-.jeu-day-head.today{color:#7aabff;}
-.jeu-day-head.past{opacity:.4;}
-.jeu-day-body{
-  padding:12px;min-height:90px;
-  cursor:pointer;transition:background .15s;
-  display:flex;flex-direction:column;justify-content:center;
-}
-.jeu-day-body:hover{background:rgba(255,255,255,.04);}
-.jeu-day-body.past{opacity:.35;pointer-events:none;}
-.jeu-day-body.has-jeu{border-left:3px solid #F5C518;}
-.jeu-empty{
-  font-family:'Barlow Condensed',sans-serif;font-size:11px;
-  color:rgba(255,255,255,.15);text-transform:uppercase;letter-spacing:.06em;
-  text-align:center;
-}
-.jeu-card-nom{
-  font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;
-  color:#fff;letter-spacing:.04em;margin-bottom:3px;
-}
-.jeu-card-heure{
-  font-family:'Share Tech Mono',monospace;font-size:11px;color:#F5C518;margin-bottom:4px;
-}
-.jeu-card-gain{
-  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;
-  color:rgba(255,255,255,.5);
-}
-
-.gc-day-past{opacity:.35;}
-.gc-cell-past{opacity:.3;pointer-events:none;}
-.gj-slot-day-head.gc-day-past{opacity:.35;}
-
 .gc-em-anims{display:flex;flex-wrap:wrap;gap:2px;margin-top:2px;}
 .gc-em-anim-chip{font-family:'Barlow',sans-serif;font-size:9px;font-weight:600;color:rgba(255,255,255,.9);background:rgba(0,0,0,.3);border-radius:3px;padding:1px 4px;white-space:nowrap;}
 .gc-timeline{position:absolute;height:2px;background:#ff4444;z-index:20;pointer-events:none;}
@@ -264,6 +146,44 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .gt-em-time{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,.35);}
 .gc-em-anims{display:flex;flex-direction:column;gap:2px;margin-top:3px;}
 .gc-em-anim-chip{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#fff;background:rgba(0,0,0,.3);border-radius:3px;padding:2px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gc-day-past{opacity:.35;}
+.gc-cell-past{opacity:.3;pointer-events:none;}
+.gj-grid{display:flex;flex-direction:column;gap:2px;}
+.gj-slot-row{display:grid;grid-template-columns:80px repeat(5,1fr);gap:2px;align-items:stretch;}
+.gj-slot-header{display:grid;grid-template-columns:80px repeat(5,1fr);gap:2px;margin-bottom:4px;}
+.gj-slot-day-head{text-align:center;padding:8px 4px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);background:#201e28;border-radius:6px;}
+.gj-slot-day-head.today{color:#7aabff;background:rgba(91,141,239,.12);}
+.gj-slot-day-head .gj-day-num{display:block;font-size:18px;font-weight:800;color:#fff;line-height:1.1;}
+.gj-slot-day-head.today .gj-day-num{color:#7aabff;}
+.gj-time-label{display:flex;align-items:center;justify-content:flex-end;padding-right:10px;font-family:'Share Tech Mono',monospace;font-size:13px;font-weight:700;color:rgba(255,255,255,.5);}
+.gj-card{min-height:52px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:6px 10px;cursor:pointer;transition:background .15s;display:flex;flex-direction:column;justify-content:center;gap:3px;}
+.gj-card:hover{background:rgba(255,255,255,.08);}
+.gj-card.has-rdv{border-left:3px solid var(--gj-color,#E87C3E);}
+.gj-card.today-col{background:rgba(91,141,239,.05);}
+.gj-card.past{opacity:.3;pointer-events:none;}
+.gj-card-empty{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:rgba(255,255,255,.15);text-transform:uppercase;text-align:center;}
+.gj-card-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;text-transform:uppercase;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gj-card-rdv{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.jeu-emission-card{background:#2a2733;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;}
+.jeu-emission-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#37333E;border-bottom:3px solid #E4032E;}
+.jeu-emission-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#fff;}
+.jeu-emission-tranche{font-family:'Share Tech Mono',monospace;font-size:13px;color:rgba(255,255,255,.4);}
+.jeu-week-grid{display:grid;grid-template-columns:repeat(5,1fr);}
+.jeu-day-col{border-right:1px solid rgba(255,255,255,.06);}
+.jeu-day-col:last-child{border-right:none;}
+.jeu-day-head{padding:8px 12px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);background:rgba(0,0,0,.15);border-bottom:1px solid rgba(255,255,255,.06);}
+.jeu-day-head .jeu-day-num{display:block;font-size:16px;font-weight:800;color:#fff;line-height:1;}
+.jeu-day-head.today .jeu-day-num{color:#7aabff;}
+.jeu-day-head.today{color:#7aabff;}
+.jeu-day-head.past{opacity:.4;}
+.jeu-day-body{padding:12px;min-height:90px;cursor:pointer;transition:background .15s;display:flex;flex-direction:column;justify-content:center;}
+.jeu-day-body:hover{background:rgba(255,255,255,.04);}
+.jeu-day-body.past{opacity:.35;pointer-events:none;}
+.jeu-day-body.has-jeu{border-left:3px solid #F5C518;}
+.jeu-empty{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:rgba(255,255,255,.15);text-transform:uppercase;text-align:center;}
+.jeu-card-nom{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;color:#fff;letter-spacing:.04em;margin-bottom:3px;}
+.jeu-card-heure{font-family:'Share Tech Mono',monospace;font-size:11px;color:#F5C518;margin-bottom:4px;}
+.jeu-card-gain{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.5);}
 </style>
 </head>
 <body>
@@ -285,10 +205,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 <section id="grille-antenne" class="section">
   <div class="ga-toolbar">
     <div style="display:flex;align-items:center;gap:12px;">
-      <div>
-        <div class="ga-title">Grille Antenne</div>
-        <div class="ga-sub">Semaine du <span id="ga-week-label">-</span></div>
-      </div>
+      <div><div class="ga-title">Grille Antenne</div><div class="ga-sub">Semaine du <span id="ga-week-label">-</span></div></div>
       <div style="display:flex;gap:6px;">
         <button class="ga-btn" onclick="changeWeek(-1)">&#9664;</button>
         <button class="ga-btn" onclick="changeWeek(0)">Auj.</button>
@@ -304,7 +221,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
       <button class="ga-btn" style="background:rgba(46,204,113,.2);border-color:rgba(46,204,113,.4);color:#2ecc71;" onclick="openModal('modal-publish')">&#128225; Publier</button>
     </div>
   </div>
-  <div class="ga-calendar-wrap"><div class="ga-calendar" id="ga-calendar"></div></div>
+  <div class="ga-calendar-wrap"><div class="ga-calendar" id="ga-calendar" style="grid-template-columns:54px repeat(5,1fr);min-width:600px;"></div></div>
 
   <div style="margin-top:48px;">
     <div class="ga-toolbar">
@@ -321,29 +238,19 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 </section>
 
 <section id="jeu-antenne" class="section">
-
-  <!-- Toolbar -->
   <div class="ga-toolbar">
     <div style="display:flex;align-items:center;gap:12px;">
-      <div>
-        <div class="ga-title">Jeu Antenne</div>
-        <div class="ga-sub">Semaine du <span id="jeu-week-label">-</span></div>
-      </div>
+      <div><div class="ga-title">Jeu Antenne</div><div class="ga-sub">Semaine du <span id="jeu-week-label">-</span></div></div>
       <div style="display:flex;gap:6px;">
         <button class="ga-btn" onclick="jeuChangeWeek(-1)">&#9664;</button>
         <button class="ga-btn" onclick="jeuChangeWeek(0)">Auj.</button>
         <button class="ga-btn" onclick="jeuChangeWeek(1)">&#9654;</button>
       </div>
     </div>
-    <div class="ga-toolbar-right">
-      <button class="ga-btn ga-btn-primary" onclick="openJeuForm(null)">&#43; Nouveau jeu</button>
-    </div>
   </div>
-
-  <!-- Grille : une carte par émission -->
   <div id="jeu-grid" style="display:flex;flex-direction:column;gap:16px;"></div>
-
 </section>
+
 <section id="commercial" class="section"><div class="placeholder">[ Commercial Editor ]</div></section>
 <section id="incidents" class="section"><div class="placeholder">[ Gestion des Incidents ]</div></section>
 
@@ -372,18 +279,12 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   <div class="modal" style="max-width:400px;">
     <div class="modal-header"><span id="anim-form-title">Nouvel animateur</span><button class="modal-close" onclick="closeModal('modal-animateur');openModal('modal-equipes')">&#10005;</button></div>
     <div class="modal-body">
-      <div class="form-row-2">
-        <div class="form-group"><label>Prenom</label><input type="text" id="anim-prenom" placeholder="Jean"></div>
-        <div class="form-group"><label>Nom</label><input type="text" id="anim-nom" placeholder="Dupont"></div>
-      </div>
+      <div class="form-row-2"><div class="form-group"><label>Prenom</label><input type="text" id="anim-prenom" placeholder="Jean"></div><div class="form-group"><label>Nom</label><input type="text" id="anim-nom" placeholder="Dupont"></div></div>
       <div class="form-group"><label>Couleur</label><input type="color" id="anim-color" value="#5B8DEF"></div>
     </div>
     <div class="modal-footer">
       <button class="ga-btn ga-btn-danger" id="anim-del-btn" style="display:none" onclick="deleteAnimateur()">&#128465; Supprimer</button>
-      <div class="modal-footer-right">
-        <button class="ga-btn" onclick="closeModal('modal-animateur');openModal('modal-equipes')">Annuler</button>
-        <button class="ga-btn ga-btn-primary" onclick="saveAnimateur()">Enregistrer</button>
-      </div>
+      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-animateur');openModal('modal-equipes')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveAnimateur()">Enregistrer</button></div>
     </div>
   </div>
 </div>
@@ -398,10 +299,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     </div>
     <div class="modal-footer">
       <button class="ga-btn ga-btn-danger" id="team-del-btn" style="display:none" onclick="deleteTeam()">&#128465; Supprimer</button>
-      <div class="modal-footer-right">
-        <button class="ga-btn" onclick="closeModal('modal-team-edit');openModal('modal-equipes')">Annuler</button>
-        <button class="ga-btn ga-btn-primary" onclick="saveTeam()">Enregistrer</button>
-      </div>
+      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-team-edit');openModal('modal-equipes')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveTeam()">Enregistrer</button></div>
     </div>
   </div>
 </div>
@@ -410,9 +308,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 <div class="modal-overlay" id="modal-emissions-panel">
   <div class="modal" style="max-width:540px;width:95%;">
     <div class="modal-header"><span>Catalogue des emissions</span><button class="modal-close" onclick="closeModal('modal-emissions-panel')">&#10005;</button></div>
-    <div class="modal-body" style="padding:16px 24px;">
-      <div id="em-catalogue-list" style="display:flex;flex-direction:column;gap:7px;max-height:400px;overflow-y:auto;"></div>
-    </div>
+    <div class="modal-body" style="padding:16px 24px;"><div id="em-catalogue-list" style="display:flex;flex-direction:column;gap:7px;max-height:400px;overflow-y:auto;"></div></div>
     <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn ga-btn-primary" onclick="openTypeForm(null)">&#43; Nouvelle emission</button></div></div>
   </div>
 </div>
@@ -428,10 +324,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     </div>
     <div class="modal-footer">
       <button class="ga-btn ga-btn-danger" id="em-type-del-btn" style="display:none" onclick="deleteEmissionType()">&#128465; Supprimer</button>
-      <div class="modal-footer-right">
-        <button class="ga-btn" onclick="closeModal('modal-emission-type');openModal('modal-emissions-panel')">Annuler</button>
-        <button class="ga-btn ga-btn-primary" onclick="saveEmissionType()">Enregistrer</button>
-      </div>
+      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-emission-type');openModal('modal-emissions-panel')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveEmissionType()">Enregistrer</button></div>
     </div>
   </div>
 </div>
@@ -442,46 +335,28 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     <div class="modal-header"><span id="modal-em-title">Affecter une emission</span><button class="modal-close" onclick="closeModal('modal-emission')">&#10005;</button></div>
     <div class="modal-body">
       <div class="form-group"><label>Emission</label><select id="em-type-id" onchange="onEmissionTypeChange()"><option value="">— Choisir —</option></select></div>
-      <div class="form-row">
-        <div class="form-group"><label>Jour</label><select id="em-jour"><option value="0">Lundi</option><option value="1">Mardi</option><option value="2">Mercredi</option><option value="3">Jeudi</option><option value="4">Vendredi</option><option value="5">Samedi</option><option value="6">Dimanche</option></select></div>
-        <div class="form-group"><label>Debut</label><select id="em-hdebut"></select></div>
-        <div class="form-group"><label>Fin</label><select id="em-hfin"></select></div>
-      </div>
+      <div class="form-row"><div class="form-group"><label>Jour</label><select id="em-jour"><option value="0">Lundi</option><option value="1">Mardi</option><option value="2">Mercredi</option><option value="3">Jeudi</option><option value="4">Vendredi</option><option value="5">Samedi</option><option value="6">Dimanche</option></select></div><div class="form-group"><label>Debut</label><select id="em-hdebut"></select></div><div class="form-group"><label>Fin</label><select id="em-hfin"></select></div></div>
       <div class="form-group"><label>Couleur</label><input type="color" id="em-color" value="#5B8DEF"></div>
-      <div class="form-group"><label>Appliquer une team</label>
-        <select id="em-team-select" onchange="applyTeamToEmission()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:9px 12px;color:#fff;font-family:'Barlow',sans-serif;font-size:14px;outline:none;">
-          <option value="">— Aucune team —</option>
-        </select>
-      </div>
+      <div class="form-group"><label>Team</label><select id="em-team-select" onchange="applyTeamToEmission()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:9px 12px;color:#fff;font-family:'Barlow',sans-serif;font-size:14px;outline:none;"><option value="">— Appliquer une team —</option></select></div>
       <div class="form-group"><label>Animateurs</label><div class="anim-selector" id="em-anim-selector"></div></div>
     </div>
     <div class="modal-footer">
       <button class="ga-btn ga-btn-danger" id="modal-del-btn" style="display:none" onclick="deleteAffectation()">&#128465; Retirer</button>
-      <div class="modal-footer-right">
-        <button class="ga-btn" onclick="closeModal('modal-emission')">Annuler</button>
-        <button class="ga-btn ga-btn-primary" onclick="saveAffectation()">Placer dans la grille</button>
-      </div>
+      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-emission')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveAffectation()">Placer dans la grille</button></div>
     </div>
   </div>
 </div>
 
-<!-- MODAL : Duplication antenne -->
+<!-- MODAL : Duplication -->
 <div class="modal-overlay" id="modal-dup">
   <div class="modal" style="max-width:420px;">
     <div class="modal-header"><span>Dupliquer la journee</span><button class="modal-close" onclick="closeModal('modal-dup')">&#10005;</button></div>
     <div class="modal-body">
-      <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Copier les emissions de <strong id="dup-src-label" style="color:#fff;"></strong> vers :</p>
-      <div class="form-group"><label>Jours de destination</label>
-        <div id="dup-dest-days" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;"></div>
-      </div>
-      <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;margin-top:4px;">
-        <input type="checkbox" id="dup-replace"> Remplacer les emissions des jours cibles
-      </label>
+      <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Copier de <strong id="dup-src-label" style="color:#fff;"></strong> vers :</p>
+      <div class="form-group"><label>Jours de destination</label><div id="dup-dest-days" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;"></div></div>
+      <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;margin-top:4px;"><input type="checkbox" id="dup-replace"> Remplacer</label>
     </div>
-    <div class="modal-footer"><div></div><div class="modal-footer-right">
-      <button class="ga-btn" onclick="closeModal('modal-dup')">Annuler</button>
-      <button class="ga-btn ga-btn-primary" onclick="dupDay()">Dupliquer</button>
-    </div></div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-dup')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="dupDay()">Dupliquer</button></div></div>
   </div>
 </div>
 
@@ -500,18 +375,11 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     <div class="modal-header"><span id="gt-form-title">Nouvelle grille type</span><button class="modal-close" onclick="closeModal('modal-grille-edit')">&#10005;</button></div>
     <div class="modal-body">
       <div class="form-group"><label>Nom</label><input type="text" id="gt-nom" placeholder="Ex : Grille standard"></div>
-      <div class="form-group">
-        <label>Emissions (<span id="gt-em-count">0</span>)</label>
-        <button class="ga-btn" style="align-self:flex-start;margin-bottom:8px;" onclick="importWeekToGrille()">&#8659; Importer la semaine affichee</button>
-        <div class="gt-em-scroll" id="gt-em-list"></div>
-      </div>
+      <div class="form-group"><label>Emissions (<span id="gt-em-count">0</span>)</label><button class="ga-btn" style="align-self:flex-start;margin-bottom:8px;" onclick="importWeekToGrille()">&#8659; Importer la semaine</button><div class="gt-em-scroll" id="gt-em-list"></div></div>
     </div>
     <div class="modal-footer">
       <button class="ga-btn ga-btn-danger" id="gt-del-btn" style="display:none" onclick="deleteGrilleType()">&#128465; Supprimer</button>
-      <div class="modal-footer-right">
-        <button class="ga-btn" onclick="closeModal('modal-grille-edit');openModal('modal-grilles-list')">Annuler</button>
-        <button class="ga-btn ga-btn-primary" onclick="saveGrilleType()">Enregistrer</button>
-      </div>
+      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-grille-edit');openModal('modal-grilles-list')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveGrilleType()">Enregistrer</button></div>
     </div>
   </div>
 </div>
@@ -522,22 +390,11 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     <div class="modal-header"><span>Appliquer la grille</span><button class="modal-close" onclick="closeModal('modal-grille-apply')">&#10005;</button></div>
     <div class="modal-body">
       <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Appliquer <strong id="apply-gt-label" style="color:#fff;"></strong> :</p>
-      <div class="form-row-2">
-        <div class="form-group"><label>Semaine</label><input type="number" id="apply-gt-week" min="1" max="53" oninput="updateWeekPreview()"></div>
-        <div class="form-group"><label>Annee</label><input type="number" id="apply-gt-year" min="2024" max="2035" oninput="updateWeekPreview()"></div>
-      </div>
-      <div id="apply-week-preview" style="display:none;background:rgba(91,141,239,.12);border:1px solid rgba(91,141,239,.3);border-radius:6px;padding:10px 14px;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px;">Dates</div>
-        <div id="apply-week-dates" style="font-family:'Barlow',sans-serif;font-size:13px;color:#fff;line-height:1.8;"></div>
-      </div>
-      <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;">
-        <input type="checkbox" id="apply-gt-replace"> Remplacer les emissions existantes
-      </label>
+      <div class="form-row-2"><div class="form-group"><label>Semaine</label><input type="number" id="apply-gt-week" min="1" max="53" oninput="updateWeekPreview()"></div><div class="form-group"><label>Annee</label><input type="number" id="apply-gt-year" min="2024" max="2035" oninput="updateWeekPreview()"></div></div>
+      <div id="apply-week-preview" style="display:none;background:rgba(91,141,239,.12);border:1px solid rgba(91,141,239,.3);border-radius:6px;padding:10px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px;">Dates</div><div id="apply-week-dates" style="font-family:'Barlow',sans-serif;font-size:13px;color:#fff;line-height:1.8;"></div></div>
+      <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" id="apply-gt-replace"> Remplacer</label>
     </div>
-    <div class="modal-footer"><div></div><div class="modal-footer-right">
-      <button class="ga-btn" onclick="closeModal('modal-grille-apply');openModal('modal-grilles-list')">Annuler</button>
-      <button class="ga-btn ga-btn-primary" onclick="applyGrilleType()">Appliquer</button>
-    </div></div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-grille-apply');openModal('modal-grilles-list')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="applyGrilleType()">Appliquer</button></div></div>
   </div>
 </div>
 
@@ -555,45 +412,30 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   <div class="modal" style="max-width:400px;">
     <div class="modal-header"><span id="journaliste-form-title">Nouveau journaliste</span><button class="modal-close" onclick="closeModal('modal-journaliste');openModal('modal-journalistes-list')">&#10005;</button></div>
     <div class="modal-body">
-      <div class="form-row-2">
-        <div class="form-group"><label>Prenom</label><input type="text" id="journaliste-prenom" placeholder="Marie"></div>
-        <div class="form-group"><label>Nom</label><input type="text" id="journaliste-nom" placeholder="Curie"></div>
-      </div>
+      <div class="form-row-2"><div class="form-group"><label>Prenom</label><input type="text" id="journaliste-prenom" placeholder="Marie"></div><div class="form-group"><label>Nom</label><input type="text" id="journaliste-nom" placeholder="Curie"></div></div>
       <div class="form-group"><label>Couleur</label><input type="color" id="journaliste-color" value="#E87C3E"></div>
     </div>
     <div class="modal-footer">
       <button class="ga-btn ga-btn-danger" id="journaliste-del-btn" style="display:none" onclick="deleteJournaliste()">&#128465; Supprimer</button>
-      <div class="modal-footer-right">
-        <button class="ga-btn" onclick="closeModal('modal-journaliste');openModal('modal-journalistes-list')">Annuler</button>
-        <button class="ga-btn ga-btn-primary" onclick="saveJournaliste()">Enregistrer</button>
-      </div>
+      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-journaliste');openModal('modal-journalistes-list')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveJournaliste()">Enregistrer</button></div>
     </div>
   </div>
 </div>
 
-<!-- MODAL : RDV journaliste (multi-jours x multi-créneaux) -->
+<!-- MODAL : RDV journaliste -->
 <div class="modal-overlay" id="modal-gj-rdv">
   <div class="modal" style="max-width:560px;">
     <div class="modal-header"><span id="modal-gj-rdv-title">Ajouter des rendez-vous</span><button class="modal-close" onclick="closeModal('modal-gj-rdv')">&#10005;</button></div>
     <div class="modal-body">
       <div class="form-group"><label>Titre</label><input type="text" id="gj-rdv-titre" placeholder="Ex : Edition du matin"></div>
-      <div class="form-group">
-        <label>Jours</label>
-        <div id="gj-rdv-jours" style="display:flex;flex-wrap:wrap;gap:7px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;"></div>
-      </div>
-      <div class="form-group">
-        <label>Horaires</label>
-        <div id="gj-rdv-slots" style="display:flex;flex-wrap:wrap;gap:7px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;"></div>
-      </div>
+      <div class="form-group"><label>Jours</label><div id="gj-rdv-jours" style="display:flex;flex-wrap:wrap;gap:7px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;"></div></div>
+      <div class="form-group"><label>Horaires</label><div id="gj-rdv-slots" style="display:flex;flex-wrap:wrap;gap:7px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;"></div></div>
       <div class="form-group"><label>Couleur</label><input type="color" id="gj-rdv-color" value="#E87C3E"></div>
       <div class="form-group"><label>Journalistes</label><div class="anim-selector" id="gj-rdv-selector"></div></div>
     </div>
     <div class="modal-footer">
       <button class="ga-btn ga-btn-danger" id="gj-rdv-del-btn" style="display:none" onclick="deleteGjRdv()">&#128465; Supprimer</button>
-      <div class="modal-footer-right">
-        <button class="ga-btn" onclick="closeModal('modal-gj-rdv')">Annuler</button>
-        <button class="ga-btn ga-btn-primary" onclick="saveGjRdv()">Enregistrer</button>
-      </div>
+      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-gj-rdv')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveGjRdv()">Enregistrer</button></div>
     </div>
   </div>
 </div>
@@ -603,22 +445,15 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   <div class="modal" style="max-width:420px;">
     <div class="modal-header"><span>Dupliquer la journee</span><button class="modal-close" onclick="closeModal('modal-gj-dup')">&#10005;</button></div>
     <div class="modal-body">
-      <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Copier les rdv de <strong id="gj-dup-src-label" style="color:#fff;"></strong> vers :</p>
-      <div class="form-group"><label>Jours de destination</label>
-        <div id="gj-dup-dest-days" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;"></div>
-      </div>
-      <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;margin-top:4px;">
-        <input type="checkbox" id="gj-dup-replace"> Remplacer les rdv des jours cibles
-      </label>
+      <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Copier de <strong id="gj-dup-src-label" style="color:#fff;"></strong> vers :</p>
+      <div class="form-group"><label>Jours</label><div id="gj-dup-dest-days" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;"></div></div>
+      <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;margin-top:4px;"><input type="checkbox" id="gj-dup-replace"> Remplacer</label>
     </div>
-    <div class="modal-footer"><div></div><div class="modal-footer-right">
-      <button class="ga-btn" onclick="closeModal('modal-gj-dup')">Annuler</button>
-      <button class="ga-btn ga-btn-primary" onclick="gjDupDay()">Dupliquer</button>
-    </div></div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-gj-dup')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="gjDupDay()">Dupliquer</button></div></div>
   </div>
 </div>
 
-<!-- MODAL : Grilles type GJ liste -->
+<!-- MODAL : Grilles type GJ -->
 <div class="modal-overlay" id="modal-gj-grilles-list">
   <div class="modal" style="max-width:500px;">
     <div class="modal-header"><span>Grilles type Journaliste</span><button class="modal-close" onclick="closeModal('modal-gj-grilles-list')">&#10005;</button></div>
@@ -633,18 +468,11 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     <div class="modal-header"><span id="gj-gt-form-title">Nouvelle grille type</span><button class="modal-close" onclick="closeModal('modal-gj-grille-edit')">&#10005;</button></div>
     <div class="modal-body">
       <div class="form-group"><label>Nom</label><input type="text" id="gj-gt-nom" placeholder="Ex : Grille semaine type"></div>
-      <div class="form-group">
-        <label>Rendez-vous (<span id="gj-gt-em-count">0</span>)</label>
-        <button class="ga-btn" style="align-self:flex-start;margin-bottom:8px;" onclick="gjImportWeekToGrille()">&#8659; Importer la semaine affichee</button>
-        <div class="gt-em-scroll" id="gj-gt-em-list"></div>
-      </div>
+      <div class="form-group"><label>Rendez-vous (<span id="gj-gt-em-count">0</span>)</label><button class="ga-btn" style="align-self:flex-start;margin-bottom:8px;" onclick="gjImportWeekToGrille()">&#8659; Importer la semaine</button><div class="gt-em-scroll" id="gj-gt-em-list"></div></div>
     </div>
     <div class="modal-footer">
       <button class="ga-btn ga-btn-danger" id="gj-gt-del-btn" style="display:none" onclick="deleteGjGrilleType()">&#128465; Supprimer</button>
-      <div class="modal-footer-right">
-        <button class="ga-btn" onclick="closeModal('modal-gj-grille-edit');openModal('modal-gj-grilles-list')">Annuler</button>
-        <button class="ga-btn ga-btn-primary" onclick="saveGjGrilleType()">Enregistrer</button>
-      </div>
+      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-gj-grille-edit');openModal('modal-gj-grilles-list')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveGjGrilleType()">Enregistrer</button></div>
     </div>
   </div>
 </div>
@@ -655,22 +483,44 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     <div class="modal-header"><span>Appliquer la grille</span><button class="modal-close" onclick="closeModal('modal-gj-grille-apply')">&#10005;</button></div>
     <div class="modal-body">
       <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Appliquer <strong id="gj-apply-gt-label" style="color:#fff;"></strong> :</p>
-      <div class="form-row-2">
-        <div class="form-group"><label>Semaine</label><input type="number" id="gj-apply-gt-week" min="1" max="53" oninput="gjUpdateWeekPreview()"></div>
-        <div class="form-group"><label>Annee</label><input type="number" id="gj-apply-gt-year" min="2024" max="2035" oninput="gjUpdateWeekPreview()"></div>
-      </div>
-      <div id="gj-apply-week-preview" style="display:none;background:rgba(91,141,239,.12);border:1px solid rgba(91,141,239,.3);border-radius:6px;padding:10px 14px;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px;">Dates</div>
-        <div id="gj-apply-week-dates" style="font-family:'Barlow',sans-serif;font-size:13px;color:#fff;line-height:1.8;"></div>
-      </div>
-      <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;">
-        <input type="checkbox" id="gj-apply-gt-replace"> Remplacer les rendez-vous existants
-      </label>
+      <div class="form-row-2"><div class="form-group"><label>Semaine</label><input type="number" id="gj-apply-gt-week" min="1" max="53" oninput="gjUpdateWeekPreview()"></div><div class="form-group"><label>Annee</label><input type="number" id="gj-apply-gt-year" min="2024" max="2035" oninput="gjUpdateWeekPreview()"></div></div>
+      <div id="gj-apply-week-preview" style="display:none;background:rgba(91,141,239,.12);border:1px solid rgba(91,141,239,.3);border-radius:6px;padding:10px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px;">Dates</div><div id="gj-apply-week-dates" style="font-family:'Barlow',sans-serif;font-size:13px;color:#fff;line-height:1.8;"></div></div>
+      <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" id="gj-apply-gt-replace"> Remplacer</label>
     </div>
-    <div class="modal-footer"><div></div><div class="modal-footer-right">
-      <button class="ga-btn" onclick="closeModal('modal-gj-grille-apply');openModal('modal-gj-grilles-list')">Annuler</button>
-      <button class="ga-btn ga-btn-primary" onclick="gjApplyGrilleType()">Appliquer</button>
-    </div></div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-gj-grille-apply');openModal('modal-gj-grilles-list')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="gjApplyGrilleType()">Appliquer</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL : Jeu Antenne -->
+<div class="modal-overlay" id="modal-jeu">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header"><span id="jeu-form-title">Nouveau jeu</span><button class="modal-close" onclick="closeModal('modal-jeu')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nom du jeu</label><input type="text" id="jeu-nom" placeholder="Ex : La Minute Gagnante"></div>
+      <div class="form-group"><label>Emission</label><select id="jeu-emission"><option value="">— Choisir —</option></select></div>
+      <div class="form-row-2">
+        <div class="form-group"><label>Heure de passage</label><select id="jeu-heure"></select></div>
+        <div class="form-group"><label>Gain</label><input type="text" id="jeu-gain" placeholder="Ex : 500€"></div>
+      </div>
+      <div class="form-group"><label>Description (optionnel)</label><input type="text" id="jeu-desc" placeholder="Ex : Trouver l artiste mystere"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="ga-btn ga-btn-danger" id="jeu-del-btn" style="display:none" onclick="deleteJeu()">&#128465; Supprimer</button>
+      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-jeu')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveJeu()">Enregistrer</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : Publier -->
+<div class="modal-overlay" id="modal-publish">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header"><span>&#128225; Publier vers l antenne</span><button class="modal-close" onclick="closeModal('modal-publish')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>URL du Worker Cloudflare</label><input type="text" id="worker-url" value="https://adminsend.nicolas7lejeune.workers.dev/broadcast" style="font-family:'Share Tech Mono',monospace;font-size:12px;"></div>
+      <div id="publish-status" style="display:none;padding:10px 14px;border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;"></div>
+      <div style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);line-height:1.6;">Publie les tranches <strong style="color:rgba(255,255,255,.6);">6h-9h</strong> et <strong style="color:rgba(255,255,255,.6);">16h-19h</strong> avec animateurs, journalistes et jeux.</div>
+    </div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-publish')">Annuler</button><button class="ga-btn" style="background:rgba(46,204,113,.2);border-color:rgba(46,204,113,.4);color:#2ecc71;" onclick="publishData()">&#128225; Publier maintenant</button></div></div>
   </div>
 </div>
 
@@ -774,7 +624,7 @@ function getWeekDates(offset){
 function getMondayKey(offset){return getWeekDates(offset)[0].toISOString().slice(0,10);}
 function changeWeek(dir){
   if(dir===0)currentWeekOffset=0;else currentWeekOffset+=dir;
-  renderCalendar();gjRenderCards();
+  renderCalendar();gjRenderCalendar();
 }
 function getWeekOffset(wk,yr){
   var now=new Date();now.setHours(0,0,0,0);
@@ -1427,19 +1277,15 @@ function renderCalendar(){
   var cal=document.getElementById('ga-calendar');if(!cal)return;
   var html='<div class="gc-corner"></div>';
   days.forEach(function(d,i){
-    if(i>=5)return;
     var isT=d.getTime()===today.getTime();
-    var isPast=d.getTime()<today.getTime();
-    html+='<div class="gc-day-head'+(isT?' today':'')+(isPast?' gc-day-past':'')+'" onclick="openDupModal('+i+')">'+
+    html+='<div class="gc-day-head'+(isT?' today':'')+'" onclick="openDupModal('+i+')">'+
       '<span class="gc-day-num">'+d.getDate()+'</span><span class="gc-day-name">'+JOURS[i]+'</span></div>';
   });
   for(var h=HOURS_START;h<HOURS_END;h++){
     html+='<div class="gc-hour-label">'+String(h).padStart(2,'0')+'h</div>';
     days.forEach(function(d,di){
-      if(di>=5)return;
       var isT=d.getTime()===today.getTime();
-      var isPast=d.getTime()<today.getTime();
-      html+='<div class="gc-cell'+(isT?' today-col':'')+(isPast?' gc-cell-past':'')+'" data-day="'+di+'" data-hour="'+h+'" onclick="handleCellClick(event,'+di+','+h+')"><span class="gc-cell-hint">+</span></div>';
+      html+='<div class="gc-cell'+(isT?' today-col':'')+'" data-day="'+di+'" data-hour="'+h+'" onclick="handleCellClick(event,'+di+','+h+')"><span class="gc-cell-hint">+</span></div>';
     });
   }
   cal.innerHTML=html;
@@ -1462,58 +1308,39 @@ function renderCalendar(){
   requestAnimationFrame(function(){updateTimeline(cal,days);});
 }
 
-function gjRenderCalendar(){ gjRenderCards(); }
-
-function gjRenderCards(){
-  var container=document.getElementById('gj-cards-grid');
-  if(!container)return;
+function gjRenderCalendar(){
   var days=getWeekDates(currentWeekOffset);
   var today=new Date();today.setHours(0,0,0,0);
-  var key=getMondayKey(currentWeekOffset);
-
-  /* En-tête : jours */
-  var headerHtml='<div class="gj-slot-header">';
-  headerHtml+='<div></div>';
+  var cal=document.getElementById('gj-calendar');if(!cal)return;
+  var html='<div class="gc-corner"></div>';
   days.forEach(function(d,i){
-    if(i>=5)return;
     var isT=d.getTime()===today.getTime();
-    var isPast=d.getTime()<today.getTime();
-    headerHtml+='<div class="gj-slot-day-head'+(isT?' today':'')+(isPast?' gc-day-past':'')+'">'+'<span class="gj-day-num">'+d.getDate()+'</span>'+JOURS[i]+'</div>';
+    html+='<div class="gc-day-head'+(isT?' today':'')+'" onclick="gjOpenDupModal('+i+')">'+
+      '<span class="gc-day-num">'+d.getDate()+'</span><span class="gc-day-name">'+JOURS[i]+'</span></div>';
   });
-  headerHtml+='</div>';
-
-  /* Lignes : un créneau par ligne */
-  var rowsHtml='<div class="gj-grid">';
-  GJ_SLOTS.forEach(function(slot){
-    rowsHtml+='<div class="gj-slot-row">';
-    rowsHtml+='<div class="gj-time-label">'+slot.l+'</div>';
-
+  for(var h=HOURS_START;h<HOURS_END;h++){
+    html+='<div class="gc-hour-label">'+String(h).padStart(2,'0')+'h</div>';
     days.forEach(function(d,di){
-      if(di>=5)return;
       var isT=d.getTime()===today.getTime();
-      var isPast=d.getTime()<today.getTime();
-      /* Trouver les RDV sur ce créneau ce jour */
-      var rdvs=gjRdvs.filter(function(r){
-        return(!r.weekKey||r.weekKey===key)&&r.jour===di&&r.hdebut===slot.v;
-      });
-
-      if(!rdvs.length){
-        rowsHtml+='<div class="gj-card'+(isT?' today-col':'')+'" onclick="openGjRdvModal('+di+','+slot.v+')">'+
-          '<span class="gj-card-empty">+</span></div>';
-      } else {
-        var r=rdvs[0];
-        var names=(r.journalistes||[]).map(function(j){return j.prenom+' '+j.nom.toUpperCase();}).join(', ')||'—';
-        rowsHtml+='<div class="gj-card has-rdv'+(isT?' today-col':'')+'" style="--gj-color:'+r.color+'" onclick="openGjRdvEdit('+r.id+')">'+
-          '<div class="gj-card-rdv">'+r.titre+'</div>'+
-          '<div class="gj-card-name">'+names+'</div>'+
-          '</div>';
-      }
+      html+='<div class="gc-cell'+(isT?' today-col':'')+'" data-day="'+di+'" data-hour="'+h+'" onclick="gjHandleCellClick(event,'+di+','+h+')"><span class="gc-cell-hint">+</span></div>';
     });
-    rowsHtml+='</div>';
+  }
+  cal.innerHTML=html;
+  var key=getMondayKey(currentWeekOffset);
+  gjRdvs.filter(function(r){return!r.weekKey||r.weekKey===key;}).forEach(function(rdv){
+    var cells=cal.querySelectorAll('.gc-cell[data-day="'+rdv.jour+'"][data-hour="'+Math.floor(rdv.hdebut)+'"]');
+    if(!cells.length)return;
+    var div=document.createElement('div');
+    div.className='gc-emission';
+    div.style.cssText='background:'+hexAlpha(rdv.color,.28)+';border-left:3px solid '+rdv.color+';top:'+((rdv.hdebut%1)*CELL_H)+'px;height:'+((rdv.hfin-rdv.hdebut)*CELL_H-3)+'px;';
+    div.innerHTML='<div class="gc-em-title">'+rdv.titre+'</div>'+
+      (rdv.journalistes&&rdv.journalistes.length?'<div class="gc-em-anims">'+rdv.journalistes.map(function(j){
+        return'<div class="gc-em-anim-chip" style="border-left:2px solid '+j.color+'">'+j.prenom+' '+j.nom.toUpperCase()+'</div>';
+      }).join('')+'</div>':'');
+    div.onclick=function(ev){ev.stopPropagation();openGjRdvEdit(rdv.id);};
+    cells[0].appendChild(div);
   });
-  rowsHtml+='</div>';
-
-  container.innerHTML=headerHtml+rowsHtml;
+  requestAnimationFrame(function(){updateTimeline(cal,days);});
 }
 
 function handleCellClick(e,dayIdx,hour){
@@ -1556,65 +1383,121 @@ function hexAlpha(hex,alpha){
 renderCalendar();
 gjRenderCalendar();
 
-/* ═══════════════════════════════════════════════════════════════════
-   JEU ANTENNE
-═══════════════════════════════════════════════════════════════════ */
-var jeux = [];           // [{id, nom, gain, desc, emissionId, heure, weekKey}]
-var editingJeuId = null;
-var jeuWeekOffset = 0;
+/* ═══ JEU ANTENNE ═══════════════════════════════════════════════════ */
+var jeux=[];
+var editingJeuId=null;
+var jeuWeekOffset=0;
 
-function saveJeux(){ localStorage.setItem('at_jeux', JSON.stringify(jeux)); }
+function saveJeux(){ localStorage.setItem('at_jeux',JSON.stringify(jeux)); }
 function loadJeux(){ try{ var v=localStorage.getItem('at_jeux'); if(v) jeux=JSON.parse(v); }catch(e){} }
 loadJeux();
 
-/* Navigation semaine */
 function jeuChangeWeek(dir){
   if(dir===0) jeuWeekOffset=0; else jeuWeekOffset+=dir;
   jeuRender();
 }
 
-/* Ouvrir modal formulaire */
-function openJeuForm(jeuId, emissionId, dayIdx){ if(!jeuId){ openJeuNew(emissionId||0,''); return; }
-  editingJeuId = jeuId;
-  var isNew = jeuId === null;
-  var j = isNew ? null : jeux.find(function(x){ return x.id===jeuId; });
+function jeuFmtH(h){ return h==null?'--':String(Math.floor(h)).padStart(2,'0')+'h'+(h%1?'30':'00'); }
 
-  document.getElementById('jeu-form-title').textContent = isNew ? 'Nouveau jeu' : 'Modifier le jeu';
-  document.getElementById('jeu-nom').value   = j ? j.nom   : '';
-  document.getElementById('jeu-gain').value  = j ? j.gain  : '';
-  document.getElementById('jeu-desc').value  = j ? j.desc  : '';
-  document.getElementById('jeu-del-btn').style.display = isNew ? 'none' : 'inline-flex';
+function jeuRender(){
+  var container=document.getElementById('jeu-grid'); if(!container) return;
+  var days=getWeekDates(jeuWeekOffset);
+  var today=new Date(); today.setHours(0,0,0,0);
+  var JOURS5=['Lun','Mar','Mer','Jeu','Ven'];
+  var lbl=document.getElementById('jeu-week-label');
+  if(lbl) lbl.textContent=days[0].getDate()+' '+MOIS[days[0].getMonth()]+' - '+days[4].getDate()+' '+MOIS[days[4].getMonth()]+' '+days[4].getFullYear();
 
-  /* Remplir le select des émissions depuis le catalogue */
-  var sel = document.getElementById('jeu-emission');
-  sel.innerHTML = '<option value="">— Choisir une emission —</option>' +
-    catalogue.map(function(t){
-      return '<option value="'+t.id+'">'+t.nom+'</option>';
-    }).join('');
-  sel.value = j ? j.emissionId : (emissionId || '');
+  if(!catalogue.length){
+    container.innerHTML='<div class="placeholder">Aucune emission dans le catalogue.</div>'; return;
+  }
 
-  /* Remplir le select des heures */
-  var hSel = document.getElementById('jeu-heure');
-  hSel.innerHTML = buildHourOptions();
-  hSel.value = j ? j.heure : (typeof dayIdx !== 'undefined' ? '' : '8');
+  container.innerHTML=catalogue.map(function(em){
+    var html='<div class="jeu-emission-card">';
+    html+='<div class="jeu-emission-header" style="border-bottom-color:'+(em.color||'#E4032E')+'">';
+    html+='<span class="jeu-emission-name">'+em.nom+'</span>';
+    if(em.desc) html+='<span class="jeu-emission-tranche">'+em.desc+'</span>';
+    html+='</div><div class="jeu-week-grid">';
 
+    for(var i=0;i<5;i++){
+      var d=days[i];
+      var dKey=d.toISOString().slice(0,10);
+      var isToday=d.getTime()===today.getTime();
+      var isPast=d.getTime()<today.getTime();
+      var emId=em.id;
+      var j=jeux.find(function(x){ return x.emissionId===emId && x.dayKey===dKey; });
+
+      html+='<div class="jeu-day-col">';
+      html+='<div class="jeu-day-head'+(isToday?' today':'')+(isPast?' past':'')+'">';
+      html+='<span class="jeu-day-num">'+d.getDate()+'</span>'+JOURS5[i]+'</div>';
+
+      if(j){
+        html+='<div class="jeu-day-body has-jeu'+(isPast?' past':'')+'" onclick="jeuOpenEdit(\''+dKey+'\','+emId+')">';
+        html+='<div class="jeu-card-heure">'+jeuFmtH(j.heure)+'</div>';
+        html+='<div class="jeu-card-nom">'+j.nom+'</div>';
+        if(j.gain) html+='<div class="jeu-card-gain">&#127941; '+j.gain+'</div>';
+      } else {
+        html+='<div class="jeu-day-body'+(isPast?' past':'')+'" onclick="jeuOpenNew('+emId+',\''+dKey+'\')">';
+        html+='<div class="jeu-empty">+</div>';
+      }
+      html+='</div></div>';
+    }
+    html+='</div></div>';
+    return html;
+  }).join('');
+}
+
+function jeuOpenNew(emId, dayKey){
+  editingJeuId=null;
+  document.getElementById('jeu-form-title').textContent='Nouveau jeu';
+  document.getElementById('jeu-nom').value='';
+  document.getElementById('jeu-gain').value='';
+  document.getElementById('jeu-desc').value='';
+  document.getElementById('jeu-del-btn').style.display='none';
+  document.getElementById('modal-jeu').dataset.dayKey=dayKey;
+  document.getElementById('modal-jeu').dataset.emId=emId;
+  var sel=document.getElementById('jeu-emission');
+  sel.innerHTML='<option value="">— Choisir —</option>'+
+    catalogue.map(function(c){ return '<option value="'+c.id+'">'+c.nom+'</option>'; }).join('');
+  sel.value=emId;
+  var hSel=document.getElementById('jeu-heure');
+  hSel.innerHTML=buildHourOptions(); hSel.value='8';
+  openModal('modal-jeu');
+}
+
+function jeuOpenEdit(dayKey, emId){
+  var j=jeux.find(function(x){ return x.emissionId===emId && x.dayKey===dayKey; });
+  if(!j) return;
+  editingJeuId=j.id;
+  document.getElementById('jeu-form-title').textContent='Modifier le jeu';
+  document.getElementById('jeu-nom').value=j.nom;
+  document.getElementById('jeu-gain').value=j.gain||'';
+  document.getElementById('jeu-desc').value=j.desc||'';
+  document.getElementById('jeu-del-btn').style.display='inline-flex';
+  document.getElementById('modal-jeu').dataset.dayKey=dayKey;
+  document.getElementById('modal-jeu').dataset.emId=emId;
+  var sel=document.getElementById('jeu-emission');
+  sel.innerHTML='<option value="">— Choisir —</option>'+
+    catalogue.map(function(c){ return '<option value="'+c.id+'">'+c.nom+'</option>'; }).join('');
+  sel.value=j.emissionId;
+  var hSel=document.getElementById('jeu-heure');
+  hSel.innerHTML=buildHourOptions(); hSel.value=j.heure||'8';
   openModal('modal-jeu');
 }
 
 function saveJeu(){
-  var nom   = document.getElementById('jeu-nom').value.trim();
-  var emId  = parseInt(document.getElementById('jeu-emission').value);
-  var heure = parseFloat(document.getElementById('jeu-heure').value);
-  var gain  = document.getElementById('jeu-gain').value.trim();
-  var desc  = document.getElementById('jeu-desc').value.trim();
-  var dayKey= document.getElementById('modal-jeu').dataset.dayKey || '';
+  var nom=document.getElementById('jeu-nom').value.trim();
+  var emId=parseInt(document.getElementById('jeu-emission').value);
+  var heure=parseFloat(document.getElementById('jeu-heure').value);
+  var gain=document.getElementById('jeu-gain').value.trim();
+  var desc=document.getElementById('jeu-desc').value.trim();
+  var dayKey=document.getElementById('modal-jeu').dataset.dayKey||'';
   if(!nom){ alert('Nom du jeu requis.'); return; }
   if(!emId){ alert('Choisissez une emission.'); return; }
-  if(editingJeuId !== null){
-    var j = jeux.find(function(x){ return x.id===editingJeuId; });
+  if(editingJeuId!==null){
+    var j=jeux.find(function(x){ return x.id===editingJeuId; });
     if(j){ j.nom=nom; j.emissionId=emId; j.heure=heure; j.gain=gain; j.desc=desc; }
   } else {
-    jeux.push({id:Date.now(), nom:nom, emissionId:emId, heure:heure, gain:gain, desc:desc, dayKey:dayKey});
+    jeux.push({id:Date.now(),nom:nom,emissionId:emId,heure:heure,gain:gain,desc:desc,dayKey:dayKey});
   }
   saveJeux(); closeModal('modal-jeu'); jeuRender();
   if(localStorage.getItem('at_worker_url')) publishData();
@@ -1622,373 +1505,148 @@ function saveJeu(){
 
 function deleteJeu(){
   if(!confirm('Supprimer ce jeu ?')) return;
-  jeux = jeux.filter(function(j){ return j.id !== editingJeuId; });
+  jeux=jeux.filter(function(j){ return j.id!==editingJeuId; });
   saveJeux(); closeModal('modal-jeu'); jeuRender();
   if(localStorage.getItem('at_worker_url')) publishData();
 }
 
-/* Rendu principal */
-function jeuFmtH(h){ return h==null?'--':String(Math.floor(h)).padStart(2,'0')+'h'+(h%1?'30':'00'); }
 
-function jeuRender(){
-  var container = document.getElementById('jeu-grid');
-  if(!container) return;
+/* ═══ GRILLE JOURNALISTE — cartes ════════════════════════════════════ */
+function gjRenderCalendar(){ gjRenderCards(); }
 
-  var days  = getWeekDates(jeuWeekOffset);
-  var today = new Date(); today.setHours(0,0,0,0);
-  var JOURS5 = ['Lun','Mar','Mer','Jeu','Ven'];
+function gjRenderCards(){
+  var container=document.getElementById('gj-cards-grid'); if(!container)return;
+  var days=getWeekDates(currentWeekOffset);
+  var today=new Date();today.setHours(0,0,0,0);
+  var key=getMondayKey(currentWeekOffset);
+  var JOURS5=['Lun','Mar','Mer','Jeu','Ven'];
 
-  /* Label semaine */
-  var lbl = document.getElementById('jeu-week-label');
-  if(lbl) lbl.textContent = days[0].getDate()+' '+MOIS[days[0].getMonth()]+' - '+days[4].getDate()+' '+MOIS[days[4].getMonth()]+' '+days[4].getFullYear();
-
-  /* Utiliser le catalogue comme liste d'émissions */
-  var emissions = catalogue.slice();
-  if(!emissions.length){
-    container.innerHTML = '<div class="placeholder">Aucune emission dans le catalogue. Creez des emissions dans "+ Emission".</div>';
-    return;
+  var headerHtml='<div class="gj-slot-header"><div></div>';
+  for(var di=0;di<5;di++){
+    var d=days[di];
+    var isT=d.getTime()===today.getTime();
+    var isPast=d.getTime()<today.getTime();
+    headerHtml+='<div class="gj-slot-day-head'+(isT?' today':'')+(isPast?' gc-day-past':'')+'">'+'<span class="gj-day-num">'+d.getDate()+'</span>'+JOURS5[di]+'</div>';
   }
+  headerHtml+='</div>';
 
-  container.innerHTML = emissions.map(function(em){
-    var html = '<div class="jeu-emission-card">';
-    /* En-tête */
-    html += '<div class="jeu-emission-header" style="border-bottom-color:'+(em.color||'#E4032E')+'">';
-    html += '<span class="jeu-emission-name">'+em.nom+'</span>';
-    if(em.desc) html += '<span class="jeu-emission-tranche">'+em.desc+'</span>';
-    html += '</div>';
-
-    /* 5 colonnes jours */
-    html += '<div class="jeu-week-grid">';
-    for(var i=0;i<5;i++){
-      var d = days[i];
-      var dKey = d.toISOString().slice(0,10);
-      var isToday = d.getTime()===today.getTime();
-      var isPast  = d.getTime()<today.getTime();
-
-      /* Chercher le jeu de ce jour pour cette émission */
-      var j = jeux.find(function(x){ return x.emissionId===em.id && x.dayKey===dKey; });
-      var captured_i = i; // closure
-      var captured_emId = em.id;
-      var captured_dKey = dKey;
-
-      html += '<div class="jeu-day-col">';
-      /* En-tête jour */
-      html += '<div class="jeu-day-head'+(isToday?' today':'')+(isPast?' past':'')+'">';
-      html += '<span class="jeu-day-num">'+d.getDate()+'</span>'+JOURS5[i];
-      html += '</div>';
-      /* Corps carte */
-      if(j){
-        html += '<div class="jeu-day-body has-jeu'+(isPast?' past':'')+'" onclick="openJeuEditByKey(''+captured_dKey+'','+captured_emId+')">';
-        html += '<div class="jeu-card-heure">'+jeuFmtH(j.heure)+'</div>';
-        html += '<div class="jeu-card-nom">'+j.nom+'</div>';
-        if(j.gain) html += '<div class="jeu-card-gain">&#127941; '+j.gain+'</div>';
-        html += '</div>';
+  var rowsHtml='<div class="gj-grid">';
+  GJ_SLOTS.forEach(function(slot){
+    rowsHtml+='<div class="gj-slot-row"><div class="gj-time-label">'+slot.l+'</div>';
+    for(var di=0;di<5;di++){
+      var d=days[di];
+      var isT=d.getTime()===today.getTime();
+      var isPast=d.getTime()<today.getTime();
+      var rdvs=gjRdvs.filter(function(r){ return(!r.weekKey||r.weekKey===key)&&r.jour===di&&r.hdebut===slot.v; });
+      if(!rdvs.length){
+        rowsHtml+='<div class="gj-card'+(isT?' today-col':'')+(isPast?' past':'')+'" onclick="openGjRdvModal('+di+','+slot.v+')">'+'<span class="gj-card-empty">+</span></div>';
       } else {
-        html += '<div class="jeu-day-body'+(isPast?' past':'')+'" onclick="openJeuNew('+captured_emId+',''+captured_dKey+'')">';
-        html += '<div class="jeu-empty">+</div>';
-        html += '</div>';
+        var r=rdvs[0];
+        var names=(r.journalistes||[]).map(function(j){return j.prenom+' '+j.nom.toUpperCase();}).join(', ')||'—';
+        rowsHtml+='<div class="gj-card has-rdv'+(isT?' today-col':'')+(isPast?' past':'')+'" style="--gj-color:'+r.color+'" onclick="openGjRdvEdit('+r.id+')">'+'<div class="gj-card-rdv">'+r.titre+'</div><div class="gj-card-name">'+names+'</div></div>';
       }
-      html += '</div>';
     }
-    html += '</div></div>';
-    return html;
-  }).join('');
+    rowsHtml+='</div>';
+  });
+  rowsHtml+='</div>';
+  container.innerHTML=headerHtml+rowsHtml;
 }
 
-function openJeuNew(emissionId, dayKey){
-  editingJeuId = null;
-  var t = catalogue.find(function(x){ return x.id===emissionId; });
-  document.getElementById('jeu-form-title').textContent = 'Nouveau jeu';
-  document.getElementById('jeu-nom').value  = '';
-  document.getElementById('jeu-gain').value = '';
-  document.getElementById('jeu-desc').value = '';
-  document.getElementById('jeu-del-btn').style.display = 'none';
-  /* Pré-remplir l'émission */
-  var sel = document.getElementById('jeu-emission');
-  sel.innerHTML = '<option value="">— Choisir —</option>'+
-    catalogue.map(function(c){ return '<option value="'+c.id+'">'+c.nom+'</option>'; }).join('');
-  sel.value = emissionId;
-  /* Stocker le dayKey pour la sauvegarde */
-  document.getElementById('modal-jeu').dataset.dayKey = dayKey;
-  var hSel = document.getElementById('jeu-heure');
-  hSel.innerHTML = buildHourOptions();
-  hSel.value = '8';
-  openModal('modal-jeu');
-}
-
-function openJeuEditByKey(dayKey, emissionId){
-  var j = jeux.find(function(x){ return x.emissionId===emissionId && x.dayKey===dayKey; });
-  if(!j) return;
-  editingJeuId = j.id;
-  document.getElementById('jeu-form-title').textContent = 'Modifier le jeu';
-  document.getElementById('jeu-nom').value  = j.nom;
-  document.getElementById('jeu-gain').value = j.gain||'';
-  document.getElementById('jeu-desc').value = j.desc||'';
-  document.getElementById('jeu-del-btn').style.display = 'inline-flex';
-  var sel = document.getElementById('jeu-emission');
-  sel.innerHTML = '<option value="">— Choisir —</option>'+
-    catalogue.map(function(c){ return '<option value="'+c.id+'">'+c.nom+'</option>'; }).join('');
-  sel.value = j.emissionId;
-  document.getElementById('modal-jeu').dataset.dayKey = dayKey;
-  var hSel = document.getElementById('jeu-heure');
-  hSel.innerHTML = buildHourOptions();
-  hSel.value = j.heure||'8';
-  openModal('modal-jeu');
-}
-
-/* Sync avec showSection */
-var _jeuOrigShow = showSection;
-showSection = function(id, btn){
-  _jeuOrigShow(id, btn);
-  if(id==='jeu-antenne') jeuRender();
-};
-
-/* Pré-charger l'URL Worker */
-(function(){ if(!localStorage.getItem('at_worker_url')) localStorage.setItem('at_worker_url','https://adminsend.nicolas7lejeune.workers.dev/broadcast'); })();
-
-/* ═══ PUBLICATION VERS CLOUDFLARE ═══════════════════════════════════
-   Extrait les tranches 6h-9h et 16h-19h pour chaque jour de la semaine
-   avec animateurs (grille antenne) et journalistes (grille journaliste)
-═══════════════════════════════════════════════════════════════════ */
-
-var WORKER_URL_KEY = 'at_worker_url';
-
-function loadWorkerUrl(){
-  var saved = localStorage.getItem(WORKER_URL_KEY);
-  if(saved){
-    var el = document.getElementById('worker-url');
-    if(el) el.value = saved;
-  }
-}
-
-/* Appelé à chaque ouverture du modal */
-var _origOpenModal2 = openModal;
-openModal = function(id){
-  _origOpenModal2(id);
-  if(id === 'modal-publish'){
-    loadWorkerUrl();
-    var ps = document.getElementById('publish-status');
-    if(ps) ps.style.display = 'none';
-  }
+/* ═══ PUBLICATION WORKER ═════════════════════════════════════════════ */
+var _origOpenModalPub=openModal;
+openModal=function(id){
+  _origOpenModalPub(id);
+  if(id==='modal-publish'){ var el=document.getElementById('worker-url'); if(el) el.value=localStorage.getItem('at_worker_url')||'https://adminsend.nicolas7lejeune.workers.dev/broadcast'; }
 };
 
 function buildBroadcastPayload(){
-  var key = getMondayKey(currentWeekOffset);
-  var weekDates = getWeekDates(currentWeekOffset);
-
-  /* Pour chaque jour (0=lun ... 6=dim) construire les tranches */
-  var days = weekDates.map(function(date, dayIdx){
-    var dKey = date.toISOString().slice(0,10);
-
-    /* ── Tranche matin 6h-9h ── */
-    var matinSlots = affectations
-      .filter(function(a){
-        return (!a.weekKey || a.weekKey === key) &&
-               a.jour === dayIdx &&
-               a.hdebut >= 6 && a.hdebut < 9;
-      })
-      .sort(function(a,b){ return a.hdebut - b.hdebut; })
-      .map(function(a){
-        var t = catalogue.find(function(x){ return x.id === a.typeId; });
-        /* Journalistes sur ce créneau */
-        var rdvsOnSlot = gjRdvs.filter(function(r){
-          return (!r.weekKey || r.weekKey === key) &&
-                 r.jour === dayIdx &&
-                 r.hdebut >= 6 && r.hdebut < 9 &&
-                 r.hdebut >= a.hdebut && r.hdebut < a.hfin;
+  var key=getMondayKey(currentWeekOffset);
+  var weekDates=getWeekDates(currentWeekOffset);
+  var days=weekDates.map(function(date,dayIdx){
+    var dKey=date.toISOString().slice(0,10);
+    function slotsFor(hStart,hEnd){
+      return affectations.filter(function(a){return(!a.weekKey||a.weekKey===key)&&a.jour===dayIdx&&a.hdebut>=hStart&&a.hdebut<hEnd;})
+        .sort(function(a,b){return a.hdebut-b.hdebut;})
+        .map(function(a){
+          var t=catalogue.find(function(x){return x.id===a.typeId;});
+          var rdvsOnSlot=gjRdvs.filter(function(r){return(!r.weekKey||r.weekKey===key)&&r.jour===dayIdx&&r.hdebut>=a.hdebut&&r.hdebut<a.hfin;});
+          var jObjs=[];
+          rdvsOnSlot.forEach(function(r){(r.journalistes||[]).forEach(function(j){if(!jObjs.find(function(x){return x.id===j.id;}))jObjs.push(j);});});
+          var jeuDuJour=jeux.find(function(j){return j.emissionId===a.typeId&&j.dayKey===dKey;});
+          return{hdebut:a.hdebut,hfin:a.hfin,emission:a.nom||(t?t.nom:'?'),color:a.color,
+            animateurs:(a.anims||[]).map(function(x){return{id:x.id,prenom:x.prenom,nom:x.nom,color:x.color};}),
+            journalistes:jObjs.map(function(x){return{id:x.id,prenom:x.prenom,nom:x.nom,color:x.color};}),
+            jeu:jeuDuJour?{nom:jeuDuJour.nom,gain:jeuDuJour.gain,heure:jeuDuJour.heure}:null};
         });
-        var journalistesOnSlot = [];
-        rdvsOnSlot.forEach(function(r){
-          (r.journalistes||[]).forEach(function(j){
-            if(!journalistesOnSlot.find(function(x){ return x.id===j.id; }))
-              journalistesOnSlot.push(j);
-          });
-        });
-        return {
-          hdebut: a.hdebut,
-          hfin: a.hfin,
-          emission: a.nom || (t?t.nom:'?'),
-          color: a.color,
-          animateurs: (a.anims||[]).map(function(x){ return {id:x.id,prenom:x.prenom,nom:x.nom,color:x.color}; }),
-          journalistes: journalistesOnSlot.map(function(x){ return {id:x.id,prenom:x.prenom,nom:x.nom,color:x.color}; })
-        };
-      });
-
-    /* ── Tranche soir 16h-19h ── */
-    var soirSlots = affectations
-      .filter(function(a){
-        return (!a.weekKey || a.weekKey === key) &&
-               a.jour === dayIdx &&
-               a.hdebut >= 16 && a.hdebut < 19;
-      })
-      .sort(function(a,b){ return a.hdebut - b.hdebut; })
-      .map(function(a){
-        var t = catalogue.find(function(x){ return x.id === a.typeId; });
-        var rdvsOnSlot = gjRdvs.filter(function(r){
-          return (!r.weekKey || r.weekKey === key) &&
-                 r.jour === dayIdx &&
-                 r.hdebut >= 16 && r.hdebut < 19 &&
-                 r.hdebut >= a.hdebut && r.hdebut < a.hfin;
-        });
-        var journalistesOnSlot = [];
-        rdvsOnSlot.forEach(function(r){
-          (r.journalistes||[]).forEach(function(j){
-            if(!journalistesOnSlot.find(function(x){ return x.id===j.id; }))
-              journalistesOnSlot.push(j);
-          });
-        });
-        return {
-          hdebut: a.hdebut,
-          hfin: a.hfin,
-          emission: a.nom || (t?t.nom:'?'),
-          color: a.color,
-          animateurs: (a.anims||[]).map(function(x){ return {id:x.id,prenom:x.prenom,nom:x.nom,color:x.color}; }),
-          journalistes: journalistesOnSlot.map(function(x){ return {id:x.id,prenom:x.prenom,nom:x.nom,color:x.color}; })
-        };
-      });
-
-    return {
-      dayIdx: dayIdx,
-      date: date.getDate(),
-      mois: date.getMonth(),
-      annee: date.getFullYear(),
-      isoDate: date.toISOString().slice(0,10),
-      matin: { slots: matinSlots },
-      soir:  { slots: soirSlots }
-    };
+    }
+    return{dayIdx:dayIdx,date:date.getDate(),mois:date.getMonth(),annee:date.getFullYear(),isoDate:dKey,
+      matin:{slots:slotsFor(6,9)},soir:{slots:slotsFor(16,19)}};
   });
-
-  /* Ajouter les jeux — indexés par dayKey+emissionId */
-  var jeuxPayload = {};
-  var weekDayKeys = weekDates.map(function(d){ return d.toISOString().slice(0,10); });
-  jeux.filter(function(j){ return weekDayKeys.indexOf(j.dayKey) >= 0; }).forEach(function(j){
-    var t = catalogue.find(function(x){ return x.id===j.emissionId; });
-    var emNom = t ? t.nom : '';
-    var k = j.dayKey + '_' + j.emissionId;
-    jeuxPayload[k] = { dayKey:j.dayKey, emissionId:j.emissionId, emissionNom:emNom, nom:j.nom, gain:j.gain, desc:j.desc, heure:j.heure };
-  });
-
-  return {
-    weekKey: key,
-    publishedAt: new Date().toISOString(),
-    days: days,
-    jeux: jeuxPayload
-  };
+  return{weekKey:key,publishedAt:new Date().toISOString(),days:days};
 }
 
 async function publishData(){
-  var urlEl = document.getElementById('worker-url');
-  var url = urlEl ? urlEl.value.trim() : '';
-  if(!url){ alert('Entrez l URL du Worker Cloudflare.'); return; }
-
-  /* Sauvegarder l'URL pour la prochaine fois */
-  localStorage.setItem(WORKER_URL_KEY, url);
-
-  var statusEl = document.getElementById('publish-status');
-  statusEl.style.display = 'block';
-  statusEl.style.background = 'rgba(255,255,255,.05)';
-  statusEl.style.border = '1px solid rgba(255,255,255,.1)';
-  statusEl.style.color = 'rgba(255,255,255,.6)';
-  statusEl.textContent = 'Publication en cours...';
-
-  try {
-    var payload = buildBroadcastPayload();
-    var res = await fetch(url, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    var data = await res.json();
-
-    statusEl.style.background = 'rgba(46,204,113,.1)';
-    statusEl.style.border = '1px solid rgba(46,204,113,.3)';
-    statusEl.style.color = '#2ecc71';
-    statusEl.textContent = '✓ Publie avec succes — ' + (data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) : '');
-
-  } catch(e) {
-    statusEl.style.background = 'rgba(231,76,60,.1)';
-    statusEl.style.border = '1px solid rgba(231,76,60,.3)';
-    statusEl.style.color = '#e74c3c';
-    statusEl.textContent = 'Erreur : ' + e.message;
+  var urlEl=document.getElementById('worker-url');
+  var url=urlEl?urlEl.value.trim():'';
+  if(!url){alert('Entrez l URL du Worker.');return;}
+  localStorage.setItem('at_worker_url',url);
+  var statusEl=document.getElementById('publish-status');
+  if(statusEl){statusEl.style.display='block';statusEl.style.background='rgba(255,255,255,.05)';statusEl.style.border='1px solid rgba(255,255,255,.1)';statusEl.style.color='rgba(255,255,255,.6)';statusEl.textContent='Publication...';}
+  try{
+    var res=await fetch(url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildBroadcastPayload())});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    var data=await res.json();
+    if(statusEl){statusEl.style.background='rgba(46,204,113,.1)';statusEl.style.border='1px solid rgba(46,204,113,.3)';statusEl.style.color='#2ecc71';statusEl.textContent='Publie '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
+  }catch(e){
+    if(statusEl){statusEl.style.background='rgba(231,76,60,.1)';statusEl.style.border='1px solid rgba(231,76,60,.3)';statusEl.style.color='#e74c3c';statusEl.textContent='Erreur: '+e.message;}
   }
 }
 
+/* ═══ CORRECTIONS renderCalendar (Sam/Dim masqués + jours passés) ════ */
+var _origRC=renderCalendar;
+renderCalendar=function(){
+  var days=getWeekDates(currentWeekOffset);
+  var today=new Date();today.setHours(0,0,0,0);
+  var lbl=document.getElementById('ga-week-label');
+  if(lbl)lbl.textContent=days[0].getDate()+' '+MOIS[days[0].getMonth()]+' - '+days[4].getDate()+' '+MOIS[days[4].getMonth()]+' '+days[4].getFullYear();
+  var cal=document.getElementById('ga-calendar');if(!cal)return;
+  var html='<div class="gc-corner" style="grid-column:1;"></div>';
+  for(var i=0;i<5;i++){
+    var d=days[i];var isT=d.getTime()===today.getTime();var isPast=d.getTime()<today.getTime();
+    html+='<div class="gc-day-head'+(isT?' today':'')+(isPast?' gc-day-past':'')+'" onclick="openDupModal('+i+')">'+'<span class="gc-day-num">'+d.getDate()+'</span><span class="gc-day-name">'+JOURS[i]+'</span></div>';
+  }
+  for(var h=HOURS_START;h<HOURS_END;h++){
+    html+='<div class="gc-hour-label">'+String(h).padStart(2,'0')+'h</div>';
+    for(var di=0;di<5;di++){
+      var d2=days[di];var isT2=d2.getTime()===today.getTime();var isPast2=d2.getTime()<today.getTime();
+      html+='<div class="gc-cell'+(isT2?' today-col':'')+(isPast2?' gc-cell-past':'')+'" data-day="'+di+'" data-hour="'+h+'" onclick="handleCellClick(event,'+di+','+h+')"><span class="gc-cell-hint">+</span></div>';
+    }
+  }
+  cal.style.gridTemplateColumns='54px repeat(5,1fr)';
+  cal.innerHTML=html;
+  var key=getMondayKey(currentWeekOffset);
+  affectations.filter(function(a){return!a.weekKey||a.weekKey===key;}).forEach(function(aff){
+    var cells=cal.querySelectorAll('.gc-cell[data-day="'+aff.jour+'"][data-hour="'+Math.floor(aff.hdebut)+'"]');
+    if(!cells.length)return;
+    var t=catalogue.find(function(x){return x.id===aff.typeId;});
+    var nom=aff.nom||(t?t.nom:'?');
+    var div=document.createElement('div');
+    div.className='gc-emission';
+    div.style.cssText='background:'+hexAlpha(aff.color,.28)+';border-left:3px solid '+aff.color+';top:'+((aff.hdebut%1)*CELL_H)+'px;height:'+((aff.hfin-aff.hdebut)*CELL_H-3)+'px;';
+    div.innerHTML='<div class="gc-em-title">'+nom+'</div>'+
+      (aff.anims&&aff.anims.length?'<div class="gc-em-anims">'+aff.anims.map(function(a){return'<div class="gc-em-anim-chip" style="border-left:2px solid '+a.color+'">'+a.prenom+' '+a.nom.toUpperCase()+'</div>';}).join('')+'</div>':'');
+    div.onclick=function(ev){ev.stopPropagation();openEmissionEdit(aff.id);};
+    cells[0].appendChild(div);
+  });
+  requestAnimationFrame(function(){updateTimeline(cal,days);});
+};
+
+/* Sync showSection avec jeuRender */
+var _origSS2=showSection;
+showSection=function(id,btn){
+  _origSS2(id,btn);
+  if(id==='jeu-antenne') jeuRender();
+};
 </script>
-
-<!-- MODAL : Publier vers l'antenne -->
-<div class="modal-overlay" id="modal-publish">
-  <div class="modal" style="max-width:440px;">
-    <div class="modal-header">
-      <span>&#128225; Publier vers l'antenne</span>
-      <button class="modal-close" onclick="closeModal('modal-publish')">&#10005;</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>URL du Worker Cloudflare</label>
-        <input type="text" id="worker-url" value="https://adminsend.nicolas7lejeune.workers.dev/broadcast"
-          style="font-family:'Share Tech Mono',monospace;font-size:12px;">
-      </div>
-      <div id="publish-status" style="display:none;padding:10px 14px;border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;margin-top:4px;"></div>
-      <div style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);line-height:1.6;margin-top:4px;">
-        Publie les tranches <strong style="color:rgba(255,255,255,.6);">6h-9h</strong> et <strong style="color:rgba(255,255,255,.6);">16h-19h</strong> 
-        de toute la semaine affichee avec animateurs et journalistes.
-      </div>
-    </div>
-    <div class="modal-footer">
-      <div></div>
-      <div class="modal-footer-right">
-        <button class="ga-btn" onclick="closeModal('modal-publish')">Annuler</button>
-        <button class="ga-btn" style="background:rgba(46,204,113,.2);border-color:rgba(46,204,113,.4);color:#2ecc71;" onclick="publishData()">&#128225; Publier maintenant</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- MODAL : Jeu Antenne -->
-<div class="modal-overlay" id="modal-jeu">
-  <div class="modal" style="max-width:480px;">
-    <div class="modal-header">
-      <span id="jeu-form-title">Nouveau jeu</span>
-      <button class="modal-close" onclick="closeModal('modal-jeu')">&#10005;</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Nom du jeu</label>
-        <input type="text" id="jeu-nom" placeholder="Ex : La Minute Gagnante">
-      </div>
-      <div class="form-group">
-        <label>Emission</label>
-        <select id="jeu-emission">
-          <option value="">— Choisir une emission —</option>
-        </select>
-      </div>
-      <div class="form-row-2">
-        <div class="form-group">
-          <label>Heure de passage</label>
-          <select id="jeu-heure"></select>
-        </div>
-        <div class="form-group">
-          <label>Gain</label>
-          <input type="text" id="jeu-gain" placeholder="Ex : 500€ en bons cadeaux">
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Description (optionnel)</label>
-        <input type="text" id="jeu-desc" placeholder="Ex : Trouver l'artiste mystere">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="ga-btn ga-btn-danger" id="jeu-del-btn" style="display:none" onclick="deleteJeu()">&#128465; Supprimer</button>
-      <div class="modal-footer-right">
-        <button class="ga-btn" onclick="closeModal('modal-jeu')">Annuler</button>
-        <button class="ga-btn ga-btn-primary" onclick="saveJeu()">Enregistrer</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
