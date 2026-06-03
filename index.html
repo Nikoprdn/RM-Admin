@@ -24,7 +24,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .nav-btn-incident{position:relative;overflow:hidden;}
 .nav-btn-incident::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(245,197,24,.18) 0px,rgba(245,197,24,.18) 10px,transparent 10px,transparent 20px);pointer-events:none;z-index:0;}
 .nav-btn-incident .nav-btn-ico,.nav-btn-incident .nav-btn-txt{position:relative;z-index:1;}
-.hdr-right{display:flex;align-items:center;padding:0 24px;border-left:1px solid var(--border);}
+.hdr-right{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;padding:0 24px;border-left:1px solid var(--border);gap:4px;}
 .hdr-clock{font-family:'Share Tech Mono',monospace;font-size:38px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.05em;white-space:nowrap;}
 
 .section{display:none;padding:36px 40px;}
@@ -197,7 +197,14 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     <button class="nav-btn" onclick="showSection('commercial',this)"><span class="nav-btn-ico">&#128200;</span><span class="nav-btn-txt">Commercial<br>Editor</span></button>
     <button class="nav-btn nav-btn-incident" onclick="showSection('incidents',this)"><span class="nav-btn-ico">&#9888;&#65039;</span><span class="nav-btn-txt">Gestion des<br>Incidents</span></button>
   </nav>
-  <div class="hdr-right"><div class="hdr-clock" id="clk">--:--:--</div></div>
+  <div class="hdr-right" style="flex-direction:column;align-items:flex-end;gap:4px;padding:0 24px;">
+    <div class="hdr-clock" id="clk">--:--:--</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span id="cf-status-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;transition:background .3s;"></span>
+      <span id="cf-status-label" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);">Non connecte</span>
+      <span id="cf-last-pub" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,.2);"></span>
+    </div>
+  </div>
 </div>
 
 <section id="accueil" class="section active"><div class="placeholder">[ Accueil ]</div></section>
@@ -1647,6 +1654,89 @@ showSection=function(id,btn){
   _origSS2(id,btn);
   if(id==='jeu-antenne') jeuRender();
 };
+
+/* ═══ INDICATEUR CLOUDFLARE + AUTO-PUBLISH ═══════════════════════════ */
+var CF_WORKER_URL = 'https://adminsend.nicolas7lejeune.workers.dev/broadcast';
+var _lastPubTime = null;
+var _cfOnline = false;
+
+function setCfStatus(online, pubTime){
+  _cfOnline = online;
+  var dot   = document.getElementById('cf-status-dot');
+  var label = document.getElementById('cf-status-label');
+  var last  = document.getElementById('cf-last-pub');
+  if(dot)   dot.style.background   = online ? '#2ecc71' : '#e74c3c';
+  if(label) label.textContent      = online ? 'En ligne' : 'Hors ligne';
+  if(label) label.style.color      = online ? 'rgba(46,204,113,.8)' : 'rgba(231,76,60,.7)';
+  if(last && pubTime){
+    _lastPubTime = pubTime;
+    last.textContent = 'Pub. ' + new Date(pubTime).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  }
+}
+
+/* Vérifier la connexion au Worker */
+function checkCfConnection(){
+  fetch(CF_WORKER_URL, {cache:'no-store', method:'GET'})
+    .then(function(r){
+      setCfStatus(r.ok, _lastPubTime);
+    })
+    .catch(function(){
+      setCfStatus(false, _lastPubTime);
+    });
+}
+
+/* Publication automatique silencieuse */
+async function autoPublish(){
+  var url = localStorage.getItem('at_worker_url') || CF_WORKER_URL;
+  try {
+    var payload = buildBroadcastPayload();
+    var res = await fetch(url, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    var data = await res.json();
+    setCfStatus(true, data.updatedAt || new Date().toISOString());
+  } catch(e){
+    setCfStatus(false, _lastPubTime);
+  }
+}
+
+/* Démarrage : vérifier + auto-publish toutes les 30 min */
+setTimeout(function(){
+  checkCfConnection();
+  /* Auto-publish si données disponibles */
+  if(catalogue.length || affectations.length) autoPublish();
+}, 2000);
+
+setInterval(function(){
+  autoPublish();
+}, 30 * 60 * 1000); /* 30 minutes */
+
+/* Aussi mettre à jour le statut après chaque publication manuelle */
+var _origPublishData = publishData;
+publishData = async function(){
+  var urlEl = document.getElementById('worker-url');
+  var url = urlEl ? urlEl.value.trim() : '';
+  if(!url){ alert('Entrez l URL du Worker.'); return; }
+  localStorage.setItem('at_worker_url', url);
+  var statusEl = document.getElementById('publish-status');
+  if(statusEl){ statusEl.style.display='block'; statusEl.style.background='rgba(255,255,255,.05)'; statusEl.style.border='1px solid rgba(255,255,255,.1)'; statusEl.style.color='rgba(255,255,255,.6)'; statusEl.textContent='Publication...'; }
+  try {
+    var payload = buildBroadcastPayload();
+    var res = await fetch(url, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    var data = await res.json();
+    var t = data.updatedAt || new Date().toISOString();
+    setCfStatus(true, t);
+    if(statusEl){ statusEl.style.background='rgba(46,204,113,.1)'; statusEl.style.border='1px solid rgba(46,204,113,.3)'; statusEl.style.color='#2ecc71'; statusEl.textContent='Publie ' + new Date(t).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+  } catch(e){
+    setCfStatus(false, _lastPubTime);
+    if(statusEl){ statusEl.style.background='rgba(231,76,60,.1)'; statusEl.style.border='1px solid rgba(231,76,60,.3)'; statusEl.style.color='#e74c3c'; statusEl.textContent='Erreur: '+e.message; }
+  }
+};
+
 </script>
 </body>
 </html>
