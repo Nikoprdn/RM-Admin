@@ -331,7 +331,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   <div class="modal" style="max-width:420px;">
     <div class="modal-header"><span id="em-type-form-title">Nouvelle emission</span><button class="modal-close" onclick="closeModal('modal-emission-type');openModal('modal-emissions-panel')">&#10005;</button></div>
     <div class="modal-body">
-      <div class="form-group"><label>Nom</label><input type="text" id="em-type-nom" placeholder="Ex : Morning Show"></div>
+      <div class="form-group"><label>Nom</label><input type="text" id="em-type-nom" placeholder="Ex : Morning Show" oninput="autoColorEmission()"></div>
       <div class="form-group"><label>Couleur par defaut</label><input type="color" id="em-type-color" value="#5B8DEF"></div>
       <div class="form-group"><label>Description (optionnel)</label><input type="text" id="em-type-desc" placeholder="Ex : Emission matinale"></div>
     </div>
@@ -1732,6 +1732,16 @@ publishData = async function(){
     if(statusEl){ statusEl.style.background='rgba(231,76,60,.1)'; statusEl.style.border='1px solid rgba(231,76,60,.3)'; statusEl.style.color='#e74c3c'; statusEl.textContent='Erreur: '+e.message; }
   }
 };
+
+
+function autoColorEmission(){
+  var nom=(document.getElementById('em-type-nom').value||'').toLowerCase();
+  var colorPicker=document.getElementById('em-type-color');
+  if(!colorPicker)return;
+  if(nom.indexOf('morning')>=0)     colorPicker.value='#E4032E';
+  else if(nom.indexOf('feel')>=0)   colorPicker.value='#93C01F';
+  else if(nom.indexOf('charly')>=0) colorPicker.value='#F59C00';
+}
 
 </script>
 </body>
