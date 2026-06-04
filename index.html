@@ -164,6 +164,33 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .gj-card-empty{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:rgba(255,255,255,.15);text-transform:uppercase;text-align:center;}
 .gj-card-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;text-transform:uppercase;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .gj-card-rdv{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* INCIDENTS */
+.inc-card{background:#2a2733;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;display:flex;}
+.inc-card-side{width:6px;flex-shrink:0;}
+.inc-card-body{flex:1;padding:16px 20px;display:flex;flex-direction:column;gap:6px;}
+.inc-card-header{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.inc-card-type{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:#fff;}
+.inc-card-time{font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(255,255,255,.4);}
+.inc-card-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.inc-card-horaire{font-family:'Share Tech Mono',monospace;font-size:13px;color:rgba(255,255,255,.7);}
+.inc-card-auteur{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.06em;}
+.inc-card-desc{font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.55);margin-top:2px;}
+.inc-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+.inc-badge-major{background:rgba(228,3,46,.2);border:1px solid rgba(228,3,46,.4);color:#f77;}
+.inc-badge-minor{background:rgba(255,165,0,.15);border:1px solid rgba(255,165,0,.3);color:#ffa500;}
+.inc-badge-other{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);}
+.inc-notif-toast{
+  position:fixed;top:24px;right:24px;z-index:9999;
+  background:#37333E;border:1px solid rgba(228,3,46,.5);border-left:4px solid #E4032E;
+  border-radius:10px;padding:16px 20px;max-width:360px;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  animation:incSlideIn .3s ease;
+}
+@keyframes incSlideIn{from{transform:translateX(120%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.inc-notif-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:#fff;letter-spacing:.05em;text-transform:uppercase;}
+.inc-notif-body{font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;}
+
 .jeu-emission-card{background:#2a2733;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;}
 .jeu-emission-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#37333E;border-bottom:3px solid #E4032E;}
 .jeu-emission-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#fff;}
@@ -195,7 +222,13 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     <button class="nav-btn" onclick="showSection('grille-antenne',this)"><span class="nav-btn-ico">&#128250;</span><span class="nav-btn-txt">Grille<br>Antenne</span></button>
     <button class="nav-btn" onclick="showSection('jeu-antenne',this)"><span class="nav-btn-ico">&#127925;</span><span class="nav-btn-txt">Jeu<br>Antenne</span></button>
     <button class="nav-btn" onclick="showSection('commercial',this)"><span class="nav-btn-ico">&#128200;</span><span class="nav-btn-txt">Commercial<br>Editor</span></button>
-    <button class="nav-btn nav-btn-incident" onclick="showSection('incidents',this)"><span class="nav-btn-ico">&#9888;&#65039;</span><span class="nav-btn-txt">Gestion des<br>Incidents</span></button>
+    <button class="nav-btn nav-btn-incident" onclick="showSection('incidents',this)" id="inc-bell">
+      <span class="nav-btn-ico" style="position:relative;display:inline-block;">
+        &#9888;&#65039;
+        <span id="inc-bell-badge" style="display:none;position:absolute;top:-6px;right:-8px;background:#E4032E;color:#fff;font-family:'Inter',sans-serif;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;align-items:center;justify-content:center;padding:0 3px;">0</span>
+      </span>
+      <span class="nav-btn-txt">Gestion des<br>Incidents</span>
+    </button>
   </nav>
   <div class="hdr-right" style="flex-direction:row;align-items:center;gap:20px;">
     <!-- Indicateur Studio Tool -->
@@ -265,7 +298,19 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 </section>
 
 <section id="commercial" class="section"><div class="placeholder">[ Commercial Editor ]</div></section>
-<section id="incidents" class="section"><div class="placeholder">[ Gestion des Incidents ]</div></section>
+<section id="incidents" class="section">
+  <div class="ga-toolbar">
+    <div>
+      <div class="ga-title">Gestion des Incidents</div>
+      <div class="ga-sub" id="inc-last-check"></div>
+    </div>
+    <div class="ga-toolbar-right">
+      <button class="ga-btn" onclick="incLoad()">&#8635; Actualiser</button>
+      <button class="ga-btn ga-btn-danger" onclick="incClear()">&#128465; Tout effacer</button>
+    </div>
+  </div>
+  <div id="inc-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+</section>
 
 <!-- PANEL : Equipes -->
 <div class="modal-overlay" id="modal-equipes">
@@ -1760,6 +1805,135 @@ function autoColorEmission(){
   else if(nom.indexOf('feel')>=0)   colorPicker.value='#93C01F';
   else if(nom.indexOf('charly')>=0) colorPicker.value='#F59C00';
 }
+
+
+/* ═══ GESTION DES INCIDENTS ═══════════════════════════════════════════ */
+var INC_URL  = 'https://adminsend.nicolas7lejeune.workers.dev/incidents';
+var _lastIncCount = 0;
+var _knownIncIds  = new Set();
+
+/* Cloche dans le header */
+var _bellEl = null;
+function incInitBell(){
+  _bellEl = document.getElementById('inc-bell');
+}
+
+function incBadgeSet(n){
+  var badge = document.getElementById('inc-bell-badge');
+  if(!badge) return;
+  badge.textContent = n;
+  badge.style.display = n > 0 ? 'flex' : 'none';
+}
+
+/* Toast notification */
+function incShowToast(inc){
+  var toast = document.createElement('div');
+  toast.className = 'inc-notif-toast';
+  var typeColor = incTypeColor(inc.type);
+  toast.innerHTML =
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">' +
+      '<span style="font-size:20px;">&#9889;</span>' +
+      '<span class="inc-notif-title">'+inc.type+'</span>' +
+    '</div>' +
+    '<div class="inc-notif-body">' +
+      (inc.heureDebut ? inc.heureDebut+(inc.heureFin?' – '+inc.heureFin:'') : '') +
+      (inc.auteur ? ' — '+inc.auteur : '') +
+      (inc.desc ? '<br>'+inc.desc : '') +
+    '</div>' +
+    '<button onclick="this.parentNode.remove()" style="position:absolute;top:8px;right:10px;background:none;border:none;color:rgba(255,255,255,.4);font-size:16px;cursor:pointer;">&#10005;</button>';
+  toast.style.position = 'fixed';
+  document.body.appendChild(toast);
+  setTimeout(function(){ if(toast.parentNode) toast.remove(); }, 8000);
+}
+
+function incTypeColor(type){
+  if(!type) return '#aaa';
+  var t = type.toLowerCase();
+  if(t.indexOf('majeur')>=0 || t.indexOf('major')>=0) return '#E4032E';
+  if(t.indexOf('blanc')>=0 || t.indexOf('diffus')>=0) return '#ffa500';
+  return '#5B8DEF';
+}
+
+function incTypeBadgeClass(type){
+  if(!type) return 'inc-badge-other';
+  var t = type.toLowerCase();
+  if(t.indexOf('majeur')>=0 || t.indexOf('major')>=0) return 'inc-badge-major';
+  if(t.indexOf('blanc')>=0 || t.indexOf('pub')>=0 || t.indexOf('diffus')>=0) return 'inc-badge-minor';
+  return 'inc-badge-other';
+}
+
+function incRender(list){
+  var container = document.getElementById('inc-list');
+  if(!container) return;
+
+  /* Mettre à jour le badge cloche */
+  var newIncs = list.filter(function(i){ return !_knownIncIds.has(String(i.id)); });
+  if(newIncs.length > 0 && _lastIncCount > 0){
+    newIncs.forEach(function(i){ incShowToast(i); });
+  }
+  list.forEach(function(i){ _knownIncIds.add(String(i.id)); });
+  _lastIncCount = list.length;
+  incBadgeSet(newIncs.length > 0 ? newIncs.length : 0);
+
+  if(!list.length){
+    container.innerHTML = '<div class="placeholder">Aucun incident déclaré.</div>';
+    return;
+  }
+
+  container.innerHTML = list.map(function(inc){
+    var color = incTypeColor(inc.type);
+    var badgeClass = incTypeBadgeClass(inc.type);
+    var d = new Date(inc.declaredAt);
+    var timeStr = d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) +
+                  ' — ' + d.toLocaleDateString('fr-FR');
+    return '<div class="inc-card">' +
+      '<div class="inc-card-side" style="background:'+color+'"></div>' +
+      '<div class="inc-card-body">' +
+        '<div class="inc-card-header">' +
+          '<span class="inc-card-type">'+inc.type+'</span>' +
+          '<span class="inc-card-time">'+timeStr+'</span>' +
+        '</div>' +
+        '<div class="inc-card-meta">' +
+          (inc.heureDebut ? '<span class="inc-card-horaire">&#128336; '+inc.heureDebut+(inc.heureFin?' – '+inc.heureFin:'')+'</span>' : '') +
+          (inc.auteur     ? '<span class="inc-card-auteur">&#128100; '+inc.auteur+'</span>' : '') +
+          '<span class="inc-badge '+badgeClass+'">'+inc.type+'</span>' +
+        '</div>' +
+        (inc.desc ? '<div class="inc-card-desc">'+inc.desc+'</div>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function incLoad(){
+  var lbl = document.getElementById('inc-last-check');
+  fetch(INC_URL, {cache:'no-store'})
+    .then(function(r){ return r.json(); })
+    .then(function(list){
+      if(lbl) lbl.textContent = 'Dernière vérif. ' + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+      incRender(Array.isArray(list) ? list : []);
+    })
+    .catch(function(){
+      if(lbl) lbl.textContent = 'Erreur de connexion';
+    });
+}
+
+function incClear(){
+  if(!confirm('Effacer tous les incidents ?')) return;
+  fetch(INC_URL, {method:'DELETE'})
+    .then(function(){ _knownIncIds.clear(); _lastIncCount=0; incBadgeSet(0); incLoad(); })
+    .catch(function(){});
+}
+
+/* Polling toutes les 30 secondes */
+setTimeout(incLoad, 2500);
+setInterval(incLoad, 30000);
+
+/* Charger quand on arrive sur l'onglet */
+var _origSS3 = showSection;
+showSection = function(id, btn){
+  _origSS3(id, btn);
+  if(id === 'incidents') incLoad();
+};
 
 </script>
 </body>
