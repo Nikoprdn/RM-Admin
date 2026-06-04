@@ -197,13 +197,20 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     <button class="nav-btn" onclick="showSection('commercial',this)"><span class="nav-btn-ico">&#128200;</span><span class="nav-btn-txt">Commercial<br>Editor</span></button>
     <button class="nav-btn nav-btn-incident" onclick="showSection('incidents',this)"><span class="nav-btn-ico">&#9888;&#65039;</span><span class="nav-btn-txt">Gestion des<br>Incidents</span></button>
   </nav>
-  <div class="hdr-right" style="flex-direction:column;align-items:flex-end;gap:4px;padding:0 24px;">
-    <div class="hdr-clock" id="clk">--:--:--</div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span id="cf-status-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;transition:background .3s;"></span>
-      <span id="cf-status-label" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);">Non connecte</span>
-      <span id="cf-last-pub" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,.2);"></span>
+  <div class="hdr-right" style="flex-direction:row;align-items:center;gap:20px;">
+    <!-- Indicateur Studio Tool -->
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);">Studio Tool</div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span id="cf-status-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;transition:background .3s;box-shadow:0 0 6px #555;"></span>
+        <span id="cf-status-label" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);">Non connecte</span>
+        <span id="cf-last-pub" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,.2);"></span>
+      </div>
     </div>
+    <!-- Séparateur -->
+    <div style="width:1px;height:40px;background:rgba(255,255,255,.1);"></div>
+    <!-- Horloge -->
+    <div class="hdr-clock" id="clk">--:--:--</div>
   </div>
 </div>
 
@@ -224,8 +231,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
       <button class="ga-btn ga-btn-primary" onclick="openEmissionsPanel()">&#43; Emission</button>
       <div class="ga-sep"></div>
       <button class="ga-btn" onclick="openModal('modal-grilles-list')">&#9776; Grilles type</button>
-      <div class="ga-sep"></div>
-      <button class="ga-btn" style="background:rgba(46,204,113,.2);border-color:rgba(46,204,113,.4);color:#2ecc71;" onclick="openModal('modal-publish')">&#128225; Publier</button>
+
     </div>
   </div>
   <div class="ga-calendar-wrap"><div class="ga-calendar" id="ga-calendar" style="grid-template-columns:54px repeat(5,1fr);min-width:600px;"></div></div>
@@ -518,17 +524,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   </div>
 </div>
 
-<!-- MODAL : Publier -->
-<div class="modal-overlay" id="modal-publish">
-  <div class="modal" style="max-width:440px;">
-    <div class="modal-header"><span>&#128225; Publier vers l antenne</span><button class="modal-close" onclick="closeModal('modal-publish')">&#10005;</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label>URL du Worker Cloudflare</label><input type="text" id="worker-url" value="https://adminsend.nicolas7lejeune.workers.dev/broadcast" style="font-family:'Share Tech Mono',monospace;font-size:12px;"></div>
-      <div id="publish-status" style="display:none;padding:10px 14px;border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;"></div>
-      <div style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);line-height:1.6;">Publie les tranches <strong style="color:rgba(255,255,255,.6);">6h-9h</strong> et <strong style="color:rgba(255,255,255,.6);">16h-19h</strong> avec animateurs, journalistes et jeux.</div>
-    </div>
-    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-publish')">Annuler</button><button class="ga-btn" style="background:rgba(46,204,113,.2);border-color:rgba(46,204,113,.4);color:#2ecc71;" onclick="publishData()">&#128225; Publier maintenant</button></div></div>
-  </div>
+
 </div>
 
 <script>var JOURS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
