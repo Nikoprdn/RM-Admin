@@ -22,8 +22,27 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .nav-btn-ico{font-size:24px;line-height:1;}
 .nav-btn-txt{white-space:normal;text-align:center;line-height:1.2;}
 .nav-btn-incident{position:relative;overflow:hidden;}
-.nav-btn-incident::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(245,197,24,.18) 0px,rgba(245,197,24,.18) 10px,transparent 10px,transparent 20px);pointer-events:none;z-index:0;}
+.nav-btn-incident::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(245,197,24,.18) 0px,rgba(245,197,24,.18) 10px,transparent 10px,transparent 20px);pointer-events:none;z-index:0;transition:opacity .3s;}
 .nav-btn-incident .nav-btn-ico,.nav-btn-incident .nav-btn-txt{position:relative;z-index:1;}
+
+/* Clignotement alerte incident */
+@keyframes incBlink{
+  0%,100%{ background:rgba(228,3,46,.35); border-bottom-color:#E4032E; }
+  50%{ background:rgba(245,197,24,.35); border-bottom-color:#F5C518; }
+}
+@keyframes incBlinkStripe{
+  0%,100%{ opacity:1; }
+  50%{ opacity:0; }
+}
+.nav-btn-incident.has-alert{
+  animation: incBlink .6s ease-in-out infinite;
+  color:#fff !important;
+}
+.nav-btn-incident.has-alert::before{
+  animation: incBlinkStripe .6s ease-in-out infinite;
+  background:repeating-linear-gradient(45deg,rgba(245,197,24,.5) 0px,rgba(245,197,24,.5) 10px,transparent 10px,transparent 20px);
+}
+.nav-btn-incident.has-alert .nav-btn-txt{color:#fff;}
 .hdr-right{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;padding:0 24px;border-left:1px solid var(--border);gap:4px;}
 .hdr-clock{font-family:'Share Tech Mono',monospace;font-size:38px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.05em;white-space:nowrap;}
 
@@ -222,11 +241,8 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     <button class="nav-btn" onclick="showSection('grille-antenne',this)"><span class="nav-btn-ico">&#128250;</span><span class="nav-btn-txt">Grille<br>Antenne</span></button>
     <button class="nav-btn" onclick="showSection('jeu-antenne',this)"><span class="nav-btn-ico">&#127925;</span><span class="nav-btn-txt">Jeu<br>Antenne</span></button>
     <button class="nav-btn" onclick="showSection('commercial',this)"><span class="nav-btn-ico">&#128200;</span><span class="nav-btn-txt">Commercial<br>Editor</span></button>
-    <button class="nav-btn nav-btn-incident" onclick="showSection('incidents',this)" id="inc-bell">
-      <span class="nav-btn-ico" style="position:relative;display:inline-block;">
-        &#9888;&#65039;
-        <span id="inc-bell-badge" style="display:none;position:absolute;top:-6px;right:-8px;background:#E4032E;color:#fff;font-family:'Inter',sans-serif;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;align-items:center;justify-content:center;padding:0 3px;">0</span>
-      </span>
+    <button class="nav-btn nav-btn-incident" id="inc-bell" onclick="showSection('incidents',this)">
+      <span class="nav-btn-ico">&#9888;&#65039;</span>
       <span class="nav-btn-txt">Gestion des<br>Incidents</span>
     </button>
   </nav>
@@ -1819,10 +1835,13 @@ function incInitBell(){
 }
 
 function incBadgeSet(n){
-  var badge = document.getElementById('inc-bell-badge');
-  if(!badge) return;
-  badge.textContent = n;
-  badge.style.display = n > 0 ? 'flex' : 'none';
+  var bell = document.getElementById('inc-bell');
+  if(!bell) return;
+  if(n > 0){
+    bell.classList.add('has-alert');
+  } else {
+    bell.classList.remove('has-alert');
+  }
 }
 
 /* Toast notification */
@@ -1932,7 +1951,7 @@ setInterval(incLoad, 30000);
 var _origSS3 = showSection;
 showSection = function(id, btn){
   _origSS3(id, btn);
-  if(id === 'incidents') incLoad();
+  if(id === 'incidents'){ incLoad(); incBadgeSet(0); }
 };
 
 </script>
