@@ -567,6 +567,24 @@ function loadAll(){
   });
 }
 loadAll();
+/* Forcer les couleurs par nom d'emission au chargement */
+(function(){
+  var updated=false;
+  catalogue.forEach(function(t){
+    var n=(t.nom||'').toLowerCase();
+    var c=null;
+    if(n.indexOf('morning')>=0)     c='#E4032E';
+    else if(n.indexOf('feel')>=0)   c='#93C01F';
+    else if(n.indexOf('charly')>=0) c='#F59C00';
+    if(c && t.color!==c){ t.color=c; updated=true; }
+  });
+  /* Mettre à jour aussi les affectations */
+  affectations.forEach(function(a){
+    var t=catalogue.find(function(x){return x.id===a.typeId;});
+    if(t) a.color=t.color;
+  });
+  if(updated) saveAll();
+})();
 
 /* MODALS */
 function openModal(id){
