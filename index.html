@@ -622,8 +622,8 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
         <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#F5C518;" id="jeu-preview-tirage"></div>
       </div>
       <div class="form-group">
-        <label>Heure de passage quotidienne</label>
-        <select id="jeu-apply-heure"></select>
+        <label>Emission</label>
+        <select id="jeu-apply-emission"><option value="">— Toutes les emissions —</option></select>
       </div>
       <div class="form-group">
         <label>Appliquer à la semaine affichée</label>
@@ -2119,9 +2119,13 @@ function openJeuApplyModal(){
   var lbl = document.getElementById('jeu-apply-week-label');
   if(lbl) lbl.textContent = 'Du '+days[0].getDate()+' '+MOIS[days[0].getMonth()]+' au '+days[4].getDate()+' '+MOIS[days[4].getMonth()]+' '+days[4].getFullYear();
 
-  /* Heure */
-  var hSel = document.getElementById('jeu-apply-heure');
-  if(hSel){ hSel.innerHTML = buildHourOptions(); hSel.value = '8'; }
+  /* Emissions */
+  var eSel = document.getElementById('jeu-apply-emission');
+  if(eSel){
+    eSel.innerHTML = '<option value="">— Toutes les emissions —</option>' +
+      catalogue.map(function(t){ return '<option value="'+t.id+'">'+t.nom+'</option>'; }).join('');
+    eSel.value = '';
+  }
 
   document.getElementById('jeu-apply-replace').checked = true;
   updateJeuApplyPreview();
@@ -2143,31 +2147,35 @@ function updateJeuApplyPreview(){
 }
 
 function applyJeuToWeek(){
-  var typeId  = parseInt(document.getElementById('jeu-apply-id').value);
-  var heure   = parseFloat(document.getElementById('jeu-apply-heure').value);
-  var replace = document.getElementById('jeu-apply-replace').checked;
+  var typeId    = parseInt(document.getElementById('jeu-apply-id').value);
+  var emFilterId= parseInt(document.getElementById('jeu-apply-emission').value)||0;
+  var replace   = document.getElementById('jeu-apply-replace').checked;
   if(!typeId){ alert('Choisissez un jeu.'); return; }
   var jType = jeuxCatalogue.find(function(x){ return x.id===typeId; });
   if(!jType) return;
 
+  /* Emissions cibles : toutes ou une seule */
+  var emTargets = emFilterId
+    ? catalogue.filter(function(t){ return t.id===emFilterId; })
+    : catalogue.slice();
+
+  if(!emTargets.length){ alert('Aucune emission dans le catalogue.'); return; }
+
   var days = getWeekDates(jeuWeekOffset);
 
-  /* Appliquer sur les 5 jours (Lun-Ven) × toutes les émissions du catalogue */
   for(var i=0;i<5;i++){
     var dKey = days[i].toISOString().slice(0,10);
-    catalogue.forEach(function(em){
-      /* Supprimer l'ancien jeu si replace */
+    emTargets.forEach(function(em){
       if(replace){
         jeux = jeux.filter(function(j){ return !(j.emissionId===em.id && j.dayKey===dKey); });
       }
-      /* Ajouter le nouveau */
       jeux.push({
         id: Date.now()+Math.random(),
         nom:    jType.nom,
         desc:   jType.desc,
         gain:   jType.gain,
         tirage: jType.tirage,
-        heure:  heure,
+        heure:  null,
         emissionId: em.id,
         dayKey: dKey,
         jeuTypeId: typeId
