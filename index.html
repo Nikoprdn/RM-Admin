@@ -1843,7 +1843,13 @@ function refreshParticipants(){
   var list=j?(j.participants||[]):[];
   var el=document.getElementById('part-list');
   var cnt=document.getElementById('part-count-label');
-  if(cnt)cnt.textContent=list.length+' participant'+(list.length>1?'s':'');
+  if(cnt){
+    if(j&&j.gagnant){
+      cnt.innerHTML='&#127942; <span style="color:#F5C518;font-weight:700;">Gagnant : '+j.gagnant.prenom+' '+j.gagnant.nom+'</span>';
+    }else{
+      cnt.textContent=list.length+' participant'+(list.length>1?'s':'');
+    }
+  }
   if(!el)return;
   if(!list.length){el.innerHTML='<div class="list-empty">Aucun participant.</div>';return;}
   el.innerHTML=list.map(function(p,i){
@@ -1856,7 +1862,10 @@ function refreshParticipants(){
           (p.email?'<span style="font-family:\'Share Tech Mono\',monospace;font-size:11px;color:rgba(255,255,255,.5);">&#9993; '+p.email+'</span>':'')+
         '</div>'+
       '</div>'+
-      '<button class="anim-row-edit" style="color:#f7a0a0;border-color:rgba(220,60,60,.3);" onclick="removeParticipant('+i+')">&#128465;</button>'+
+      '<div style="display:flex;gap:6px;">'+
+        '<button class="anim-row-edit" style="color:#F5C518;border-color:rgba(245,197,24,.3);" onclick="designerGagnant('+i+')">&#127942;</button>'+
+        '<button class="anim-row-edit" style="color:#f7a0a0;border-color:rgba(220,60,60,.3);" onclick="removeParticipant('+i+')">&#128465;</button>'+
+      '</div>'+
     '</div>';
   }).join('');
 }
@@ -1875,6 +1884,15 @@ function addParticipant(){
   saveJeux();
   ['part-nom','part-prenom','part-adresse','part-tel','part-email'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   refreshParticipants();jeuRender();
+}
+
+function designerGagnant(idx){
+  var j=jeux.find(function(x){return x.dayKey===_partDayKey&&x.emissionId===_partEmId;});
+  if(!j||!j.participants||!j.participants[idx])return;
+  var p=j.participants[idx];
+  if(!confirm('Designer '+p.prenom+' '+p.nom+' comme gagnant ?'))return;
+  j.gagnant={nom:p.nom,prenom:p.prenom,tel:p.tel,email:p.email,designedAt:new Date().toISOString()};
+  saveJeux();refreshParticipants();jeuRender();
 }
 
 function removeParticipant(idx){
