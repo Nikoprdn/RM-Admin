@@ -309,6 +309,10 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
         <button class="ga-btn" onclick="jeuChangeWeek(1)">&#9654;</button>
       </div>
     </div>
+    <div class="ga-toolbar-right">
+      <button class="ga-btn" onclick="openModal('modal-jeu-catalogue')">&#127381; Catalogue des jeux</button>
+      <button class="ga-btn ga-btn-primary" onclick="openModal('modal-jeu-apply')">&#9654; Appliquer un jeu</button>
+    </div>
   </div>
   <div id="jeu-grid" style="display:flex;flex-direction:column;gap:16px;"></div>
 </section>
@@ -565,22 +569,91 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   </div>
 </div>
 
-<!-- MODAL : Jeu Antenne -->
-<div class="modal-overlay" id="modal-jeu">
+<!-- MODAL : Catalogue des jeux -->
+<div class="modal-overlay" id="modal-jeu-catalogue">
+  <div class="modal" style="max-width:540px;width:95%;">
+    <div class="modal-header"><span>&#127381; Catalogue des jeux</span><button class="modal-close" onclick="closeModal('modal-jeu-catalogue')">&#10005;</button></div>
+    <div class="modal-body" style="padding:16px 24px;">
+      <div id="jeu-catalogue-list" style="display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto;"></div>
+    </div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right">
+      <button class="ga-btn ga-btn-primary" onclick="openJeuTypeForm(null)">&#43; Nouveau jeu</button>
+    </div></div>
+  </div>
+</div>
+
+<!-- MODAL : Formulaire type de jeu -->
+<div class="modal-overlay" id="modal-jeu-type">
   <div class="modal" style="max-width:480px;">
-    <div class="modal-header"><span id="jeu-form-title">Nouveau jeu</span><button class="modal-close" onclick="closeModal('modal-jeu')">&#10005;</button></div>
+    <div class="modal-header"><span id="jeu-type-form-title">Nouveau jeu</span><button class="modal-close" onclick="closeModal('modal-jeu-type');openModal('modal-jeu-catalogue')">&#10005;</button></div>
     <div class="modal-body">
-      <div class="form-group"><label>Nom du jeu</label><input type="text" id="jeu-nom" placeholder="Ex : La Minute Gagnante"></div>
-      <div class="form-group"><label>Emission</label><select id="jeu-emission"><option value="">— Choisir —</option></select></div>
-      <div class="form-row-2">
-        <div class="form-group"><label>Heure de passage</label><select id="jeu-heure"></select></div>
-        <div class="form-group"><label>Gain</label><input type="text" id="jeu-gain" placeholder="Ex : 500€"></div>
+      <div class="form-group"><label>Nom du jeu</label><input type="text" id="jeu-type-nom" placeholder="Ex : La Minute Gagnante"></div>
+      <div class="form-group"><label>Description</label><input type="text" id="jeu-type-desc" placeholder="Ex : Trouver l artiste mystere"></div>
+      <div class="form-group"><label>Gain</label><input type="text" id="jeu-type-gain" placeholder="Ex : 500€ en bons cadeaux"></div>
+      <div class="form-group">
+        <label>Tirage au sort final</label>
+        <input type="text" id="jeu-type-tirage" placeholder="Ex : Vendredi 18h en direct">
+        <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);margin-top:4px;">Moment où le gain sera remporté à l'antenne</span>
       </div>
-      <div class="form-group"><label>Description (optionnel)</label><input type="text" id="jeu-desc" placeholder="Ex : Trouver l artiste mystere"></div>
     </div>
     <div class="modal-footer">
-      <button class="ga-btn ga-btn-danger" id="jeu-del-btn" style="display:none" onclick="deleteJeu()">&#128465; Supprimer</button>
-      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-jeu')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveJeu()">Enregistrer</button></div>
+      <button class="ga-btn ga-btn-danger" id="jeu-type-del-btn" style="display:none" onclick="deleteJeuType()">&#128465; Supprimer</button>
+      <div class="modal-footer-right">
+        <button class="ga-btn" onclick="closeModal('modal-jeu-type');openModal('modal-jeu-catalogue')">Annuler</button>
+        <button class="ga-btn ga-btn-primary" onclick="saveJeuType()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : Appliquer un jeu à la semaine -->
+<div class="modal-overlay" id="modal-jeu-apply">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header"><span>&#9654; Appliquer un jeu</span><button class="modal-close" onclick="closeModal('modal-jeu-apply')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Jeu</label>
+        <select id="jeu-apply-id"><option value="">— Choisir un jeu —</option></select>
+      </div>
+      <div id="jeu-apply-preview" style="display:none;background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.25);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:#F5C518;letter-spacing:.04em;" id="jeu-preview-nom"></div>
+        <div style="font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.6);" id="jeu-preview-desc"></div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);">&#127941; <span id="jeu-preview-gain"></span></div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#F5C518;" id="jeu-preview-tirage"></div>
+      </div>
+      <div class="form-group">
+        <label>Heure de passage quotidienne</label>
+        <select id="jeu-apply-heure"></select>
+      </div>
+      <div class="form-group">
+        <label>Appliquer à la semaine affichée</label>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:rgba(255,255,255,.5);" id="jeu-apply-week-label"></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;">
+        <input type="checkbox" id="jeu-apply-replace"> Remplacer les jeux existants de la semaine
+      </label>
+    </div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right">
+      <button class="ga-btn" onclick="closeModal('modal-jeu-apply')">Annuler</button>
+      <button class="ga-btn ga-btn-primary" onclick="applyJeuToWeek()">Appliquer à toute la semaine</button>
+    </div></div>
+  </div>
+</div>
+
+<!-- MODAL : Edition jeu par case (conservé pour compatibilité) -->
+<div class="modal-overlay" id="modal-jeu">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header"><span id="jeu-form-title">Jeu du jour</span><button class="modal-close" onclick="closeModal('modal-jeu')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Jeu</label><select id="jeu-emission"><option value="">— Choisir un jeu —</option></select></div>
+      <div class="form-group"><label>Heure de passage</label><select id="jeu-heure"></select></div>
+    </div>
+    <div class="modal-footer">
+      <button class="ga-btn ga-btn-danger" id="jeu-del-btn" style="display:none" onclick="deleteJeu()">&#128465; Retirer</button>
+      <div class="modal-footer-right">
+        <button class="ga-btn" onclick="closeModal('modal-jeu')">Annuler</button>
+        <button class="ga-btn ga-btn-primary" onclick="saveJeu()">Placer</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1516,7 +1589,8 @@ function jeuRender(){
         html+='<div class="jeu-day-body has-jeu'+(isPast?' past':'')+'" onclick="jeuOpenEdit(\''+dKey+'\','+emId+')">';
         html+='<div class="jeu-card-heure">'+jeuFmtH(j.heure)+'</div>';
         html+='<div class="jeu-card-nom">'+j.nom+'</div>';
-        if(j.gain) html+='<div class="jeu-card-gain">&#127941; '+j.gain+'</div>';
+        if(j.gain)   html+='<div class="jeu-card-gain">&#127941; '+j.gain+'</div>';
+        if(j.tirage) html+='<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(245,197,24,.6);margin-top:2px;">&#127381; '+j.tirage+'</div>';
       } else {
         html+='<div class="jeu-day-body'+(isPast?' past':'')+'" onclick="jeuOpenNew('+emId+',\''+dKey+'\')">';
         html+='<div class="jeu-empty">+</div>';
@@ -1530,17 +1604,15 @@ function jeuRender(){
 
 function jeuOpenNew(emId, dayKey){
   editingJeuId=null;
-  document.getElementById('jeu-form-title').textContent='Nouveau jeu';
-  document.getElementById('jeu-nom').value='';
-  document.getElementById('jeu-gain').value='';
-  document.getElementById('jeu-desc').value='';
+  document.getElementById('jeu-form-title').textContent='Jeu du jour';
   document.getElementById('jeu-del-btn').style.display='none';
   document.getElementById('modal-jeu').dataset.dayKey=dayKey;
   document.getElementById('modal-jeu').dataset.emId=emId;
+  /* Remplir avec les jeux du catalogue */
   var sel=document.getElementById('jeu-emission');
-  sel.innerHTML='<option value="">— Choisir —</option>'+
-    catalogue.map(function(c){ return '<option value="'+c.id+'">'+c.nom+'</option>'; }).join('');
-  sel.value=emId;
+  sel.innerHTML='<option value="">— Choisir un jeu —</option>'+
+    jeuxCatalogue.map(function(j){ return '<option value="'+j.id+'">'+j.nom+'</option>'; }).join('');
+  sel.value='';
   var hSel=document.getElementById('jeu-heure');
   hSel.innerHTML=buildHourOptions(); hSel.value='8';
   openModal('modal-jeu');
@@ -1567,19 +1639,18 @@ function jeuOpenEdit(dayKey, emId){
 }
 
 function saveJeu(){
-  var nom=document.getElementById('jeu-nom').value.trim();
-  var emId=parseInt(document.getElementById('jeu-emission').value);
-  var heure=parseFloat(document.getElementById('jeu-heure').value);
-  var gain=document.getElementById('jeu-gain').value.trim();
-  var desc=document.getElementById('jeu-desc').value.trim();
-  var dayKey=document.getElementById('modal-jeu').dataset.dayKey||'';
-  if(!nom){ alert('Nom du jeu requis.'); return; }
-  if(!emId){ alert('Choisissez une emission.'); return; }
+  var jeuTypeId = parseInt(document.getElementById('jeu-emission').value);
+  var heure     = parseFloat(document.getElementById('jeu-heure').value);
+  var dayKey    = document.getElementById('modal-jeu').dataset.dayKey||'';
+  var emId      = parseInt(document.getElementById('modal-jeu').dataset.emId||'0');
+  if(!jeuTypeId){ alert('Choisissez un jeu dans le catalogue.'); return; }
+  var jType = jeuxCatalogue.find(function(x){ return x.id===jeuTypeId; });
+  if(!jType) return;
   if(editingJeuId!==null){
     var j=jeux.find(function(x){ return x.id===editingJeuId; });
-    if(j){ j.nom=nom; j.emissionId=emId; j.heure=heure; j.gain=gain; j.desc=desc; }
+    if(j){ j.nom=jType.nom; j.desc=jType.desc; j.gain=jType.gain; j.tirage=jType.tirage; j.heure=heure; j.jeuTypeId=jeuTypeId; }
   } else {
-    jeux.push({id:Date.now(),nom:nom,emissionId:emId,heure:heure,gain:gain,desc:desc,dayKey:dayKey});
+    jeux.push({id:Date.now(),nom:jType.nom,desc:jType.desc,gain:jType.gain,tirage:jType.tirage,heure:heure,emissionId:emId,dayKey:dayKey,jeuTypeId:jeuTypeId});
   }
   saveJeux(); closeModal('modal-jeu'); jeuRender();
   if(localStorage.getItem('at_worker_url')) publishData();
@@ -1953,6 +2024,163 @@ showSection = function(id, btn){
   _origSS3(id, btn);
   if(id === 'incidents'){ incLoad(); incBadgeSet(0); }
 };
+
+
+/* ═══ CATALOGUE DES JEUX ═════════════════════════════════════════════
+   jeuxCatalogue = types de jeux (permanent)
+   jeux          = affectations par jour (dayKey + emissionId)
+═══════════════════════════════════════════════════════════════════ */
+var jeuxCatalogue = [];
+var editingJeuTypeId = null;
+
+function saveJeuxCatalogue(){ localStorage.setItem('at_jeux_catalogue', JSON.stringify(jeuxCatalogue)); }
+function loadJeuxCatalogue(){ try{ var v=localStorage.getItem('at_jeux_catalogue'); if(v) jeuxCatalogue=JSON.parse(v); }catch(e){} }
+loadJeuxCatalogue();
+
+/* Étendre openModal */
+var _omJeu = openModal;
+openModal = function(id){
+  _omJeu(id);
+  if(id==='modal-jeu-catalogue') refreshJeuCatalogue();
+  if(id==='modal-jeu-apply')     openJeuApplyModal();
+};
+
+/* ── Catalogue : liste ── */
+function refreshJeuCatalogue(){
+  var el = document.getElementById('jeu-catalogue-list'); if(!el) return;
+  if(!jeuxCatalogue.length){
+    el.innerHTML='<div class="list-empty">Aucun jeu dans le catalogue.</div>'; return;
+  }
+  el.innerHTML = jeuxCatalogue.map(function(j){
+    return '<div class="em-list-item" onclick="openJeuTypeForm('+j.id+')">' +
+      '<div class="em-list-bar" style="background:#F5C518;"></div>' +
+      '<div class="em-list-info">' +
+        '<div class="em-list-title">'+j.nom+'</div>' +
+        '<div class="em-list-meta">'+(j.desc||'—')+' &bull; &#127941; '+(j.gain||'—')+(j.tirage?' &bull; Tirage : '+j.tirage:'')+'</div>' +
+      '</div>' +
+      '<button class="anim-row-edit" onclick="event.stopPropagation();openJeuTypeForm('+j.id+')">&#9998;</button>' +
+    '</div>';
+  }).join('');
+}
+
+/* ── Catalogue : formulaire ── */
+function openJeuTypeForm(typeId){
+  editingJeuTypeId = typeId;
+  var isNew = typeId === null;
+  var j = isNew ? null : jeuxCatalogue.find(function(x){ return x.id===typeId; });
+  document.getElementById('jeu-type-form-title').textContent = isNew ? 'Nouveau jeu' : 'Modifier le jeu';
+  document.getElementById('jeu-type-nom').value    = j ? j.nom    : '';
+  document.getElementById('jeu-type-desc').value   = j ? j.desc   : '';
+  document.getElementById('jeu-type-gain').value   = j ? j.gain   : '';
+  document.getElementById('jeu-type-tirage').value = j ? j.tirage : '';
+  document.getElementById('jeu-type-del-btn').style.display = isNew ? 'none' : 'inline-flex';
+  closeModal('modal-jeu-catalogue');
+  openModal('modal-jeu-type');
+}
+
+function saveJeuType(){
+  var nom    = document.getElementById('jeu-type-nom').value.trim();
+  var desc   = document.getElementById('jeu-type-desc').value.trim();
+  var gain   = document.getElementById('jeu-type-gain').value.trim();
+  var tirage = document.getElementById('jeu-type-tirage').value.trim();
+  if(!nom){ alert('Nom requis.'); return; }
+  if(editingJeuTypeId !== null){
+    var j = jeuxCatalogue.find(function(x){ return x.id===editingJeuTypeId; });
+    if(j){ j.nom=nom; j.desc=desc; j.gain=gain; j.tirage=tirage; }
+  } else {
+    jeuxCatalogue.push({id:Date.now(), nom:nom, desc:desc, gain:gain, tirage:tirage});
+  }
+  saveJeuxCatalogue();
+  closeModal('modal-jeu-type');
+  openModal('modal-jeu-catalogue');
+}
+
+function deleteJeuType(){
+  if(!confirm('Supprimer ce jeu du catalogue ?')) return;
+  jeuxCatalogue = jeuxCatalogue.filter(function(j){ return j.id!==editingJeuTypeId; });
+  saveJeuxCatalogue();
+  closeModal('modal-jeu-type');
+  openModal('modal-jeu-catalogue');
+  jeuRender();
+}
+
+/* ── Appliquer un jeu à la semaine ── */
+function openJeuApplyModal(){
+  /* Remplir le select des jeux */
+  var sel = document.getElementById('jeu-apply-id');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">— Choisir un jeu —</option>' +
+    jeuxCatalogue.map(function(j){ return '<option value="'+j.id+'">'+j.nom+'</option>'; }).join('');
+  sel.onchange = updateJeuApplyPreview;
+  sel.value = '';
+
+  /* Label semaine */
+  var days = getWeekDates(jeuWeekOffset);
+  var lbl = document.getElementById('jeu-apply-week-label');
+  if(lbl) lbl.textContent = 'Du '+days[0].getDate()+' '+MOIS[days[0].getMonth()]+' au '+days[4].getDate()+' '+MOIS[days[4].getMonth()]+' '+days[4].getFullYear();
+
+  /* Heure */
+  var hSel = document.getElementById('jeu-apply-heure');
+  if(hSel){ hSel.innerHTML = buildHourOptions(); hSel.value = '8'; }
+
+  document.getElementById('jeu-apply-replace').checked = true;
+  updateJeuApplyPreview();
+}
+
+function updateJeuApplyPreview(){
+  var sel = document.getElementById('jeu-apply-id');
+  var preview = document.getElementById('jeu-apply-preview');
+  if(!sel || !preview) return;
+  var typeId = parseInt(sel.value);
+  if(!typeId){ preview.style.display='none'; return; }
+  var j = jeuxCatalogue.find(function(x){ return x.id===typeId; });
+  if(!j){ preview.style.display='none'; return; }
+  preview.style.display = 'flex';
+  document.getElementById('jeu-preview-nom').textContent    = j.nom;
+  document.getElementById('jeu-preview-desc').textContent   = j.desc || '';
+  document.getElementById('jeu-preview-gain').textContent   = j.gain || '—';
+  document.getElementById('jeu-preview-tirage').textContent = j.tirage ? '&#127381; Tirage : '+j.tirage : '';
+}
+
+function applyJeuToWeek(){
+  var typeId  = parseInt(document.getElementById('jeu-apply-id').value);
+  var heure   = parseFloat(document.getElementById('jeu-apply-heure').value);
+  var replace = document.getElementById('jeu-apply-replace').checked;
+  if(!typeId){ alert('Choisissez un jeu.'); return; }
+  var jType = jeuxCatalogue.find(function(x){ return x.id===typeId; });
+  if(!jType) return;
+
+  var days = getWeekDates(jeuWeekOffset);
+
+  /* Appliquer sur les 5 jours (Lun-Ven) × toutes les émissions du catalogue */
+  for(var i=0;i<5;i++){
+    var dKey = days[i].toISOString().slice(0,10);
+    catalogue.forEach(function(em){
+      /* Supprimer l'ancien jeu si replace */
+      if(replace){
+        jeux = jeux.filter(function(j){ return !(j.emissionId===em.id && j.dayKey===dKey); });
+      }
+      /* Ajouter le nouveau */
+      jeux.push({
+        id: Date.now()+Math.random(),
+        nom:    jType.nom,
+        desc:   jType.desc,
+        gain:   jType.gain,
+        tirage: jType.tirage,
+        heure:  heure,
+        emissionId: em.id,
+        dayKey: dKey,
+        jeuTypeId: typeId
+      });
+    });
+  }
+  saveJeux();
+  closeModal('modal-jeu-apply');
+  jeuRender();
+  if(localStorage.getItem('at_worker_url')) publishData();
+}
+
+/* ── Mise à jour de jeuRender pour afficher tirage ── */
 
 </script>
 </body>
