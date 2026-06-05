@@ -22,28 +22,9 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .nav-btn-ico{font-size:24px;line-height:1;}
 .nav-btn-txt{white-space:normal;text-align:center;line-height:1.2;}
 .nav-btn-incident{position:relative;overflow:hidden;}
-.nav-btn-incident::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(245,197,24,.18) 0px,rgba(245,197,24,.18) 10px,transparent 10px,transparent 20px);pointer-events:none;z-index:0;transition:opacity .3s;}
+.nav-btn-incident::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(245,197,24,.18) 0px,rgba(245,197,24,.18) 10px,transparent 10px,transparent 20px);pointer-events:none;z-index:0;}
 .nav-btn-incident .nav-btn-ico,.nav-btn-incident .nav-btn-txt{position:relative;z-index:1;}
-
-/* Clignotement alerte incident */
-@keyframes incBlink{
-  0%,100%{ background:rgba(228,3,46,.35); border-bottom-color:#E4032E; }
-  50%{ background:rgba(245,197,24,.35); border-bottom-color:#F5C518; }
-}
-@keyframes incBlinkStripe{
-  0%,100%{ opacity:1; }
-  50%{ opacity:0; }
-}
-.nav-btn-incident.has-alert{
-  animation: incBlink .6s ease-in-out infinite;
-  color:#fff !important;
-}
-.nav-btn-incident.has-alert::before{
-  animation: incBlinkStripe .6s ease-in-out infinite;
-  background:repeating-linear-gradient(45deg,rgba(245,197,24,.5) 0px,rgba(245,197,24,.5) 10px,transparent 10px,transparent 20px);
-}
-.nav-btn-incident.has-alert .nav-btn-txt{color:#fff;}
-.hdr-right{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;padding:0 24px;border-left:1px solid var(--border);gap:4px;}
+.hdr-right{display:flex;align-items:center;padding:0 24px;border-left:1px solid var(--border);}
 .hdr-clock{font-family:'Share Tech Mono',monospace;font-size:38px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.05em;white-space:nowrap;}
 
 .section{display:none;padding:36px 40px;}
@@ -142,7 +123,6 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .em-list-info{flex:1;}
 .em-list-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#fff;}
 .em-list-meta{font-family:'Barlow',sans-serif;font-size:11px;color:rgba(255,255,255,.4);margin-top:1px;}
-
 .team-row{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:7px;}
 .team-row:hover{background:rgba(255,255,255,.09);}
 .team-row-name{font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;color:#fff;}
@@ -183,48 +163,6 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .gj-card-empty{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:rgba(255,255,255,.15);text-transform:uppercase;text-align:center;}
 .gj-card-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;text-transform:uppercase;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .gj-card-rdv{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-
-/* INCIDENTS */
-.inc-card{background:#2a2733;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;display:flex;}
-.inc-card-side{width:6px;flex-shrink:0;}
-.inc-card-body{flex:1;padding:16px 20px;display:flex;flex-direction:column;gap:6px;}
-.inc-card-header{display:flex;align-items:center;justify-content:space-between;gap:12px;}
-.inc-card-type{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:#fff;}
-.inc-card-time{font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(255,255,255,.4);}
-.inc-card-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-.inc-card-horaire{font-family:'Share Tech Mono',monospace;font-size:13px;color:rgba(255,255,255,.7);}
-.inc-card-auteur{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.06em;}
-.inc-card-desc{font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.55);margin-top:2px;}
-.inc-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
-.inc-badge-major{background:rgba(228,3,46,.2);border:1px solid rgba(228,3,46,.4);color:#f77;}
-.inc-badge-minor{background:rgba(255,165,0,.15);border:1px solid rgba(255,165,0,.3);color:#ffa500;}
-.inc-badge-other{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);}
-.inc-notif-toast{
-  position:fixed;top:24px;right:24px;z-index:9999;
-  background:#37333E;border:1px solid rgba(228,3,46,.5);border-left:4px solid #E4032E;
-  border-radius:10px;padding:16px 20px;max-width:360px;
-  box-shadow:0 8px 32px rgba(0,0,0,.5);
-  animation:incSlideIn .3s ease;
-}
-@keyframes incSlideIn{from{transform:translateX(120%);opacity:0;}to{transform:translateX(0);opacity:1;}}
-.inc-notif-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:#fff;letter-spacing:.05em;text-transform:uppercase;}
-.inc-notif-body{font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;}
-
-
-
-.part-row{display:grid;grid-template-columns:180px 140px 200px 140px 200px auto;gap:10px;align-items:center;padding:10px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:7px;transition:background .15s;}
-.part-row:hover{background:rgba(255,255,255,.07);}
-.part-row-head{grid-template-columns:180px 140px 200px 140px 200px auto;background:#201e28;border-color:rgba(255,255,255,.1);}
-.part-row-head span{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);}
-.part-cell{font-family:'Inter',sans-serif;font-size:13px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.part-cell-meta{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;color:rgba(255,255,255,.35);text-transform:uppercase;}
-.part-highlight{background:rgba(245,197,24,.25);border-radius:3px;padding:0 2px;}
-
-/* PARTICIPANTS */
-.part-count{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;color:rgba(255,255,255,.4);text-transform:uppercase;}
-.part-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;background:rgba(245,197,24,.15);border:1px solid rgba(245,197,24,.3);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#F5C518;cursor:pointer;transition:all .15s;}
-.part-badge:hover{background:rgba(245,197,24,.25);}
-
 .jeu-emission-card{background:#2a2733;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;}
 .jeu-emission-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#37333E;border-bottom:3px solid #E4032E;}
 .jeu-emission-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#fff;}
@@ -245,6 +183,40 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .jeu-card-nom{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;color:#fff;letter-spacing:.04em;margin-bottom:3px;}
 .jeu-card-heure{font-family:'Share Tech Mono',monospace;font-size:11px;color:#F5C518;margin-bottom:4px;}
 .jeu-card-gain{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.5);}
+.part-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;background:rgba(245,197,24,.15);border:1px solid rgba(245,197,24,.3);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#F5C518;cursor:pointer;transition:all .15s;}
+.part-badge:hover{background:rgba(245,197,24,.25);}
+.part-row{display:grid;grid-template-columns:200px 150px 200px 140px 200px;gap:10px;align-items:center;padding:10px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:7px;transition:background .15s;}
+.part-row:hover{background:rgba(255,255,255,.07);}
+.part-row-head{background:#201e28;border-color:rgba(255,255,255,.1);}
+.part-row-head span{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);}
+.part-cell{font-family:'Inter',sans-serif;font-size:13px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.part-cell-meta{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;color:rgba(255,255,255,.4);text-transform:uppercase;}
+.part-highlight{background:rgba(245,197,24,.3);border-radius:3px;padding:0 2px;}
+.nav-btn-incident{position:relative;overflow:hidden;}
+.nav-btn-incident::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(245,197,24,.18) 0px,rgba(245,197,24,.18) 10px,transparent 10px,transparent 20px);pointer-events:none;z-index:0;transition:opacity .3s;}
+.nav-btn-incident .nav-btn-ico,.nav-btn-incident .nav-btn-txt{position:relative;z-index:1;}
+@keyframes incBlink{0%,100%{background:rgba(228,3,46,.35);border-bottom-color:#E4032E;}50%{background:rgba(245,197,24,.35);border-bottom-color:#F5C518;}}
+@keyframes incBlinkStripe{0%,100%{opacity:1;}50%{opacity:0;}}
+.nav-btn-incident.has-alert{animation:incBlink .6s ease-in-out infinite;color:#fff !important;}
+.nav-btn-incident.has-alert::before{animation:incBlinkStripe .6s ease-in-out infinite;background:repeating-linear-gradient(45deg,rgba(245,197,24,.5) 0px,rgba(245,197,24,.5) 10px,transparent 10px,transparent 20px);}
+.inc-card{background:#2a2733;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;display:flex;}
+.inc-card-side{width:6px;flex-shrink:0;}
+.inc-card-body{flex:1;padding:16px 20px;display:flex;flex-direction:column;gap:6px;}
+.inc-card-header{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.inc-card-type{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:#fff;}
+.inc-card-time{font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(255,255,255,.4);}
+.inc-card-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.inc-card-horaire{font-family:'Share Tech Mono',monospace;font-size:13px;color:rgba(255,255,255,.7);}
+.inc-card-auteur{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.06em;}
+.inc-card-desc{font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.55);margin-top:2px;}
+.inc-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+.inc-badge-major{background:rgba(228,3,46,.2);border:1px solid rgba(228,3,46,.4);color:#f77;}
+.inc-badge-minor{background:rgba(255,165,0,.15);border:1px solid rgba(255,165,0,.3);color:#ffa500;}
+.inc-badge-other{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);}
+.inc-notif-toast{position:fixed;top:24px;right:24px;z-index:9999;background:#37333E;border:1px solid rgba(228,3,46,.5);border-left:4px solid #E4032E;border-radius:10px;padding:16px 20px;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:incSlideIn .3s ease;}
+@keyframes incSlideIn{from{transform:translateX(120%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.inc-notif-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:#fff;letter-spacing:.05em;text-transform:uppercase;}
+.inc-notif-body{font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;}
 </style>
 </head>
 <body>
@@ -256,24 +228,18 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     <button class="nav-btn" onclick="showSection('grille-antenne',this)"><span class="nav-btn-ico">&#128250;</span><span class="nav-btn-txt">Grille<br>Antenne</span></button>
     <button class="nav-btn" onclick="showSection('jeu-antenne',this)"><span class="nav-btn-ico">&#127925;</span><span class="nav-btn-txt">Jeu<br>Antenne</span></button>
     <button class="nav-btn" onclick="showSection('commercial',this)"><span class="nav-btn-ico">&#128200;</span><span class="nav-btn-txt">Commercial<br>Editor</span></button>
-    <button class="nav-btn nav-btn-incident" id="inc-bell" onclick="showSection('incidents',this)">
-      <span class="nav-btn-ico">&#9888;&#65039;</span>
-      <span class="nav-btn-txt">Gestion des<br>Incidents</span>
-    </button>
+    <button class="nav-btn nav-btn-incident" id="inc-bell" onclick="showSection('incidents',this)"><span class="nav-btn-ico">&#9888;&#65039;</span><span class="nav-btn-txt">Gestion des<br>Incidents</span></button>
   </nav>
   <div class="hdr-right" style="flex-direction:row;align-items:center;gap:20px;">
-    <!-- Indicateur Studio Tool -->
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
       <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);">Studio Tool</div>
       <div style="display:flex;align-items:center;gap:6px;">
-        <span id="cf-status-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;transition:background .3s;box-shadow:0 0 6px #555;"></span>
+        <span id="cf-status-dot" style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;transition:background .3s;"></span>
         <span id="cf-status-label" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);">Non connecte</span>
         <span id="cf-last-pub" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,.2);"></span>
       </div>
     </div>
-    <!-- Séparateur -->
     <div style="width:1px;height:40px;background:rgba(255,255,255,.1);"></div>
-    <!-- Horloge -->
     <div class="hdr-clock" id="clk">--:--:--</div>
   </div>
 </div>
@@ -284,22 +250,16 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   <div class="ga-toolbar">
     <div style="display:flex;align-items:center;gap:12px;">
       <div><div class="ga-title">Grille Antenne</div><div class="ga-sub">Semaine du <span id="ga-week-label">-</span></div></div>
-      <div style="display:flex;gap:6px;">
-        <button class="ga-btn" onclick="changeWeek(-1)">&#9664;</button>
-        <button class="ga-btn" onclick="changeWeek(0)">Auj.</button>
-        <button class="ga-btn" onclick="changeWeek(1)">&#9654;</button>
-      </div>
+      <div style="display:flex;gap:6px;"><button class="ga-btn" onclick="changeWeek(-1)">&#9664;</button><button class="ga-btn" onclick="changeWeek(0)">Auj.</button><button class="ga-btn" onclick="changeWeek(1)">&#9654;</button></div>
     </div>
     <div class="ga-toolbar-right">
       <button class="ga-btn" onclick="openModal('modal-equipes')">&#128101; Gestion des equipes</button>
       <button class="ga-btn ga-btn-primary" onclick="openEmissionsPanel()">&#43; Emission</button>
       <div class="ga-sep"></div>
       <button class="ga-btn" onclick="openModal('modal-grilles-list')">&#9776; Grilles type</button>
-
     </div>
   </div>
   <div class="ga-calendar-wrap"><div class="ga-calendar" id="ga-calendar" style="grid-template-columns:54px repeat(5,1fr);min-width:600px;"></div></div>
-
   <div style="margin-top:48px;">
     <div class="ga-toolbar">
       <div><div class="ga-title">Grille Journaliste</div></div>
@@ -318,11 +278,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   <div class="ga-toolbar">
     <div style="display:flex;align-items:center;gap:12px;">
       <div><div class="ga-title">Jeu Antenne</div><div class="ga-sub">Semaine du <span id="jeu-week-label">-</span></div></div>
-      <div style="display:flex;gap:6px;">
-        <button class="ga-btn" onclick="jeuChangeWeek(-1)">&#9664;</button>
-        <button class="ga-btn" onclick="jeuChangeWeek(0)">Auj.</button>
-        <button class="ga-btn" onclick="jeuChangeWeek(1)">&#9654;</button>
-      </div>
+      <div style="display:flex;gap:6px;"><button class="ga-btn" onclick="jeuChangeWeek(-1)">&#9664;</button><button class="ga-btn" onclick="jeuChangeWeek(0)">Auj.</button><button class="ga-btn" onclick="jeuChangeWeek(1)">&#9654;</button></div>
     </div>
     <div class="ga-toolbar-right">
       <button class="ga-btn" onclick="openModal('modal-jeu-catalogue')">&#127381; Catalogue des jeux</button>
@@ -330,33 +286,27 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     </div>
   </div>
   <div id="jeu-grid" style="display:flex;flex-direction:column;gap:16px;"></div>
-
-  <!-- Liste globale des participants -->
   <div style="margin-top:48px;">
     <div class="ga-toolbar" style="margin-bottom:16px;">
       <div><div class="ga-title" style="font-size:18px;">Participants</div></div>
       <div class="ga-toolbar-right">
         <div style="position:relative;">
-          <input type="text" id="part-search" placeholder="Rechercher un participant..."
-            oninput="partSearchRender()"
-            style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:8px 36px 8px 14px;color:#fff;font-family:'Inter',sans-serif;font-size:13px;outline:none;width:280px;">
-          <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.3);font-size:14px;">&#128269;</span>
+          <input type="text" id="part-search" placeholder="Rechercher..." oninput="partSearchRender()"
+            style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:8px 36px 8px 14px;color:#fff;font-family:'Inter',sans-serif;font-size:13px;outline:none;width:260px;">
+          <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.3);">&#128269;</span>
         </div>
-        <button class="ga-btn" onclick="exportParticipants()">&#8659; Exporter CSV</button>
+        <button class="ga-btn" onclick="exportParticipants()">&#8659; CSV</button>
       </div>
     </div>
     <div id="part-global-list" style="display:flex;flex-direction:column;gap:6px;"></div>
   </div>
-
 </section>
 
 <section id="commercial" class="section"><div class="placeholder">[ Commercial Editor ]</div></section>
+
 <section id="incidents" class="section">
   <div class="ga-toolbar">
-    <div>
-      <div class="ga-title">Gestion des Incidents</div>
-      <div class="ga-sub" id="inc-last-check"></div>
-    </div>
+    <div><div class="ga-title">Gestion des Incidents</div><div class="ga-sub" id="inc-last-check"></div></div>
     <div class="ga-toolbar-right">
       <button class="ga-btn" onclick="incLoad()">&#8635; Actualiser</button>
       <button class="ga-btn ga-btn-danger" onclick="incClear()">&#128465; Tout effacer</button>
@@ -365,7 +315,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   <div id="inc-list" style="display:flex;flex-direction:column;gap:10px;"></div>
 </section>
 
-<!-- PANEL : Equipes -->
+<!-- PANEL Equipes -->
 <div class="modal-overlay" id="modal-equipes">
   <div class="modal" style="max-width:680px;width:95%;">
     <div class="modal-header"><span>&#128101; Gestion des equipes</span><button class="modal-close" onclick="closeModal('modal-equipes')">&#10005;</button></div>
@@ -385,7 +335,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   </div>
 </div>
 
-<!-- MODAL : Animateur -->
+<!-- MODAL Animateur -->
 <div class="modal-overlay" id="modal-animateur">
   <div class="modal" style="max-width:400px;">
     <div class="modal-header"><span id="anim-form-title">Nouvel animateur</span><button class="modal-close" onclick="closeModal('modal-animateur');openModal('modal-equipes')">&#10005;</button></div>
@@ -400,7 +350,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   </div>
 </div>
 
-<!-- MODAL : Team -->
+<!-- MODAL Team -->
 <div class="modal-overlay" id="modal-team-edit">
   <div class="modal" style="max-width:480px;">
     <div class="modal-header"><span id="team-form-title">Nouvelle team</span><button class="modal-close" onclick="closeModal('modal-team-edit');openModal('modal-equipes')">&#10005;</button></div>
@@ -415,7 +365,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   </div>
 </div>
 
-<!-- PANEL : Catalogue -->
+<!-- PANEL Catalogue emissions -->
 <div class="modal-overlay" id="modal-emissions-panel">
   <div class="modal" style="max-width:540px;width:95%;">
     <div class="modal-header"><span>Catalogue des emissions</span><button class="modal-close" onclick="closeModal('modal-emissions-panel')">&#10005;</button></div>
@@ -424,14 +374,14 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   </div>
 </div>
 
-<!-- MODAL : Type emission -->
+<!-- MODAL Type emission -->
 <div class="modal-overlay" id="modal-emission-type">
   <div class="modal" style="max-width:420px;">
     <div class="modal-header"><span id="em-type-form-title">Nouvelle emission</span><button class="modal-close" onclick="closeModal('modal-emission-type');openModal('modal-emissions-panel')">&#10005;</button></div>
     <div class="modal-body">
       <div class="form-group"><label>Nom</label><input type="text" id="em-type-nom" placeholder="Ex : Morning Show" oninput="autoColorEmission()"></div>
-      <div class="form-group"><label>Couleur par defaut</label><input type="color" id="em-type-color" value="#5B8DEF"></div>
-      <div class="form-group"><label>Description (optionnel)</label><input type="text" id="em-type-desc" placeholder="Ex : Emission matinale"></div>
+      <div class="form-group"><label>Couleur</label><input type="color" id="em-type-color" value="#5B8DEF"></div>
+      <div class="form-group"><label>Description</label><input type="text" id="em-type-desc" placeholder="Ex : Emission matinale"></div>
     </div>
     <div class="modal-footer">
       <button class="ga-btn ga-btn-danger" id="em-type-del-btn" style="display:none" onclick="deleteEmissionType()">&#128465; Supprimer</button>
@@ -440,7 +390,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   </div>
 </div>
 
-<!-- MODAL : Affectation -->
+<!-- MODAL Affectation -->
 <div class="modal-overlay" id="modal-emission">
   <div class="modal">
     <div class="modal-header"><span id="modal-em-title">Affecter une emission</span><button class="modal-close" onclick="closeModal('modal-emission')">&#10005;</button></div>
@@ -448,7 +398,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
       <div class="form-group"><label>Emission</label><select id="em-type-id" onchange="onEmissionTypeChange()"><option value="">— Choisir —</option></select></div>
       <div class="form-row"><div class="form-group"><label>Jour</label><select id="em-jour"><option value="0">Lundi</option><option value="1">Mardi</option><option value="2">Mercredi</option><option value="3">Jeudi</option><option value="4">Vendredi</option><option value="5">Samedi</option><option value="6">Dimanche</option></select></div><div class="form-group"><label>Debut</label><select id="em-hdebut"></select></div><div class="form-group"><label>Fin</label><select id="em-hfin"></select></div></div>
       <div class="form-group"><label>Couleur</label><input type="color" id="em-color" value="#5B8DEF"></div>
-      <div class="form-group"><label>Team</label><select id="em-team-select" onchange="applyTeamToEmission()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:9px 12px;color:#fff;font-family:'Barlow',sans-serif;font-size:14px;outline:none;"><option value="">— Appliquer une team —</option></select></div>
+      <div class="form-group"><label>Team</label><select id="em-team-select" onchange="applyTeamToEmission()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:9px 12px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;outline:none;"><option value="">— Appliquer une team —</option></select></div>
       <div class="form-group"><label>Animateurs</label><div class="anim-selector" id="em-anim-selector"></div></div>
     </div>
     <div class="modal-footer">
@@ -458,20 +408,20 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   </div>
 </div>
 
-<!-- MODAL : Duplication -->
+<!-- MODAL Duplication -->
 <div class="modal-overlay" id="modal-dup">
   <div class="modal" style="max-width:420px;">
     <div class="modal-header"><span>Dupliquer la journee</span><button class="modal-close" onclick="closeModal('modal-dup')">&#10005;</button></div>
     <div class="modal-body">
       <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Copier de <strong id="dup-src-label" style="color:#fff;"></strong> vers :</p>
-      <div class="form-group"><label>Jours de destination</label><div id="dup-dest-days" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;"></div></div>
+      <div class="form-group"><label>Jours</label><div id="dup-dest-days" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;"></div></div>
       <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;margin-top:4px;"><input type="checkbox" id="dup-replace"> Remplacer</label>
     </div>
     <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-dup')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="dupDay()">Dupliquer</button></div></div>
   </div>
 </div>
 
-<!-- MODAL : Grilles type liste -->
+<!-- MODAL Grilles type -->
 <div class="modal-overlay" id="modal-grilles-list">
   <div class="modal" style="max-width:500px;">
     <div class="modal-header"><span>Grilles type</span><button class="modal-close" onclick="closeModal('modal-grilles-list')">&#10005;</button></div>
@@ -479,28 +429,21 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn ga-btn-primary" onclick="openGrilleForm(null)">&#43; Nouvelle grille</button></div></div>
   </div>
 </div>
-
-<!-- MODAL : Grille type edition -->
 <div class="modal-overlay" id="modal-grille-edit">
   <div class="modal" style="max-width:520px;">
     <div class="modal-header"><span id="gt-form-title">Nouvelle grille type</span><button class="modal-close" onclick="closeModal('modal-grille-edit')">&#10005;</button></div>
     <div class="modal-body">
-      <div class="form-group"><label>Nom</label><input type="text" id="gt-nom" placeholder="Ex : Grille standard"></div>
-      <div class="form-group"><label>Emissions (<span id="gt-em-count">0</span>)</label><button class="ga-btn" style="align-self:flex-start;margin-bottom:8px;" onclick="importWeekToGrille()">&#8659; Importer la semaine</button><div class="gt-em-scroll" id="gt-em-list"></div></div>
+      <div class="form-group"><label>Nom</label><input type="text" id="gt-nom"></div>
+      <div class="form-group"><label>Emissions (<span id="gt-em-count">0</span>)</label><button class="ga-btn" style="align-self:flex-start;margin-bottom:8px;" onclick="importWeekToGrille()">&#8659; Importer</button><div class="gt-em-scroll" id="gt-em-list"></div></div>
     </div>
-    <div class="modal-footer">
-      <button class="ga-btn ga-btn-danger" id="gt-del-btn" style="display:none" onclick="deleteGrilleType()">&#128465; Supprimer</button>
-      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-grille-edit');openModal('modal-grilles-list')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveGrilleType()">Enregistrer</button></div>
-    </div>
+    <div class="modal-footer"><button class="ga-btn ga-btn-danger" id="gt-del-btn" style="display:none" onclick="deleteGrilleType()">&#128465;</button><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-grille-edit');openModal('modal-grilles-list')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveGrilleType()">Enregistrer</button></div></div>
   </div>
 </div>
-
-<!-- MODAL : Appliquer grille -->
 <div class="modal-overlay" id="modal-grille-apply">
   <div class="modal" style="max-width:420px;">
     <div class="modal-header"><span>Appliquer la grille</span><button class="modal-close" onclick="closeModal('modal-grille-apply')">&#10005;</button></div>
     <div class="modal-body">
-      <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Appliquer <strong id="apply-gt-label" style="color:#fff;"></strong> :</p>
+      <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Appliquer <strong id="apply-gt-label" style="color:#fff;"></strong></p>
       <div class="form-row-2"><div class="form-group"><label>Semaine</label><input type="number" id="apply-gt-week" min="1" max="53" oninput="updateWeekPreview()"></div><div class="form-group"><label>Annee</label><input type="number" id="apply-gt-year" min="2024" max="2035" oninput="updateWeekPreview()"></div></div>
       <div id="apply-week-preview" style="display:none;background:rgba(91,141,239,.12);border:1px solid rgba(91,141,239,.3);border-radius:6px;padding:10px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px;">Dates</div><div id="apply-week-dates" style="font-family:'Barlow',sans-serif;font-size:13px;color:#fff;line-height:1.8;"></div></div>
       <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" id="apply-gt-replace"> Remplacer</label>
@@ -509,16 +452,14 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   </div>
 </div>
 
-<!-- MODAL : Journalistes liste -->
+<!-- MODAL Journalistes -->
 <div class="modal-overlay" id="modal-journalistes-list">
   <div class="modal" style="max-width:460px;">
     <div class="modal-header"><span>Journalistes</span><button class="modal-close" onclick="closeModal('modal-journalistes-list')">&#10005;</button></div>
     <div class="modal-body" style="padding:16px 24px;"><div id="journaliste-full-list" style="display:flex;flex-direction:column;gap:8px;min-height:40px;"></div></div>
-    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn ga-btn-primary" onclick="openJournalisteForm(null)">&#43; Nouveau journaliste</button></div></div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn ga-btn-primary" onclick="openJournalisteForm(null)">&#43; Nouveau</button></div></div>
   </div>
 </div>
-
-<!-- MODAL : Journaliste formulaire -->
 <div class="modal-overlay" id="modal-journaliste">
   <div class="modal" style="max-width:400px;">
     <div class="modal-header"><span id="journaliste-form-title">Nouveau journaliste</span><button class="modal-close" onclick="closeModal('modal-journaliste');openModal('modal-journalistes-list')">&#10005;</button></div>
@@ -526,14 +467,11 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
       <div class="form-row-2"><div class="form-group"><label>Prenom</label><input type="text" id="journaliste-prenom" placeholder="Marie"></div><div class="form-group"><label>Nom</label><input type="text" id="journaliste-nom" placeholder="Curie"></div></div>
       <div class="form-group"><label>Couleur</label><input type="color" id="journaliste-color" value="#E87C3E"></div>
     </div>
-    <div class="modal-footer">
-      <button class="ga-btn ga-btn-danger" id="journaliste-del-btn" style="display:none" onclick="deleteJournaliste()">&#128465; Supprimer</button>
-      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-journaliste');openModal('modal-journalistes-list')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveJournaliste()">Enregistrer</button></div>
-    </div>
+    <div class="modal-footer"><button class="ga-btn ga-btn-danger" id="journaliste-del-btn" style="display:none" onclick="deleteJournaliste()">&#128465;</button><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-journaliste');openModal('modal-journalistes-list')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveJournaliste()">Enregistrer</button></div></div>
   </div>
 </div>
 
-<!-- MODAL : RDV journaliste -->
+<!-- MODAL RDV journaliste -->
 <div class="modal-overlay" id="modal-gj-rdv">
   <div class="modal" style="max-width:560px;">
     <div class="modal-header"><span id="modal-gj-rdv-title">Ajouter des rendez-vous</span><button class="modal-close" onclick="closeModal('modal-gj-rdv')">&#10005;</button></div>
@@ -544,17 +482,14 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
       <div class="form-group"><label>Couleur</label><input type="color" id="gj-rdv-color" value="#E87C3E"></div>
       <div class="form-group"><label>Journalistes</label><div class="anim-selector" id="gj-rdv-selector"></div></div>
     </div>
-    <div class="modal-footer">
-      <button class="ga-btn ga-btn-danger" id="gj-rdv-del-btn" style="display:none" onclick="deleteGjRdv()">&#128465; Supprimer</button>
-      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-gj-rdv')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveGjRdv()">Enregistrer</button></div>
-    </div>
+    <div class="modal-footer"><button class="ga-btn ga-btn-danger" id="gj-rdv-del-btn" style="display:none" onclick="deleteGjRdv()">&#128465;</button><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-gj-rdv')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveGjRdv()">Enregistrer</button></div></div>
   </div>
 </div>
 
-<!-- MODAL : Duplication GJ -->
+<!-- MODAL Duplication GJ -->
 <div class="modal-overlay" id="modal-gj-dup">
   <div class="modal" style="max-width:420px;">
-    <div class="modal-header"><span>Dupliquer la journee</span><button class="modal-close" onclick="closeModal('modal-gj-dup')">&#10005;</button></div>
+    <div class="modal-header"><span>Dupliquer</span><button class="modal-close" onclick="closeModal('modal-gj-dup')">&#10005;</button></div>
     <div class="modal-body">
       <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Copier de <strong id="gj-dup-src-label" style="color:#fff;"></strong> vers :</p>
       <div class="form-group"><label>Jours</label><div id="gj-dup-dest-days" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;"></div></div>
@@ -564,7 +499,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   </div>
 </div>
 
-<!-- MODAL : Grilles type GJ -->
+<!-- MODAL Grilles type GJ -->
 <div class="modal-overlay" id="modal-gj-grilles-list">
   <div class="modal" style="max-width:500px;">
     <div class="modal-header"><span>Grilles type Journaliste</span><button class="modal-close" onclick="closeModal('modal-gj-grilles-list')">&#10005;</button></div>
@@ -572,108 +507,71 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn ga-btn-primary" onclick="openGjGrilleForm(null)">&#43; Nouvelle grille</button></div></div>
   </div>
 </div>
-
-<!-- MODAL : Grille type GJ edition -->
 <div class="modal-overlay" id="modal-gj-grille-edit">
   <div class="modal" style="max-width:520px;">
     <div class="modal-header"><span id="gj-gt-form-title">Nouvelle grille type</span><button class="modal-close" onclick="closeModal('modal-gj-grille-edit')">&#10005;</button></div>
     <div class="modal-body">
-      <div class="form-group"><label>Nom</label><input type="text" id="gj-gt-nom" placeholder="Ex : Grille semaine type"></div>
-      <div class="form-group"><label>Rendez-vous (<span id="gj-gt-em-count">0</span>)</label><button class="ga-btn" style="align-self:flex-start;margin-bottom:8px;" onclick="gjImportWeekToGrille()">&#8659; Importer la semaine</button><div class="gt-em-scroll" id="gj-gt-em-list"></div></div>
+      <div class="form-group"><label>Nom</label><input type="text" id="gj-gt-nom"></div>
+      <div class="form-group"><label>Rendez-vous (<span id="gj-gt-em-count">0</span>)</label><button class="ga-btn" style="align-self:flex-start;margin-bottom:8px;" onclick="gjImportWeekToGrille()">&#8659; Importer</button><div class="gt-em-scroll" id="gj-gt-em-list"></div></div>
     </div>
-    <div class="modal-footer">
-      <button class="ga-btn ga-btn-danger" id="gj-gt-del-btn" style="display:none" onclick="deleteGjGrilleType()">&#128465; Supprimer</button>
-      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-gj-grille-edit');openModal('modal-gj-grilles-list')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveGjGrilleType()">Enregistrer</button></div>
-    </div>
+    <div class="modal-footer"><button class="ga-btn ga-btn-danger" id="gj-gt-del-btn" style="display:none" onclick="deleteGjGrilleType()">&#128465;</button><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-gj-grille-edit');openModal('modal-gj-grilles-list')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveGjGrilleType()">Enregistrer</button></div></div>
   </div>
 </div>
-
-<!-- MODAL : Appliquer grille GJ -->
 <div class="modal-overlay" id="modal-gj-grille-apply">
   <div class="modal" style="max-width:420px;">
-    <div class="modal-header"><span>Appliquer la grille</span><button class="modal-close" onclick="closeModal('modal-gj-grille-apply')">&#10005;</button></div>
+    <div class="modal-header"><span>Appliquer grille GJ</span><button class="modal-close" onclick="closeModal('modal-gj-grille-apply')">&#10005;</button></div>
     <div class="modal-body">
-      <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Appliquer <strong id="gj-apply-gt-label" style="color:#fff;"></strong> :</p>
+      <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.55);">Appliquer <strong id="gj-apply-gt-label" style="color:#fff;"></strong></p>
       <div class="form-row-2"><div class="form-group"><label>Semaine</label><input type="number" id="gj-apply-gt-week" min="1" max="53" oninput="gjUpdateWeekPreview()"></div><div class="form-group"><label>Annee</label><input type="number" id="gj-apply-gt-year" min="2024" max="2035" oninput="gjUpdateWeekPreview()"></div></div>
-      <div id="gj-apply-week-preview" style="display:none;background:rgba(91,141,239,.12);border:1px solid rgba(91,141,239,.3);border-radius:6px;padding:10px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px;">Dates</div><div id="gj-apply-week-dates" style="font-family:'Barlow',sans-serif;font-size:13px;color:#fff;line-height:1.8;"></div></div>
+      <div id="gj-apply-week-preview" style="display:none;background:rgba(91,141,239,.12);border:1px solid rgba(91,141,239,.3);border-radius:6px;padding:10px 14px;"><div id="gj-apply-week-dates" style="font-family:'Barlow',sans-serif;font-size:13px;color:#fff;line-height:1.8;"></div></div>
       <label style="display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" id="gj-apply-gt-replace"> Remplacer</label>
     </div>
     <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-gj-grille-apply');openModal('modal-gj-grilles-list')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="gjApplyGrilleType()">Appliquer</button></div></div>
   </div>
 </div>
 
-<!-- MODAL : Catalogue des jeux -->
+<!-- MODALS JEU ANTENNE -->
 <div class="modal-overlay" id="modal-jeu-catalogue">
   <div class="modal" style="max-width:540px;width:95%;">
     <div class="modal-header"><span>&#127381; Catalogue des jeux</span><button class="modal-close" onclick="closeModal('modal-jeu-catalogue')">&#10005;</button></div>
-    <div class="modal-body" style="padding:16px 24px;">
-      <div id="jeu-catalogue-list" style="display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto;"></div>
-    </div>
-    <div class="modal-footer"><div></div><div class="modal-footer-right">
-      <button class="ga-btn ga-btn-primary" onclick="openJeuTypeForm(null)">&#43; Nouveau jeu</button>
-    </div></div>
+    <div class="modal-body" style="padding:16px 24px;"><div id="jeu-catalogue-list" style="display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto;"></div></div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn ga-btn-primary" onclick="openJeuTypeForm(null)">&#43; Nouveau jeu</button></div></div>
   </div>
 </div>
-
-<!-- MODAL : Formulaire type de jeu -->
 <div class="modal-overlay" id="modal-jeu-type">
   <div class="modal" style="max-width:480px;">
     <div class="modal-header"><span id="jeu-type-form-title">Nouveau jeu</span><button class="modal-close" onclick="closeModal('modal-jeu-type');openModal('modal-jeu-catalogue')">&#10005;</button></div>
     <div class="modal-body">
       <div class="form-group"><label>Nom du jeu</label><input type="text" id="jeu-type-nom" placeholder="Ex : La Minute Gagnante"></div>
       <div class="form-group"><label>Description</label><input type="text" id="jeu-type-desc" placeholder="Ex : Trouver l artiste mystere"></div>
-      <div class="form-group"><label>Gain</label><input type="text" id="jeu-type-gain" placeholder="Ex : 500€ en bons cadeaux"></div>
+      <div class="form-group"><label>Gain</label><input type="text" id="jeu-type-gain" placeholder="Ex : 500 euros en bons cadeaux"></div>
       <div class="form-group">
         <label>Tirage au sort final</label>
         <input type="text" id="jeu-type-tirage" placeholder="Ex : Vendredi 18h en direct">
-        <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);margin-top:4px;">Moment où le gain sera remporté à l'antenne</span>
+        <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);margin-top:4px;">Moment ou le gain sera remporte a l'antenne</span>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="ga-btn ga-btn-danger" id="jeu-type-del-btn" style="display:none" onclick="deleteJeuType()">&#128465; Supprimer</button>
-      <div class="modal-footer-right">
-        <button class="ga-btn" onclick="closeModal('modal-jeu-type');openModal('modal-jeu-catalogue')">Annuler</button>
-        <button class="ga-btn ga-btn-primary" onclick="saveJeuType()">Enregistrer</button>
-      </div>
-    </div>
+    <div class="modal-footer"><button class="ga-btn ga-btn-danger" id="jeu-type-del-btn" style="display:none" onclick="deleteJeuType()">&#128465; Supprimer</button><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-jeu-type');openModal('modal-jeu-catalogue')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveJeuType()">Enregistrer</button></div></div>
   </div>
 </div>
-
-<!-- MODAL : Appliquer un jeu à la semaine -->
 <div class="modal-overlay" id="modal-jeu-apply">
   <div class="modal" style="max-width:480px;">
     <div class="modal-header"><span>&#9654; Appliquer un jeu</span><button class="modal-close" onclick="closeModal('modal-jeu-apply')">&#10005;</button></div>
     <div class="modal-body">
-      <div class="form-group">
-        <label>Jeu</label>
-        <select id="jeu-apply-id"><option value="">— Choisir un jeu —</option></select>
-      </div>
-      <div id="jeu-apply-preview" style="display:none;background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.25);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;">
+      <div class="form-group"><label>Jeu</label><select id="jeu-apply-id"><option value="">— Choisir un jeu —</option></select></div>
+      <div id="jeu-apply-preview" style="display:none;background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.25);border-radius:8px;padding:14px 16px;flex-direction:column;gap:6px;">
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:#F5C518;letter-spacing:.04em;" id="jeu-preview-nom"></div>
         <div style="font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.6);" id="jeu-preview-desc"></div>
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);">&#127941; <span id="jeu-preview-gain"></span></div>
         <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#F5C518;" id="jeu-preview-tirage"></div>
       </div>
-      <div class="form-group">
-        <label>Emission</label>
-        <select id="jeu-apply-emission"><option value="">— Toutes les emissions —</option></select>
-      </div>
-      <div class="form-group">
-        <label>Appliquer à la semaine affichée</label>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:rgba(255,255,255,.5);" id="jeu-apply-week-label"></div>
-      </div>
-      <label style="display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;">
-        <input type="checkbox" id="jeu-apply-replace"> Remplacer les jeux existants de la semaine
-      </label>
+      <div class="form-group"><label>Emission</label><select id="jeu-apply-emission"><option value="">— Toutes les emissions —</option></select></div>
+      <div class="form-group"><label>Semaine cible</label><div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:rgba(255,255,255,.5);" id="jeu-apply-week-label"></div></div>
+      <label style="display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" id="jeu-apply-replace"> Remplacer les jeux existants</label>
     </div>
-    <div class="modal-footer"><div></div><div class="modal-footer-right">
-      <button class="ga-btn" onclick="closeModal('modal-jeu-apply')">Annuler</button>
-      <button class="ga-btn ga-btn-primary" onclick="applyJeuToWeek()">Appliquer à toute la semaine</button>
-    </div></div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-jeu-apply')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="applyJeuToWeek()">Appliquer a toute la semaine</button></div></div>
   </div>
 </div>
-
-<!-- MODAL : Edition jeu par case (conservé pour compatibilité) -->
 <div class="modal-overlay" id="modal-jeu">
   <div class="modal" style="max-width:420px;">
     <div class="modal-header"><span id="jeu-form-title">Jeu du jour</span><button class="modal-close" onclick="closeModal('modal-jeu')">&#10005;</button></div>
@@ -681,17 +579,26 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
       <div class="form-group"><label>Jeu</label><select id="jeu-emission"><option value="">— Choisir un jeu —</option></select></div>
       <div class="form-group"><label>Heure de passage</label><select id="jeu-heure"></select></div>
     </div>
-    <div class="modal-footer">
-      <button class="ga-btn ga-btn-danger" id="jeu-del-btn" style="display:none" onclick="deleteJeu()">&#128465; Retirer</button>
-      <div class="modal-footer-right">
-        <button class="ga-btn" onclick="closeModal('modal-jeu')">Annuler</button>
-        <button class="ga-btn ga-btn-primary" onclick="saveJeu()">Placer</button>
-      </div>
-    </div>
+    <div class="modal-footer"><button class="ga-btn ga-btn-danger" id="jeu-del-btn" style="display:none" onclick="deleteJeu()">&#128465; Retirer</button><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-jeu')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveJeu()">Placer</button></div></div>
   </div>
 </div>
 
-
+<!-- MODAL Participants -->
+<div class="modal-overlay" id="modal-participants">
+  <div class="modal" style="max-width:600px;width:95%;">
+    <div class="modal-header"><span>&#128100; Participants — <span id="part-jeu-label" style="font-weight:400;opacity:.6;font-size:13px;text-transform:none;letter-spacing:0;"></span></span><button class="modal-close" onclick="closeModal('modal-participants')">&#10005;</button></div>
+    <div class="modal-body" style="padding:0;flex-direction:column;gap:0;">
+      <div style="padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.08);">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:12px;">Ajouter un participant</div>
+        <div class="form-row-2"><div class="form-group"><label>Nom</label><input type="text" id="part-nom" placeholder="DUPONT"></div><div class="form-group"><label>Prenom</label><input type="text" id="part-prenom" placeholder="Jean"></div></div>
+        <div class="form-group"><label>Adresse</label><input type="text" id="part-adresse" placeholder="12 rue de la Paix"></div>
+        <div class="form-row-2"><div class="form-group"><label>Telephone</label><input type="tel" id="part-tel" placeholder="+377 xx xx xx xx"></div><div class="form-group"><label>Email</label><input type="email" id="part-email" placeholder="jean@exemple.com"></div></div>
+        <div style="margin-top:4px;"><button class="ga-btn ga-btn-primary" onclick="addParticipant()">&#43; Ajouter</button></div>
+      </div>
+      <div style="padding:16px 24px;max-height:280px;overflow-y:auto;"><div id="part-list" style="display:flex;flex-direction:column;gap:8px;"></div></div>
+    </div>
+    <div class="modal-footer"><div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:rgba(255,255,255,.3);" id="part-count-label"></div><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-participants')">Fermer</button></div></div>
+  </div>
 </div>
 
 <script>var JOURS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
@@ -734,24 +641,6 @@ function loadAll(){
   });
 }
 loadAll();
-/* Forcer les couleurs par nom d'emission au chargement */
-(function(){
-  var updated=false;
-  catalogue.forEach(function(t){
-    var n=(t.nom||'').toLowerCase();
-    var c=null;
-    if(n.indexOf('morning')>=0)     c='#E4032E';
-    else if(n.indexOf('feel')>=0)   c='#93C01F';
-    else if(n.indexOf('charly')>=0) c='#F59C00';
-    if(c && t.color!==c){ t.color=c; updated=true; }
-  });
-  /* Mettre à jour aussi les affectations */
-  affectations.forEach(function(a){
-    var t=catalogue.find(function(x){return x.id===a.typeId;});
-    if(t) a.color=t.color;
-  });
-  if(updated) saveAll();
-})();
 
 /* MODALS */
 function openModal(id){
@@ -1491,7 +1380,6 @@ function renderCalendar(){
         return'<div class="gc-em-anim-chip" style="border-left:2px solid '+a.color+'">'+a.prenom+' '+a.nom.toUpperCase()+'</div>';
       }).join('')+'</div>':'');
     div.onclick=function(ev){ev.stopPropagation();openEmissionEdit(aff.id);};
-
     cells[0].appendChild(div);
   });
   requestAnimationFrame(function(){updateTimeline(cal,days);});
@@ -1572,226 +1460,55 @@ function hexAlpha(hex,alpha){
 renderCalendar();
 gjRenderCalendar();
 
-/* ═══ JEU ANTENNE ═══════════════════════════════════════════════════ */
-var jeux=[];
-var editingJeuId=null;
-var jeuWeekOffset=0;
+var CF_WORKER_URL='https://adminsend.nicolas7lejeune.workers.dev/broadcast';
+var INC_URL='https://adminsend.nicolas7lejeune.workers.dev/incidents';
+var _lastPubTime=null,_cfOnline=false,_lastIncCount=0,_knownIncIds={};
 
-function saveJeux(){ localStorage.setItem('at_jeux',JSON.stringify(jeux)); }
-function loadJeux(){ try{ var v=localStorage.getItem('at_jeux'); if(v) jeux=JSON.parse(v); }catch(e){} }
-loadJeux();
-
-function jeuChangeWeek(dir){
-  if(dir===0) jeuWeekOffset=0; else jeuWeekOffset+=dir;
-  jeuRender();
+/* ── Status CF ── */
+function setCfStatus(online,pubTime){
+  _cfOnline=online;
+  var dot=document.getElementById('cf-status-dot');
+  var label=document.getElementById('cf-status-label');
+  var last=document.getElementById('cf-last-pub');
+  if(dot){dot.style.background=online?'#2ecc71':'#e74c3c';dot.style.boxShadow='0 0 6px '+(online?'#2ecc71':'#e74c3c');}
+  if(label){label.textContent=online?'En ligne':'Hors ligne';label.style.color=online?'rgba(46,204,113,.8)':'rgba(231,76,60,.7)';}
+  if(last&&pubTime){_lastPubTime=pubTime;last.textContent='Pub. '+new Date(pubTime).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
 }
 
-function jeuFmtH(h){ return h==null?'--':String(Math.floor(h)).padStart(2,'0')+'h'+(h%1?'30':'00'); }
-
-function jeuRender(){
-  var container=document.getElementById('jeu-grid'); if(!container) return;
-  var days=getWeekDates(jeuWeekOffset);
-  var today=new Date(); today.setHours(0,0,0,0);
-  var JOURS5=['Lun','Mar','Mer','Jeu','Ven'];
-  var lbl=document.getElementById('jeu-week-label');
-  if(lbl) lbl.textContent=days[0].getDate()+' '+MOIS[days[0].getMonth()]+' - '+days[4].getDate()+' '+MOIS[days[4].getMonth()]+' '+days[4].getFullYear();
-
-  if(!catalogue.length){
-    container.innerHTML='<div class="placeholder">Aucune emission dans le catalogue.</div>'; return;
-  }
-
-  container.innerHTML=catalogue.map(function(em){
-    var html='<div class="jeu-emission-card">';
-    html+='<div class="jeu-emission-header" style="border-bottom-color:'+(em.color||'#E4032E')+'">';
-    html+='<span class="jeu-emission-name">'+em.nom+'</span>';
-    if(em.desc) html+='<span class="jeu-emission-tranche">'+em.desc+'</span>';
-    html+='</div><div class="jeu-week-grid">';
-
-    for(var i=0;i<5;i++){
-      var d=days[i];
-      var dKey=d.toISOString().slice(0,10);
-      var isToday=d.getTime()===today.getTime();
-      var isPast=d.getTime()<today.getTime();
-      var emId=em.id;
-      var j=jeux.find(function(x){ return x.emissionId===emId && x.dayKey===dKey; });
-
-      html+='<div class="jeu-day-col">';
-      html+='<div class="jeu-day-head'+(isToday?' today':'')+(isPast?' past':'')+'">';
-      html+='<span class="jeu-day-num">'+d.getDate()+'</span>'+JOURS5[i]+'</div>';
-
-      if(j){
-        html+='<div class="jeu-day-body has-jeu'+(isPast?' past':'')+'" onclick="jeuOpenEdit(\''+dKey+'\','+emId+')">';
-        html+='<div class="jeu-card-heure">'+jeuFmtH(j.heure)+'</div>';
-        html+='<div class="jeu-card-nom">'+j.nom+'</div>';
-        if(j.gain)   html+='<div class="jeu-card-gain">&#127941; '+j.gain+'</div>';
-        if(j.tirage) html+='<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(245,197,24,.6);margin-top:2px;">&#127381; '+j.tirage+'</div>';
-        var nbPart=(j.participants||[]).length;
-        html+='<div class="part-badge" style="margin-top:6px;" onclick="event.stopPropagation();openParticipants(''+dKey+'','+emId+')">&#128100; '+(nbPart||'0')+' participant'+(nbPart>1?'s':'')+'</div>';
-      } else {
-        html+='<div class="jeu-day-body'+(isPast?' past':'')+'" onclick="jeuOpenNew('+emId+',\''+dKey+'\')">';
-        html+='<div class="jeu-empty">+</div>';
-      }
-      html+='</div></div>';
-    }
-    html+='</div></div>';
-    return html;
-  }).join('');
-}
-
-function jeuOpenNew(emId, dayKey){
-  editingJeuId=null;
-  document.getElementById('jeu-form-title').textContent='Jeu du jour';
-  document.getElementById('jeu-del-btn').style.display='none';
-  document.getElementById('modal-jeu').dataset.dayKey=dayKey;
-  document.getElementById('modal-jeu').dataset.emId=emId;
-  /* Remplir avec les jeux du catalogue */
-  var sel=document.getElementById('jeu-emission');
-  sel.innerHTML='<option value="">— Choisir un jeu —</option>'+
-    jeuxCatalogue.map(function(j){ return '<option value="'+j.id+'">'+j.nom+'</option>'; }).join('');
-  sel.value='';
-  var hSel=document.getElementById('jeu-heure');
-  hSel.innerHTML=buildHourOptions(); hSel.value='8';
-  openModal('modal-jeu');
-}
-
-function jeuOpenEdit(dayKey, emId){
-  var j=jeux.find(function(x){ return x.emissionId===emId && x.dayKey===dayKey; });
-  if(!j) return;
-  editingJeuId=j.id;
-  document.getElementById('jeu-form-title').textContent='Modifier le jeu';
-  document.getElementById('jeu-nom').value=j.nom;
-  document.getElementById('jeu-gain').value=j.gain||'';
-  document.getElementById('jeu-desc').value=j.desc||'';
-  document.getElementById('jeu-del-btn').style.display='inline-flex';
-  document.getElementById('modal-jeu').dataset.dayKey=dayKey;
-  document.getElementById('modal-jeu').dataset.emId=emId;
-  var sel=document.getElementById('jeu-emission');
-  sel.innerHTML='<option value="">— Choisir —</option>'+
-    catalogue.map(function(c){ return '<option value="'+c.id+'">'+c.nom+'</option>'; }).join('');
-  sel.value=j.emissionId;
-  var hSel=document.getElementById('jeu-heure');
-  hSel.innerHTML=buildHourOptions(); hSel.value=j.heure||'8';
-  openModal('modal-jeu');
-}
-
-function saveJeu(){
-  var jeuTypeId = parseInt(document.getElementById('jeu-emission').value);
-  var heure     = parseFloat(document.getElementById('jeu-heure').value);
-  var dayKey    = document.getElementById('modal-jeu').dataset.dayKey||'';
-  var emId      = parseInt(document.getElementById('modal-jeu').dataset.emId||'0');
-  if(!jeuTypeId){ alert('Choisissez un jeu dans le catalogue.'); return; }
-  var jType = jeuxCatalogue.find(function(x){ return x.id===jeuTypeId; });
-  if(!jType) return;
-  if(editingJeuId!==null){
-    var j=jeux.find(function(x){ return x.id===editingJeuId; });
-    if(j){ j.nom=jType.nom; j.desc=jType.desc; j.gain=jType.gain; j.tirage=jType.tirage; j.heure=heure; j.jeuTypeId=jeuTypeId; }
-  } else {
-    jeux.push({id:Date.now(),nom:jType.nom,desc:jType.desc,gain:jType.gain,tirage:jType.tirage,heure:heure,emissionId:emId,dayKey:dayKey,jeuTypeId:jeuTypeId});
-  }
-  saveJeux(); closeModal('modal-jeu'); jeuRender();
-  if(localStorage.getItem('at_worker_url')) publishData();
-}
-
-function deleteJeu(){
-  if(!confirm('Supprimer ce jeu ?')) return;
-  jeux=jeux.filter(function(j){ return j.id!==editingJeuId; });
-  saveJeux(); closeModal('modal-jeu'); jeuRender();
-  if(localStorage.getItem('at_worker_url')) publishData();
-}
-
-
-/* ═══ GRILLE JOURNALISTE — cartes ════════════════════════════════════ */
-function gjRenderCalendar(){ gjRenderCards(); }
-
+/* ── Grille journaliste cartes ── */
+function gjRenderCalendar(){gjRenderCards();}
 function gjRenderCards(){
-  var container=document.getElementById('gj-cards-grid'); if(!container)return;
+  var container=document.getElementById('gj-cards-grid');if(!container)return;
   var days=getWeekDates(currentWeekOffset);
   var today=new Date();today.setHours(0,0,0,0);
   var key=getMondayKey(currentWeekOffset);
   var JOURS5=['Lun','Mar','Mer','Jeu','Ven'];
-
-  var headerHtml='<div class="gj-slot-header"><div></div>';
+  var h='<div class="gj-slot-header"><div></div>';
   for(var di=0;di<5;di++){
-    var d=days[di];
-    var isT=d.getTime()===today.getTime();
-    var isPast=d.getTime()<today.getTime();
-    headerHtml+='<div class="gj-slot-day-head'+(isT?' today':'')+(isPast?' gc-day-past':'')+'">'+'<span class="gj-day-num">'+d.getDate()+'</span>'+JOURS5[di]+'</div>';
+    var d=days[di];var isT=d.getTime()===today.getTime();var isPast=d.getTime()<today.getTime();
+    h+='<div class="gj-slot-day-head'+(isT?' today':'')+(isPast?' gc-day-past':'')+'"><span class="gj-day-num">'+d.getDate()+'</span>'+JOURS5[di]+'</div>';
   }
-  headerHtml+='</div>';
-
-  var rowsHtml='<div class="gj-grid">';
+  h+='</div><div class="gj-grid">';
   GJ_SLOTS.forEach(function(slot){
-    rowsHtml+='<div class="gj-slot-row"><div class="gj-time-label">'+slot.l+'</div>';
+    h+='<div class="gj-slot-row"><div class="gj-time-label">'+slot.l+'</div>';
     for(var di=0;di<5;di++){
-      var d=days[di];
-      var isT=d.getTime()===today.getTime();
-      var isPast=d.getTime()<today.getTime();
-      var rdvs=gjRdvs.filter(function(r){ return(!r.weekKey||r.weekKey===key)&&r.jour===di&&r.hdebut===slot.v; });
+      var d=days[di];var isT=d.getTime()===today.getTime();var isPast=d.getTime()<today.getTime();
+      var rdvs=gjRdvs.filter(function(r){return(!r.weekKey||r.weekKey===key)&&r.jour===di&&r.hdebut===slot.v;});
       if(!rdvs.length){
-        rowsHtml+='<div class="gj-card'+(isT?' today-col':'')+(isPast?' past':'')+'" onclick="openGjRdvModal('+di+','+slot.v+')">'+'<span class="gj-card-empty">+</span></div>';
-      } else {
+        h+='<div class="gj-card'+(isT?' today-col':'')+(isPast?' past':'')+'" onclick="openGjRdvModal('+di+','+slot.v+')"><span class="gj-card-empty">+</span></div>';
+      }else{
         var r=rdvs[0];
         var names=(r.journalistes||[]).map(function(j){return j.prenom+' '+j.nom.toUpperCase();}).join(', ')||'—';
-        rowsHtml+='<div class="gj-card has-rdv'+(isT?' today-col':'')+(isPast?' past':'')+'" style="--gj-color:'+r.color+'" onclick="openGjRdvEdit('+r.id+')" ondblclick="gjDeleteRdv('+r.id+')">'+'<div class="gj-card-rdv">'+r.titre+'</div><div class="gj-card-name">'+names+'</div></div>';
+        h+='<div class="gj-card has-rdv'+(isT?' today-col':'')+(isPast?' past':'')+'" style="--gj-color:'+r.color+'" onclick="openGjRdvEdit('+r.id+')"><div class="gj-card-rdv">'+r.titre+'</div><div class="gj-card-name">'+names+'</div></div>';
       }
     }
-    rowsHtml+='</div>';
+    h+='</div>';
   });
-  rowsHtml+='</div>';
-  container.innerHTML=headerHtml+rowsHtml;
+  h+='</div>';
+  container.innerHTML=h;
 }
 
-/* ═══ PUBLICATION WORKER ═════════════════════════════════════════════ */
-var _origOpenModalPub=openModal;
-openModal=function(id){
-  _origOpenModalPub(id);
-  if(id==='modal-publish'){ var el=document.getElementById('worker-url'); if(el) el.value=localStorage.getItem('at_worker_url')||'https://adminsend.nicolas7lejeune.workers.dev/broadcast'; }
-};
-
-function buildBroadcastPayload(){
-  var key=getMondayKey(currentWeekOffset);
-  var weekDates=getWeekDates(currentWeekOffset);
-  var days=weekDates.map(function(date,dayIdx){
-    var dKey=date.toISOString().slice(0,10);
-    function slotsFor(hStart,hEnd){
-      return affectations.filter(function(a){return(!a.weekKey||a.weekKey===key)&&a.jour===dayIdx&&a.hdebut>=hStart&&a.hdebut<hEnd;})
-        .sort(function(a,b){return a.hdebut-b.hdebut;})
-        .map(function(a){
-          var t=catalogue.find(function(x){return x.id===a.typeId;});
-          var rdvsOnSlot=gjRdvs.filter(function(r){return(!r.weekKey||r.weekKey===key)&&r.jour===dayIdx&&r.hdebut>=a.hdebut&&r.hdebut<a.hfin;});
-          var jObjs=[];
-          rdvsOnSlot.forEach(function(r){(r.journalistes||[]).forEach(function(j){if(!jObjs.find(function(x){return x.id===j.id;}))jObjs.push(j);});});
-          var jeuDuJour=jeux.find(function(j){return j.emissionId===a.typeId&&j.dayKey===dKey;});
-          return{hdebut:a.hdebut,hfin:a.hfin,emission:a.nom||(t?t.nom:'?'),color:a.color,
-            animateurs:(a.anims||[]).map(function(x){return{id:x.id,prenom:x.prenom,nom:x.nom,color:x.color};}),
-            journalistes:jObjs.map(function(x){return{id:x.id,prenom:x.prenom,nom:x.nom,color:x.color};}),
-            jeu:jeuDuJour?{nom:jeuDuJour.nom,gain:jeuDuJour.gain,heure:jeuDuJour.heure}:null};
-        });
-    }
-    return{dayIdx:dayIdx,date:date.getDate(),mois:date.getMonth(),annee:date.getFullYear(),isoDate:dKey,
-      matin:{slots:slotsFor(6,9)},soir:{slots:slotsFor(16,19)}};
-  });
-  return{weekKey:key,publishedAt:new Date().toISOString(),days:days};
-}
-
-async function publishData(){
-  var urlEl=document.getElementById('worker-url');
-  var url=urlEl?urlEl.value.trim():'';
-  if(!url){alert('Entrez l URL du Worker.');return;}
-  localStorage.setItem('at_worker_url',url);
-  var statusEl=document.getElementById('publish-status');
-  if(statusEl){statusEl.style.display='block';statusEl.style.background='rgba(255,255,255,.05)';statusEl.style.border='1px solid rgba(255,255,255,.1)';statusEl.style.color='rgba(255,255,255,.6)';statusEl.textContent='Publication...';}
-  try{
-    var res=await fetch(url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildBroadcastPayload())});
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    var data=await res.json();
-    if(statusEl){statusEl.style.background='rgba(46,204,113,.1)';statusEl.style.border='1px solid rgba(46,204,113,.3)';statusEl.style.color='#2ecc71';statusEl.textContent='Publie '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
-  }catch(e){
-    if(statusEl){statusEl.style.background='rgba(231,76,60,.1)';statusEl.style.border='1px solid rgba(231,76,60,.3)';statusEl.style.color='#e74c3c';statusEl.textContent='Erreur: '+e.message;}
-  }
-}
-
-/* ═══ CORRECTIONS renderCalendar (Sam/Dim masqués + jours passés) ════ */
+/* ── renderCalendar override (Sam/Dim masqués + jours passés) ── */
 var _origRC=renderCalendar;
 renderCalendar=function(){
   var days=getWeekDates(currentWeekOffset);
@@ -1799,7 +1516,7 @@ renderCalendar=function(){
   var lbl=document.getElementById('ga-week-label');
   if(lbl)lbl.textContent=days[0].getDate()+' '+MOIS[days[0].getMonth()]+' - '+days[4].getDate()+' '+MOIS[days[4].getMonth()]+' '+days[4].getFullYear();
   var cal=document.getElementById('ga-calendar');if(!cal)return;
-  var html='<div class="gc-corner" style="grid-column:1;"></div>';
+  var html='<div class="gc-corner"></div>';
   for(var i=0;i<5;i++){
     var d=days[i];var isT=d.getTime()===today.getTime();var isPast=d.getTime()<today.getTime();
     html+='<div class="gc-day-head'+(isT?' today':'')+(isPast?' gc-day-past':'')+'" onclick="openDupModal('+i+')">'+'<span class="gc-day-num">'+d.getDate()+'</span><span class="gc-day-name">'+JOURS[i]+'</span></div>';
@@ -1825,623 +1542,456 @@ renderCalendar=function(){
     div.innerHTML='<div class="gc-em-title">'+nom+'</div>'+
       (aff.anims&&aff.anims.length?'<div class="gc-em-anims">'+aff.anims.map(function(a){return'<div class="gc-em-anim-chip" style="border-left:2px solid '+a.color+'">'+a.prenom+' '+a.nom.toUpperCase()+'</div>';}).join('')+'</div>':'');
     div.onclick=function(ev){ev.stopPropagation();openEmissionEdit(aff.id);};
-
     cells[0].appendChild(div);
   });
   requestAnimationFrame(function(){updateTimeline(cal,days);});
 };
 
-/* Sync showSection avec jeuRender */
-var _origSS2=showSection;
-showSection=function(id,btn){
-  _origSS2(id,btn);
-  if(id==='jeu-antenne') jeuRender();
-};
-
-/* ═══ INDICATEUR CLOUDFLARE + AUTO-PUBLISH ═══════════════════════════ */
-var CF_WORKER_URL = 'https://adminsend.nicolas7lejeune.workers.dev/broadcast';
-var _lastPubTime = null;
-var _cfOnline = false;
-
-function setCfStatus(online, pubTime){
-  _cfOnline = online;
-  var dot   = document.getElementById('cf-status-dot');
-  var label = document.getElementById('cf-status-label');
-  var last  = document.getElementById('cf-last-pub');
-  if(dot)   dot.style.background   = online ? '#2ecc71' : '#e74c3c';
-  if(label) label.textContent      = online ? 'En ligne' : 'Hors ligne';
-  if(label) label.style.color      = online ? 'rgba(46,204,113,.8)' : 'rgba(231,76,60,.7)';
-  if(last && pubTime){
-    _lastPubTime = pubTime;
-    last.textContent = 'Pub. ' + new Date(pubTime).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-  }
-}
-
-/* Vérifier la connexion au Worker */
-function checkCfConnection(){
-  fetch(CF_WORKER_URL, {cache:'no-store', method:'GET'})
-    .then(function(r){
-      setCfStatus(r.ok, _lastPubTime);
-    })
-    .catch(function(){
-      setCfStatus(false, _lastPubTime);
-    });
-}
-
-/* Publication automatique silencieuse */
-async function autoPublish(){
-  var url = localStorage.getItem('at_worker_url') || CF_WORKER_URL;
-  try {
-    var payload = buildBroadcastPayload();
-    var res = await fetch(url, {
-      method:'PUT',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
-    });
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    var data = await res.json();
-    setCfStatus(true, data.updatedAt || new Date().toISOString());
-  } catch(e){
-    setCfStatus(false, _lastPubTime);
-  }
-}
-
-/* Démarrage : vérifier + auto-publish toutes les 30 min */
-setTimeout(function(){
-  checkCfConnection();
-  /* Auto-publish si données disponibles */
-  if(catalogue.length || affectations.length) autoPublish();
-}, 2000);
-
-setInterval(function(){
-  autoPublish();
-}, 30 * 60 * 1000); /* 30 minutes */
-
-/* Aussi mettre à jour le statut après chaque publication manuelle */
-var _origPublishData = publishData;
-publishData = async function(){
-  var urlEl = document.getElementById('worker-url');
-  var url = urlEl ? urlEl.value.trim() : '';
-  if(!url){ alert('Entrez l URL du Worker.'); return; }
-  localStorage.setItem('at_worker_url', url);
-  var statusEl = document.getElementById('publish-status');
-  if(statusEl){ statusEl.style.display='block'; statusEl.style.background='rgba(255,255,255,.05)'; statusEl.style.border='1px solid rgba(255,255,255,.1)'; statusEl.style.color='rgba(255,255,255,.6)'; statusEl.textContent='Publication...'; }
-  try {
-    var payload = buildBroadcastPayload();
-    var res = await fetch(url, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    var data = await res.json();
-    var t = data.updatedAt || new Date().toISOString();
-    setCfStatus(true, t);
-    if(statusEl){ statusEl.style.background='rgba(46,204,113,.1)'; statusEl.style.border='1px solid rgba(46,204,113,.3)'; statusEl.style.color='#2ecc71'; statusEl.textContent='Publie ' + new Date(t).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
-  } catch(e){
-    setCfStatus(false, _lastPubTime);
-    if(statusEl){ statusEl.style.background='rgba(231,76,60,.1)'; statusEl.style.border='1px solid rgba(231,76,60,.3)'; statusEl.style.color='#e74c3c'; statusEl.textContent='Erreur: '+e.message; }
-  }
-};
-
-
+/* ── Couleurs auto par nom d'émission ── */
 function autoColorEmission(){
   var nom=(document.getElementById('em-type-nom').value||'').toLowerCase();
-  var colorPicker=document.getElementById('em-type-color');
-  if(!colorPicker)return;
-  if(nom.indexOf('morning')>=0)     colorPicker.value='#E4032E';
-  else if(nom.indexOf('feel')>=0)   colorPicker.value='#93C01F';
-  else if(nom.indexOf('charly')>=0) colorPicker.value='#F59C00';
+  var cp=document.getElementById('em-type-color');if(!cp)return;
+  if(nom.indexOf('morning')>=0)cp.value='#E4032E';
+  else if(nom.indexOf('feel')>=0)cp.value='#93C01F';
+  else if(nom.indexOf('charly')>=0)cp.value='#F59C00';
 }
 
+/* ── openModal override ── */
+var _omExtra=openModal;
+openModal=function(id){
+  _omExtra(id);
+  if(id==='modal-jeu-catalogue')refreshJeuCatalogue();
+  if(id==='modal-jeu-apply')openJeuApplyModal();
+  if(id==='modal-publish'){var el=document.getElementById('worker-url');if(el)el.value=localStorage.getItem('at_worker_url')||CF_WORKER_URL;}
+};
 
-/* ═══ GESTION DES INCIDENTS ═══════════════════════════════════════════ */
-var INC_URL  = 'https://adminsend.nicolas7lejeune.workers.dev/incidents';
-var _lastIncCount = 0;
-var _knownIncIds  = new Set();
-
-/* Cloche dans le header */
-var _bellEl = null;
-function incInitBell(){
-  _bellEl = document.getElementById('inc-bell');
+/* ── Publication ── */
+function buildBroadcastPayload(){
+  var key=getMondayKey(currentWeekOffset);
+  var weekDates=getWeekDates(currentWeekOffset);
+  var days=weekDates.map(function(date,dayIdx){
+    var dKey=date.toISOString().slice(0,10);
+    function slotsFor(hS,hE){
+      return affectations.filter(function(a){return(!a.weekKey||a.weekKey===key)&&a.jour===dayIdx&&a.hdebut>=hS&&a.hdebut<hE;})
+        .sort(function(a,b){return a.hdebut-b.hdebut;})
+        .map(function(a){
+          var t=catalogue.find(function(x){return x.id===a.typeId;});
+          var rdvsOnSlot=gjRdvs.filter(function(r){return(!r.weekKey||r.weekKey===key)&&r.jour===dayIdx&&r.hdebut>=a.hdebut&&r.hdebut<a.hfin;});
+          var jObjs=[];
+          rdvsOnSlot.forEach(function(r){(r.journalistes||[]).forEach(function(j){if(!jObjs.find(function(x){return x.id===j.id;}))jObjs.push(j);});});
+          var jeuDuJour=jeux.find(function(j){return j.emissionId===a.typeId&&j.dayKey===dKey;});
+          return{hdebut:a.hdebut,hfin:a.hfin,emission:a.nom||(t?t.nom:'?'),color:a.color,
+            animateurs:(a.anims||[]).map(function(x){return{id:x.id,prenom:x.prenom,nom:x.nom,color:x.color};}),
+            journalistes:jObjs.map(function(x){return{id:x.id,prenom:x.prenom,nom:x.nom,color:x.color};}),
+            jeu:jeuDuJour?{nom:jeuDuJour.nom,gain:jeuDuJour.gain,heure:jeuDuJour.heure,tirage:jeuDuJour.tirage}:null};
+        });
+    }
+    return{dayIdx:dayIdx,date:date.getDate(),mois:date.getMonth(),annee:date.getFullYear(),isoDate:dKey,
+      matin:{slots:slotsFor(6,9)},soir:{slots:slotsFor(16,19)}};
+  });
+  return{weekKey:key,publishedAt:new Date().toISOString(),days:days};
 }
 
-function incBadgeSet(n){
-  var bell = document.getElementById('inc-bell');
-  if(!bell) return;
-  if(n > 0){
-    bell.classList.add('has-alert');
-  } else {
-    bell.classList.remove('has-alert');
+async function autoPublish(){
+  var url=localStorage.getItem('at_worker_url')||CF_WORKER_URL;
+  try{
+    var res=await fetch(url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildBroadcastPayload())});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    var data=await res.json();
+    setCfStatus(true,data.updatedAt||new Date().toISOString());
+  }catch(e){setCfStatus(false,_lastPubTime);}
+}
+
+async function publishData(){
+  var urlEl=document.getElementById('worker-url');
+  var url=urlEl?urlEl.value.trim():'';
+  if(!url){alert('Entrez l URL du Worker.');return;}
+  localStorage.setItem('at_worker_url',url);
+  var st=document.getElementById('publish-status');
+  if(st){st.style.display='block';st.style.cssText='display:block;padding:10px 14px;border-radius:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-family:Inter,sans-serif;font-size:13px;';st.textContent='Publication...';}
+  try{
+    var res=await fetch(url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildBroadcastPayload())});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    var data=await res.json();
+    setCfStatus(true,data.updatedAt||new Date().toISOString());
+    if(st){st.style.background='rgba(46,204,113,.1)';st.style.border='1px solid rgba(46,204,113,.3)';st.style.color='#2ecc71';st.textContent='Publie '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
+  }catch(e){
+    setCfStatus(false,_lastPubTime);
+    if(st){st.style.background='rgba(231,76,60,.1)';st.style.border='1px solid rgba(231,76,60,.3)';st.style.color='#e74c3c';st.textContent='Erreur: '+e.message;}
   }
 }
 
-/* Toast notification */
-function incShowToast(inc){
-  var toast = document.createElement('div');
-  toast.className = 'inc-notif-toast';
-  var typeColor = incTypeColor(inc.type);
-  toast.innerHTML =
-    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">' +
-      '<span style="font-size:20px;">&#9889;</span>' +
-      '<span class="inc-notif-title">'+inc.type+'</span>' +
-    '</div>' +
-    '<div class="inc-notif-body">' +
-      (inc.heureDebut ? inc.heureDebut+(inc.heureFin?' – '+inc.heureFin:'') : '') +
-      (inc.auteur ? ' — '+inc.auteur : '') +
-      (inc.desc ? '<br>'+inc.desc : '') +
-    '</div>' +
-    '<button onclick="this.parentNode.remove()" style="position:absolute;top:8px;right:10px;background:none;border:none;color:rgba(255,255,255,.4);font-size:16px;cursor:pointer;">&#10005;</button>';
-  toast.style.position = 'fixed';
-  document.body.appendChild(toast);
-  setTimeout(function(){ if(toast.parentNode) toast.remove(); }, 8000);
-}
+setTimeout(function(){autoPublish();},2000);
+setInterval(autoPublish,30*60*1000);
 
-function incTypeColor(type){
-  if(!type) return '#aaa';
-  var t = type.toLowerCase();
-  if(t.indexOf('majeur')>=0 || t.indexOf('major')>=0) return '#E4032E';
-  if(t.indexOf('blanc')>=0 || t.indexOf('diffus')>=0) return '#ffa500';
-  return '#5B8DEF';
-}
+/* ── showSection overrides ── */
+var _origSS=showSection;
+showSection=function(id,btn){
+  _origSS(id,btn);
+  if(id==='grille-antenne'){renderCalendar();gjRenderCards();}
+  if(id==='jeu-antenne'){jeuRender();partSearchRender();}
+  if(id==='incidents'){incLoad();incBadgeSet(0);}
+};
 
-function incTypeBadgeClass(type){
-  if(!type) return 'inc-badge-other';
-  var t = type.toLowerCase();
-  if(t.indexOf('majeur')>=0 || t.indexOf('major')>=0) return 'inc-badge-major';
-  if(t.indexOf('blanc')>=0 || t.indexOf('pub')>=0 || t.indexOf('diffus')>=0) return 'inc-badge-minor';
-  return 'inc-badge-other';
-}
+/* ── JEU ANTENNE ── */
+var jeux=[],jeuxCatalogue=[];
+var editingJeuId=null,editingJeuTypeId=null,jeuWeekOffset=0;
+var _partDayKey='',_partEmId=0;
 
-function incRender(list){
-  var container = document.getElementById('inc-list');
-  if(!container) return;
+function saveJeux(){localStorage.setItem('at_jeux',JSON.stringify(jeux));}
+function saveJeuxCatalogue(){localStorage.setItem('at_jeux_catalogue',JSON.stringify(jeuxCatalogue));}
+(function(){
+  try{var v=localStorage.getItem('at_jeux');if(v)jeux=JSON.parse(v);}catch(e){}
+  try{var v=localStorage.getItem('at_jeux_catalogue');if(v)jeuxCatalogue=JSON.parse(v);}catch(e){}
+})();
 
-  /* Mettre à jour le badge cloche */
-  var newIncs = list.filter(function(i){ return !_knownIncIds.has(String(i.id)); });
-  if(newIncs.length > 0 && _lastIncCount > 0){
-    newIncs.forEach(function(i){ incShowToast(i); });
-  }
-  list.forEach(function(i){ _knownIncIds.add(String(i.id)); });
-  _lastIncCount = list.length;
-  incBadgeSet(newIncs.length > 0 ? newIncs.length : 0);
+function jeuChangeWeek(dir){if(dir===0)jeuWeekOffset=0;else jeuWeekOffset+=dir;jeuRender();}
+function jeuFmtH(h){return h==null?'--':String(Math.floor(h)).padStart(2,'0')+'h'+(h%1?'30':'00');}
 
-  if(!list.length){
-    container.innerHTML = '<div class="placeholder">Aucun incident déclaré.</div>';
-    return;
-  }
-
-  container.innerHTML = list.map(function(inc){
-    var color = incTypeColor(inc.type);
-    var badgeClass = incTypeBadgeClass(inc.type);
-    var d = new Date(inc.declaredAt);
-    var timeStr = d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) +
-                  ' — ' + d.toLocaleDateString('fr-FR');
-    return '<div class="inc-card">' +
-      '<div class="inc-card-side" style="background:'+color+'"></div>' +
-      '<div class="inc-card-body">' +
-        '<div class="inc-card-header">' +
-          '<span class="inc-card-type">'+inc.type+'</span>' +
-          '<span class="inc-card-time">'+timeStr+'</span>' +
-        '</div>' +
-        '<div class="inc-card-meta">' +
-          (inc.heureDebut ? '<span class="inc-card-horaire">&#128336; '+inc.heureDebut+(inc.heureFin?' – '+inc.heureFin:'')+'</span>' : '') +
-          (inc.auteur     ? '<span class="inc-card-auteur">&#128100; '+inc.auteur+'</span>' : '') +
-          '<span class="inc-badge '+badgeClass+'">'+inc.type+'</span>' +
-        '</div>' +
-        (inc.desc ? '<div class="inc-card-desc">'+inc.desc+'</div>' : '') +
-      '</div>' +
-    '</div>';
+function jeuRender(){
+  var container=document.getElementById('jeu-grid');if(!container)return;
+  var days=getWeekDates(jeuWeekOffset);
+  var today=new Date();today.setHours(0,0,0,0);
+  var JOURS5=['Lun','Mar','Mer','Jeu','Ven'];
+  var lbl=document.getElementById('jeu-week-label');
+  if(lbl)lbl.textContent=days[0].getDate()+' '+MOIS[days[0].getMonth()]+' - '+days[4].getDate()+' '+MOIS[days[4].getMonth()]+' '+days[4].getFullYear();
+  if(!catalogue.length){container.innerHTML='<div class="placeholder">Aucune emission dans le catalogue.</div>';return;}
+  container.innerHTML=catalogue.map(function(em){
+    var html='<div class="jeu-emission-card"><div class="jeu-emission-header" style="border-bottom-color:'+(em.color||'#E4032E')+'"><span class="jeu-emission-name">'+em.nom+'</span>'+(em.desc?'<span class="jeu-emission-tranche">'+em.desc+'</span>':'')+'</div><div class="jeu-week-grid">';
+    for(var i=0;i<5;i++){
+      var d=days[i],dKey=d.toISOString().slice(0,10);
+      var isToday=d.getTime()===today.getTime(),isPast=d.getTime()<today.getTime();
+      var emId=em.id;
+      var j=jeux.find(function(x){return x.emissionId===emId&&x.dayKey===dKey;});
+      html+='<div class="jeu-day-col"><div class="jeu-day-head'+(isToday?' today':'')+(isPast?' past':'')+'"><span class="jeu-day-num">'+d.getDate()+'</span>'+JOURS5[i]+'</div>';
+      if(j){
+        var nb=(j.participants||[]).length;
+        html+='<div class="jeu-day-body has-jeu'+(isPast?' past':'')+'" onclick="jeuOpenEdit(\''+dKey+'\','+emId+')">';
+        html+='<div class="jeu-card-nom">'+j.nom+'</div>';
+        if(j.gain)html+='<div class="jeu-card-gain">&#127941; '+j.gain+'</div>';
+        if(j.tirage)html+='<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(245,197,24,.6);margin-top:2px;">&#127381; '+j.tirage+'</div>';
+        html+='<div class="part-badge" style="margin-top:6px;" onclick="event.stopPropagation();openParticipants(\''+dKey+'\','+emId+')">&#128100; '+nb+' participant'+(nb>1?'s':'')+'</div>';
+        html+='</div>';
+      }else{
+        html+='<div class="jeu-day-body'+(isPast?' past':'')+'" onclick="jeuOpenNew('+emId+',\''+dKey+'\')"><div class="jeu-empty">+</div></div>';
+      }
+      html+='</div>';
+    }
+    html+='</div></div>';
+    return html;
   }).join('');
+  partSearchRender();
 }
 
-function incLoad(){
-  var lbl = document.getElementById('inc-last-check');
-  fetch(INC_URL, {cache:'no-store'})
-    .then(function(r){ return r.json(); })
-    .then(function(list){
-      if(lbl) lbl.textContent = 'Dernière vérif. ' + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-      incRender(Array.isArray(list) ? list : []);
-    })
-    .catch(function(){
-      if(lbl) lbl.textContent = 'Erreur de connexion';
-    });
+function jeuOpenNew(emId,dayKey){
+  editingJeuId=null;
+  document.getElementById('jeu-form-title').textContent='Jeu du jour';
+  document.getElementById('jeu-del-btn').style.display='none';
+  document.getElementById('modal-jeu').dataset.dayKey=dayKey;
+  document.getElementById('modal-jeu').dataset.emId=emId;
+  var sel=document.getElementById('jeu-emission');
+  sel.innerHTML='<option value="">— Choisir un jeu —</option>'+jeuxCatalogue.map(function(j){return'<option value="'+j.id+'">'+j.nom+'</option>';}).join('');
+  sel.value='';
+  var hSel=document.getElementById('jeu-heure');
+  hSel.innerHTML=buildHourOptions();hSel.value='8';
+  openModal('modal-jeu');
 }
 
-function incClear(){
-  if(!confirm('Effacer tous les incidents ?')) return;
-  fetch(INC_URL, {method:'DELETE'})
-    .then(function(){ _knownIncIds.clear(); _lastIncCount=0; incBadgeSet(0); incLoad(); })
-    .catch(function(){});
+function jeuOpenEdit(dayKey,emId){
+  var j=jeux.find(function(x){return x.emissionId===emId&&x.dayKey===dayKey;});if(!j)return;
+  editingJeuId=j.id;
+  document.getElementById('jeu-form-title').textContent='Modifier le jeu';
+  document.getElementById('jeu-del-btn').style.display='inline-flex';
+  document.getElementById('modal-jeu').dataset.dayKey=dayKey;
+  document.getElementById('modal-jeu').dataset.emId=emId;
+  var sel=document.getElementById('jeu-emission');
+  sel.innerHTML='<option value="">— Choisir un jeu —</option>'+jeuxCatalogue.map(function(x){return'<option value="'+x.id+'">'+x.nom+'</option>';}).join('');
+  sel.value=j.jeuTypeId||'';
+  var hSel=document.getElementById('jeu-heure');
+  hSel.innerHTML=buildHourOptions();hSel.value=j.heure||'8';
+  openModal('modal-jeu');
 }
 
-/* Polling toutes les 30 secondes */
-setTimeout(incLoad, 2500);
-setInterval(incLoad, 30000);
+function saveJeu(){
+  var jeuTypeId=parseInt(document.getElementById('jeu-emission').value);
+  var heure=parseFloat(document.getElementById('jeu-heure').value);
+  var dayKey=document.getElementById('modal-jeu').dataset.dayKey||'';
+  var emId=parseInt(document.getElementById('modal-jeu').dataset.emId||'0');
+  if(!jeuTypeId){alert('Choisissez un jeu dans le catalogue.');return;}
+  var jType=jeuxCatalogue.find(function(x){return x.id===jeuTypeId;});if(!jType)return;
+  if(editingJeuId!==null){
+    var j=jeux.find(function(x){return x.id===editingJeuId;});
+    if(j){j.nom=jType.nom;j.desc=jType.desc;j.gain=jType.gain;j.tirage=jType.tirage;j.heure=heure;j.jeuTypeId=jeuTypeId;}
+  }else{
+    jeux.push({id:Date.now(),nom:jType.nom,desc:jType.desc,gain:jType.gain,tirage:jType.tirage,heure:heure,emissionId:emId,dayKey:dayKey,jeuTypeId:jeuTypeId,participants:[]});
+  }
+  saveJeux();closeModal('modal-jeu');jeuRender();
+  if(localStorage.getItem('at_worker_url'))autoPublish();
+}
 
-/* Charger quand on arrive sur l'onglet */
-var _origSS3 = showSection;
-showSection = function(id, btn){
-  _origSS3(id, btn);
-  if(id === 'incidents'){ incLoad(); incBadgeSet(0); }
-};
+function deleteJeu(){
+  if(!confirm('Retirer ce jeu ?'))return;
+  jeux=jeux.filter(function(j){return j.id!==editingJeuId;});
+  saveJeux();closeModal('modal-jeu');jeuRender();
+}
 
-
-/* ═══ CATALOGUE DES JEUX ═════════════════════════════════════════════
-   jeuxCatalogue = types de jeux (permanent)
-   jeux          = affectations par jour (dayKey + emissionId)
-═══════════════════════════════════════════════════════════════════ */
-var jeuxCatalogue = [];
-var editingJeuTypeId = null;
-
-function saveJeuxCatalogue(){ localStorage.setItem('at_jeux_catalogue', JSON.stringify(jeuxCatalogue)); }
-function loadJeuxCatalogue(){ try{ var v=localStorage.getItem('at_jeux_catalogue'); if(v) jeuxCatalogue=JSON.parse(v); }catch(e){} }
-loadJeuxCatalogue();
-
-/* Étendre openModal */
-var _omJeu = openModal;
-openModal = function(id){
-  _omJeu(id);
-  if(id==='modal-jeu-catalogue') refreshJeuCatalogue();
-  if(id==='modal-jeu-apply')     openJeuApplyModal();
-};
-
-/* ── Catalogue : liste ── */
+/* Catalogue jeux */
 function refreshJeuCatalogue(){
-  var el = document.getElementById('jeu-catalogue-list'); if(!el) return;
-  if(!jeuxCatalogue.length){
-    el.innerHTML='<div class="list-empty">Aucun jeu dans le catalogue.</div>'; return;
-  }
-  el.innerHTML = jeuxCatalogue.map(function(j){
-    return '<div class="em-list-item" onclick="openJeuTypeForm('+j.id+')">' +
-      '<div class="em-list-bar" style="background:#F5C518;"></div>' +
-      '<div class="em-list-info">' +
-        '<div class="em-list-title">'+j.nom+'</div>' +
-        '<div class="em-list-meta">'+(j.desc||'—')+' &bull; &#127941; '+(j.gain||'—')+(j.tirage?' &bull; Tirage : '+j.tirage:'')+'</div>' +
-      '</div>' +
-      '<button class="anim-row-edit" onclick="event.stopPropagation();openJeuTypeForm('+j.id+')">&#9998;</button>' +
+  var el=document.getElementById('jeu-catalogue-list');if(!el)return;
+  if(!jeuxCatalogue.length){el.innerHTML='<div class="list-empty">Aucun jeu dans le catalogue.</div>';return;}
+  el.innerHTML=jeuxCatalogue.map(function(j){
+    return'<div class="em-list-item" onclick="openJeuTypeForm('+j.id+')">'+
+      '<div class="em-list-bar" style="background:#F5C518;"></div>'+
+      '<div class="em-list-info"><div class="em-list-title">'+j.nom+'</div>'+
+      '<div class="em-list-meta">'+(j.desc||'—')+' &bull; &#127941; '+(j.gain||'—')+(j.tirage?' &bull; &#127381; '+j.tirage:'')+'</div></div>'+
+      '<button class="anim-row-edit" onclick="event.stopPropagation();openJeuTypeForm('+j.id+')">&#9998;</button>'+
     '</div>';
   }).join('');
 }
 
-/* ── Catalogue : formulaire ── */
 function openJeuTypeForm(typeId){
-  editingJeuTypeId = typeId;
-  var isNew = typeId === null;
-  var j = isNew ? null : jeuxCatalogue.find(function(x){ return x.id===typeId; });
-  document.getElementById('jeu-type-form-title').textContent = isNew ? 'Nouveau jeu' : 'Modifier le jeu';
-  document.getElementById('jeu-type-nom').value    = j ? j.nom    : '';
-  document.getElementById('jeu-type-desc').value   = j ? j.desc   : '';
-  document.getElementById('jeu-type-gain').value   = j ? j.gain   : '';
-  document.getElementById('jeu-type-tirage').value = j ? j.tirage : '';
-  document.getElementById('jeu-type-del-btn').style.display = isNew ? 'none' : 'inline-flex';
-  closeModal('modal-jeu-catalogue');
-  openModal('modal-jeu-type');
+  editingJeuTypeId=typeId;
+  var isNew=typeId===null;
+  var j=isNew?null:jeuxCatalogue.find(function(x){return x.id===typeId;});
+  document.getElementById('jeu-type-form-title').textContent=isNew?'Nouveau jeu':'Modifier le jeu';
+  document.getElementById('jeu-type-nom').value=j?j.nom:'';
+  document.getElementById('jeu-type-desc').value=j?j.desc:'';
+  document.getElementById('jeu-type-gain').value=j?j.gain:'';
+  document.getElementById('jeu-type-tirage').value=j?j.tirage:'';
+  document.getElementById('jeu-type-del-btn').style.display=isNew?'none':'inline-flex';
+  closeModal('modal-jeu-catalogue');openModal('modal-jeu-type');
 }
 
 function saveJeuType(){
-  var nom    = document.getElementById('jeu-type-nom').value.trim();
-  var desc   = document.getElementById('jeu-type-desc').value.trim();
-  var gain   = document.getElementById('jeu-type-gain').value.trim();
-  var tirage = document.getElementById('jeu-type-tirage').value.trim();
-  if(!nom){ alert('Nom requis.'); return; }
-  if(editingJeuTypeId !== null){
-    var j = jeuxCatalogue.find(function(x){ return x.id===editingJeuTypeId; });
-    if(j){ j.nom=nom; j.desc=desc; j.gain=gain; j.tirage=tirage; }
-  } else {
-    jeuxCatalogue.push({id:Date.now(), nom:nom, desc:desc, gain:gain, tirage:tirage});
-  }
-  saveJeuxCatalogue();
-  closeModal('modal-jeu-type');
-  openModal('modal-jeu-catalogue');
+  var nom=document.getElementById('jeu-type-nom').value.trim();
+  var desc=document.getElementById('jeu-type-desc').value.trim();
+  var gain=document.getElementById('jeu-type-gain').value.trim();
+  var tirage=document.getElementById('jeu-type-tirage').value.trim();
+  if(!nom){alert('Nom requis.');return;}
+  if(editingJeuTypeId!==null){
+    var j=jeuxCatalogue.find(function(x){return x.id===editingJeuTypeId;});
+    if(j){j.nom=nom;j.desc=desc;j.gain=gain;j.tirage=tirage;}
+  }else{jeuxCatalogue.push({id:Date.now(),nom:nom,desc:desc,gain:gain,tirage:tirage});}
+  saveJeuxCatalogue();closeModal('modal-jeu-type');openModal('modal-jeu-catalogue');
 }
 
 function deleteJeuType(){
-  if(!confirm('Supprimer ce jeu du catalogue ?')) return;
-  jeuxCatalogue = jeuxCatalogue.filter(function(j){ return j.id!==editingJeuTypeId; });
-  saveJeuxCatalogue();
-  closeModal('modal-jeu-type');
-  openModal('modal-jeu-catalogue');
-  jeuRender();
+  if(!confirm('Supprimer ce jeu du catalogue ?'))return;
+  jeuxCatalogue=jeuxCatalogue.filter(function(j){return j.id!==editingJeuTypeId;});
+  saveJeuxCatalogue();closeModal('modal-jeu-type');openModal('modal-jeu-catalogue');jeuRender();
 }
 
-/* ── Appliquer un jeu à la semaine ── */
 function openJeuApplyModal(){
-  /* Remplir le select des jeux */
-  var sel = document.getElementById('jeu-apply-id');
-  if(!sel) return;
-  sel.innerHTML = '<option value="">— Choisir un jeu —</option>' +
-    jeuxCatalogue.map(function(j){ return '<option value="'+j.id+'">'+j.nom+'</option>'; }).join('');
-  sel.onchange = updateJeuApplyPreview;
-  sel.value = '';
-
-  /* Label semaine */
-  var days = getWeekDates(jeuWeekOffset);
-  var lbl = document.getElementById('jeu-apply-week-label');
-  if(lbl) lbl.textContent = 'Du '+days[0].getDate()+' '+MOIS[days[0].getMonth()]+' au '+days[4].getDate()+' '+MOIS[days[4].getMonth()]+' '+days[4].getFullYear();
-
-  /* Emissions */
-  var eSel = document.getElementById('jeu-apply-emission');
-  if(eSel){
-    eSel.innerHTML = '<option value="">— Toutes les emissions —</option>' +
-      catalogue.map(function(t){ return '<option value="'+t.id+'">'+t.nom+'</option>'; }).join('');
-    eSel.value = '';
-  }
-
-  document.getElementById('jeu-apply-replace').checked = true;
+  var sel=document.getElementById('jeu-apply-id');if(!sel)return;
+  sel.innerHTML='<option value="">— Choisir un jeu —</option>'+jeuxCatalogue.map(function(j){return'<option value="'+j.id+'">'+j.nom+'</option>';}).join('');
+  sel.onchange=updateJeuApplyPreview;sel.value='';
+  var eSel=document.getElementById('jeu-apply-emission');
+  if(eSel){eSel.innerHTML='<option value="">— Toutes les emissions —</option>'+catalogue.map(function(t){return'<option value="'+t.id+'">'+t.nom+'</option>';}).join('');eSel.value='';}
+  var days=getWeekDates(jeuWeekOffset);
+  var lbl=document.getElementById('jeu-apply-week-label');
+  if(lbl)lbl.textContent='Du '+days[0].getDate()+' '+MOIS[days[0].getMonth()]+' au '+days[4].getDate()+' '+MOIS[days[4].getMonth()]+' '+days[4].getFullYear();
+  document.getElementById('jeu-apply-replace').checked=true;
   updateJeuApplyPreview();
 }
 
 function updateJeuApplyPreview(){
-  var sel = document.getElementById('jeu-apply-id');
-  var preview = document.getElementById('jeu-apply-preview');
-  if(!sel || !preview) return;
-  var typeId = parseInt(sel.value);
-  if(!typeId){ preview.style.display='none'; return; }
-  var j = jeuxCatalogue.find(function(x){ return x.id===typeId; });
-  if(!j){ preview.style.display='none'; return; }
-  preview.style.display = 'flex';
-  document.getElementById('jeu-preview-nom').textContent    = j.nom;
-  document.getElementById('jeu-preview-desc').textContent   = j.desc || '';
-  document.getElementById('jeu-preview-gain').textContent   = j.gain || '—';
-  document.getElementById('jeu-preview-tirage').textContent = j.tirage ? '&#127381; Tirage : '+j.tirage : '';
+  var sel=document.getElementById('jeu-apply-id');
+  var preview=document.getElementById('jeu-apply-preview');if(!sel||!preview)return;
+  var typeId=parseInt(sel.value);
+  if(!typeId){preview.style.display='none';return;}
+  var j=jeuxCatalogue.find(function(x){return x.id===typeId;});
+  if(!j){preview.style.display='none';return;}
+  preview.style.display='flex';
+  document.getElementById('jeu-preview-nom').textContent=j.nom;
+  document.getElementById('jeu-preview-desc').textContent=j.desc||'';
+  document.getElementById('jeu-preview-gain').textContent=j.gain||'—';
+  document.getElementById('jeu-preview-tirage').innerHTML=j.tirage?'&#127381; Tirage : '+j.tirage:'';
 }
 
 function applyJeuToWeek(){
-  var typeId    = parseInt(document.getElementById('jeu-apply-id').value);
-  var emFilterId= parseInt(document.getElementById('jeu-apply-emission').value)||0;
-  var replace   = document.getElementById('jeu-apply-replace').checked;
-  if(!typeId){ alert('Choisissez un jeu.'); return; }
-  var jType = jeuxCatalogue.find(function(x){ return x.id===typeId; });
-  if(!jType) return;
-
-  /* Emissions cibles : toutes ou une seule */
-  var emTargets = emFilterId
-    ? catalogue.filter(function(t){ return t.id===emFilterId; })
-    : catalogue.slice();
-
-  if(!emTargets.length){ alert('Aucune emission dans le catalogue.'); return; }
-
-  var days = getWeekDates(jeuWeekOffset);
-
+  var typeId=parseInt(document.getElementById('jeu-apply-id').value);
+  var emFilterId=parseInt(document.getElementById('jeu-apply-emission').value)||0;
+  var replace=document.getElementById('jeu-apply-replace').checked;
+  if(!typeId){alert('Choisissez un jeu.');return;}
+  var jType=jeuxCatalogue.find(function(x){return x.id===typeId;});if(!jType)return;
+  var emTargets=emFilterId?catalogue.filter(function(t){return t.id===emFilterId;}):catalogue.slice();
+  if(!emTargets.length){alert('Aucune emission dans le catalogue.');return;}
+  var days=getWeekDates(jeuWeekOffset);
   for(var i=0;i<5;i++){
-    var dKey = days[i].toISOString().slice(0,10);
+    var dKey=days[i].toISOString().slice(0,10);
     emTargets.forEach(function(em){
-      if(replace){
-        jeux = jeux.filter(function(j){ return !(j.emissionId===em.id && j.dayKey===dKey); });
-      }
-      jeux.push({
-        id: Date.now()+Math.random(),
-        nom:    jType.nom,
-        desc:   jType.desc,
-        gain:   jType.gain,
-        tirage: jType.tirage,
-        heure:  null,
-        emissionId: em.id,
-        dayKey: dKey,
-        jeuTypeId: typeId
-      });
+      if(replace)jeux=jeux.filter(function(j){return!(j.emissionId===em.id&&j.dayKey===dKey);});
+      jeux.push({id:Date.now()+Math.random(),nom:jType.nom,desc:jType.desc,gain:jType.gain,tirage:jType.tirage,heure:null,emissionId:em.id,dayKey:dKey,jeuTypeId:typeId,participants:[]});
     });
   }
-  saveJeux();
-  closeModal('modal-jeu-apply');
-  jeuRender();
-  if(localStorage.getItem('at_worker_url')) publishData();
+  saveJeux();closeModal('modal-jeu-apply');jeuRender();
+  if(localStorage.getItem('at_worker_url'))autoPublish();
 }
 
-/* ── Mise à jour de jeuRender pour afficher tirage ── */
-
-
-
-
-
-/* ═══ PARTICIPANTS ═══════════════════════════════════════════════════ */
-var _partDayKey = '';
-var _partEmId   = 0;
-
-function openParticipants(dayKey, emId){
-  _partDayKey = dayKey;
-  _partEmId   = emId;
-  /* Trouver le jeu */
-  var j = jeux.find(function(x){ return x.dayKey===dayKey && x.emissionId===emId; });
-  var label = document.getElementById('part-jeu-label');
-  if(label) label.textContent = j ? j.nom+' — '+dayKey : dayKey;
-  /* Vider le formulaire */
-  ['part-nom','part-prenom','part-adresse','part-tel','part-email'].forEach(function(id){
-    var el=document.getElementById(id); if(el) el.value='';
-  });
-  refreshParticipants();
-  openModal('modal-participants');
+/* ── PARTICIPANTS ── */
+function openParticipants(dayKey,emId){
+  _partDayKey=dayKey;_partEmId=emId;
+  var j=jeux.find(function(x){return x.dayKey===dayKey&&x.emissionId===emId;});
+  var label=document.getElementById('part-jeu-label');
+  if(label)label.textContent=j?j.nom+' — '+dayKey:dayKey;
+  ['part-nom','part-prenom','part-adresse','part-tel','part-email'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  refreshParticipants();openModal('modal-participants');
 }
 
 function refreshParticipants(){
-  var j = jeux.find(function(x){ return x.dayKey===_partDayKey && x.emissionId===_partEmId; });
-  var list = j ? (j.participants||[]) : [];
-  var el = document.getElementById('part-list');
-  var cnt = document.getElementById('part-count-label');
-  if(cnt) cnt.textContent = list.length+' participant'+(list.length>1?'s':'');
-  if(!el) return;
-  if(!list.length){
-    el.innerHTML='<div class="list-empty">Aucun participant pour ce jeu.</div>'; return;
-  }
-  el.innerHTML = list.map(function(p,i){
-    return '<div class="anim-row" style="flex-wrap:wrap;gap:6px;">' +
-      '<div style="flex:1;min-width:200px;">' +
-        '<div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:#fff;letter-spacing:.04em;">'+p.nom+' '+p.prenom+'</div>' +
-        '<div style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;">'+(p.adresse||'')+'</div>' +
-        '<div style="display:flex;gap:12px;margin-top:3px;">' +
-          (p.tel   ? '<span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(255,255,255,.5);">&#128222; '+p.tel+'</span>' : '') +
-          (p.email ? '<span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(255,255,255,.5);">&#9993; '+p.email+'</span>' : '') +
-        '</div>' +
-      '</div>' +
-      '<button class="anim-row-edit" style="color:#f7a0a0;border-color:rgba(220,60,60,.3);" onclick="removeParticipant('+i+')">&#128465;</button>' +
+  var j=jeux.find(function(x){return x.dayKey===_partDayKey&&x.emissionId===_partEmId;});
+  var list=j?(j.participants||[]):[];
+  var el=document.getElementById('part-list');
+  var cnt=document.getElementById('part-count-label');
+  if(cnt)cnt.textContent=list.length+' participant'+(list.length>1?'s':'');
+  if(!el)return;
+  if(!list.length){el.innerHTML='<div class="list-empty">Aucun participant.</div>';return;}
+  el.innerHTML=list.map(function(p,i){
+    return'<div class="anim-row" style="flex-wrap:wrap;gap:6px;">'+
+      '<div style="flex:1;min-width:180px;">'+
+        '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:15px;font-weight:800;color:#fff;">'+p.nom+' '+p.prenom+'</div>'+
+        (p.adresse?'<div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;">'+p.adresse+'</div>':'')+
+        '<div style="display:flex;gap:12px;margin-top:3px;">'+
+          (p.tel?'<span style="font-family:\'Share Tech Mono\',monospace;font-size:11px;color:rgba(255,255,255,.5);">&#128222; '+p.tel+'</span>':'')+
+          (p.email?'<span style="font-family:\'Share Tech Mono\',monospace;font-size:11px;color:rgba(255,255,255,.5);">&#9993; '+p.email+'</span>':'')+
+        '</div>'+
+      '</div>'+
+      '<button class="anim-row-edit" style="color:#f7a0a0;border-color:rgba(220,60,60,.3);" onclick="removeParticipant('+i+')">&#128465;</button>'+
     '</div>';
   }).join('');
 }
 
 function addParticipant(){
-  var nom    = document.getElementById('part-nom').value.trim().toUpperCase();
-  var prenom = document.getElementById('part-prenom').value.trim();
-  var adresse= document.getElementById('part-adresse').value.trim();
-  var tel    = document.getElementById('part-tel').value.trim();
-  var email  = document.getElementById('part-email').value.trim();
-  if(!nom && !prenom){ alert('Entrez au moins un nom.'); return; }
-  var j = jeux.find(function(x){ return x.dayKey===_partDayKey && x.emissionId===_partEmId; });
-  if(!j){ alert('Jeu introuvable.'); return; }
-  if(!j.participants) j.participants=[];
-  j.participants.push({nom:nom, prenom:prenom, adresse:adresse, tel:tel, email:email, addedAt:new Date().toISOString()});
+  var nom=document.getElementById('part-nom').value.trim().toUpperCase();
+  var prenom=document.getElementById('part-prenom').value.trim();
+  var adresse=document.getElementById('part-adresse').value.trim();
+  var tel=document.getElementById('part-tel').value.trim();
+  var email=document.getElementById('part-email').value.trim();
+  if(!nom&&!prenom){alert('Entrez au moins un nom.');return;}
+  var j=jeux.find(function(x){return x.dayKey===_partDayKey&&x.emissionId===_partEmId;});
+  if(!j){alert('Jeu introuvable.');return;}
+  if(!j.participants)j.participants=[];
+  j.participants.push({nom:nom,prenom:prenom,adresse:adresse,tel:tel,email:email,addedAt:new Date().toISOString()});
   saveJeux();
-  /* Vider le formulaire */
-  ['part-nom','part-prenom','part-adresse','part-tel','part-email'].forEach(function(id){
-    var el=document.getElementById(id); if(el) el.value='';
-  });
-  refreshParticipants();
-  jeuRender();
+  ['part-nom','part-prenom','part-adresse','part-tel','part-email'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  refreshParticipants();jeuRender();
 }
 
 function removeParticipant(idx){
-  if(!confirm('Retirer ce participant ?')) return;
-  var j = jeux.find(function(x){ return x.dayKey===_partDayKey && x.emissionId===_partEmId; });
-  if(!j || !j.participants) return;
+  if(!confirm('Retirer ce participant ?'))return;
+  var j=jeux.find(function(x){return x.dayKey===_partDayKey&&x.emissionId===_partEmId;});
+  if(!j||!j.participants)return;
   j.participants.splice(idx,1);
-  saveJeux();
-  refreshParticipants();
-  jeuRender();
+  saveJeux();refreshParticipants();jeuRender();
 }
 
-
-/* ═══ LISTE GLOBALE DES PARTICIPANTS ════════════════════════════════ */
+/* ── LISTE GLOBALE PARTICIPANTS ── */
 function getAllParticipants(){
-  var all = [];
+  var all=[];
   jeux.forEach(function(j){
     (j.participants||[]).forEach(function(p){
-      all.push({
-        nom:       p.nom,
-        prenom:    p.prenom,
-        adresse:   p.adresse||'',
-        tel:       p.tel||'',
-        email:     p.email||'',
-        jeuNom:    j.nom||'',
-        dayKey:    j.dayKey||'',
-        emissionId:j.emissionId
-      });
+      all.push({nom:p.nom,prenom:p.prenom,adresse:p.adresse||'',tel:p.tel||'',email:p.email||'',jeuNom:j.nom||'',dayKey:j.dayKey||''});
     });
   });
   return all;
 }
 
-function partHighlight(text, query){
-  if(!query) return text||'';
-  var re = new RegExp('('+query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
-  return (text||'').replace(re,'<span class="part-highlight">$1</span>');
+function partHighlight(text,query){
+  if(!query||!text)return text||'';
+  var safe=query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  return text.replace(new RegExp('('+safe+')','gi'),'<span class="part-highlight">$1</span>');
 }
 
 function partSearchRender(){
-  var query = (document.getElementById('part-search').value||'').trim().toLowerCase();
-  var all = getAllParticipants();
-
-  var filtered = query ? all.filter(function(p){
-    return (p.nom+' '+p.prenom+' '+p.adresse+' '+p.tel+' '+p.email+' '+p.jeuNom).toLowerCase().indexOf(query) >= 0;
-  }) : all;
-
-  var container = document.getElementById('part-global-list');
-  if(!container) return;
-
-  if(!all.length){
-    container.innerHTML='<div class="list-empty">Aucun participant enregistré.</div>'; return;
-  }
-  if(!filtered.length){
-    container.innerHTML='<div class="list-empty">Aucun résultat pour "'+query+'".</div>'; return;
-  }
-
-  var h = query;
-  /* En-tête */
-  var html = '<div class="part-row part-row-head">'+
-    '<span>Nom / Prénom</span><span>Jeu</span><span>Adresse</span><span>Téléphone</span><span>Email</span><span></span>'+
-  '</div>';
-
-  html += filtered.map(function(p){
-    return '<div class="part-row">'+
+  var query=(document.getElementById('part-search')?document.getElementById('part-search').value||'':'').trim().toLowerCase();
+  var all=getAllParticipants();
+  var filtered=query?all.filter(function(p){return(p.nom+' '+p.prenom+' '+p.adresse+' '+p.tel+' '+p.email+' '+p.jeuNom).toLowerCase().indexOf(query)>=0;}):all;
+  var container=document.getElementById('part-global-list');if(!container)return;
+  if(!all.length){container.innerHTML='<div class="list-empty">Aucun participant enregistre.</div>';return;}
+  if(!filtered.length){container.innerHTML='<div class="list-empty">Aucun resultat pour "'+query+'".</div>';return;}
+  var html='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:12px;color:rgba(255,255,255,.3);margin-bottom:8px;">'+filtered.length+' participant'+(filtered.length>1?'s':'')+'</div>';
+  html+='<div class="part-row part-row-head"><span>Nom / Prenom</span><span>Jeu</span><span>Adresse</span><span>Tel</span><span>Email</span></div>';
+  html+=filtered.map(function(p){
+    var h=query;
+    return'<div class="part-row">'+
       '<div class="part-cell"><strong>'+partHighlight(p.nom,h)+'</strong> '+partHighlight(p.prenom,h)+'</div>'+
       '<div class="part-cell-meta">'+partHighlight(p.jeuNom,h)+'</div>'+
       '<div class="part-cell">'+partHighlight(p.adresse,h)+'</div>'+
       '<div class="part-cell">'+partHighlight(p.tel,h)+'</div>'+
       '<div class="part-cell">'+partHighlight(p.email,h)+'</div>'+
-      '<div></div>'+
     '</div>';
   }).join('');
-
-  /* Compteur */
-  html = '<div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:rgba(255,255,255,.3);margin-bottom:8px;">'+
-    filtered.length+' participant'+(filtered.length>1?'s':'')+(query?' trouvé'+(filtered.length>1?'s':'')+'':'')+
-  '</div>' + html;
-
-  container.innerHTML = html;
+  container.innerHTML=html;
 }
 
 function exportParticipants(){
-  var all = getAllParticipants();
-  if(!all.length){ alert('Aucun participant à exporter.'); return; }
-  var csv = 'Nom,Prenom,Adresse,Telephone,Email,Jeu,Date
-';
-  csv += all.map(function(p){
-    return [p.nom,p.prenom,p.adresse,p.tel,p.email,p.jeuNom,p.dayKey]
-      .map(function(v){ return '"'+(v||'').replace(/"/g,'""')+'"'; }).join(',');
-  }).join('
-');
-  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-  var url  = URL.createObjectURL(blob);
-  var a    = document.createElement('a');
-  a.href   = url; a.download='participants.csv';
-  a.click(); URL.revokeObjectURL(url);
+  var all=getAllParticipants();
+  if(!all.length){alert('Aucun participant a exporter.');return;}
+  var csv='Nom,Prenom,Adresse,Telephone,Email,Jeu,Date\n';
+  csv+=all.map(function(p){return[p.nom,p.prenom,p.adresse,p.tel,p.email,p.jeuNom,p.dayKey].map(function(v){return'"'+(v||'').replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='participants.csv';a.click();URL.revokeObjectURL(url);
 }
 
-/* Rafraîchir la liste quand on arrive sur l'onglet */
-var _origSS4 = showSection;
-showSection = function(id, btn){
-  _origSS4(id, btn);
-  if(id==='jeu-antenne') partSearchRender();
-};
-/* Aussi après chaque modif */
-var _origJeuRender = jeuRender;
-jeuRender = function(){
-  _origJeuRender();
-  partSearchRender();
-};
+/* ── INCIDENTS ── */
+function incBadgeSet(n){
+  var bell=document.getElementById('inc-bell');if(!bell)return;
+  if(n>0)bell.classList.add('has-alert');else bell.classList.remove('has-alert');
+}
+function incTypeColor(type){if(!type)return'#aaa';var t=type.toLowerCase();if(t.indexOf('majeur')>=0||t.indexOf('major')>=0)return'#E4032E';if(t.indexOf('blanc')>=0||t.indexOf('diffus')>=0)return'#ffa500';return'#5B8DEF';}
+function incTypeBadgeClass(type){if(!type)return'inc-badge-other';var t=type.toLowerCase();if(t.indexOf('majeur')>=0||t.indexOf('major')>=0)return'inc-badge-major';if(t.indexOf('blanc')>=0||t.indexOf('pub')>=0||t.indexOf('diffus')>=0)return'inc-badge-minor';return'inc-badge-other';}
 
+function incShowToast(inc){
+  var toast=document.createElement('div');toast.className='inc-notif-toast';
+  toast.style.cssText='position:fixed;top:24px;right:24px;z-index:9999;';
+  toast.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:20px;">&#9889;</span><span class="inc-notif-title">'+inc.type+'</span></div>'+
+    '<div class="inc-notif-body">'+(inc.heureDebut?inc.heureDebut+(inc.heureFin?' \u2013 '+inc.heureFin:''):'')+
+    (inc.auteur?' \u2014 '+inc.auteur:'')+(inc.desc?'<br>'+inc.desc:'')+'</div>'+
+    '<button onclick="this.parentNode.remove()" style="position:absolute;top:8px;right:10px;background:none;border:none;color:rgba(255,255,255,.4);font-size:16px;cursor:pointer;">&#10005;</button>';
+  document.body.appendChild(toast);
+  setTimeout(function(){if(toast.parentNode)toast.remove();},8000);
+}
+
+function incRender(list){
+  var container=document.getElementById('inc-list');if(!container)return;
+  var newIncs=list.filter(function(i){return!_knownIncIds[String(i.id)];});
+  if(newIncs.length>0&&_lastIncCount>0)newIncs.forEach(function(i){incShowToast(i);});
+  list.forEach(function(i){_knownIncIds[String(i.id)]=true;});
+  _lastIncCount=list.length;
+  incBadgeSet(newIncs.length>0?newIncs.length:0);
+  if(!list.length){container.innerHTML='<div class="placeholder">Aucun incident declare.</div>';return;}
+  container.innerHTML=list.map(function(inc){
+    var color=incTypeColor(inc.type);
+    var badgeClass=incTypeBadgeClass(inc.type);
+    var d=new Date(inc.declaredAt);
+    var timeStr=d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+' \u2014 '+d.toLocaleDateString('fr-FR');
+    return'<div class="inc-card"><div class="inc-card-side" style="background:'+color+'"></div>'+
+      '<div class="inc-card-body"><div class="inc-card-header"><span class="inc-card-type">'+inc.type+'</span><span class="inc-card-time">'+timeStr+'</span></div>'+
+      '<div class="inc-card-meta">'+
+        (inc.heureDebut?'<span class="inc-card-horaire">&#128336; '+inc.heureDebut+(inc.heureFin?' \u2013 '+inc.heureFin:'')+'</span>':'')+
+        (inc.auteur?'<span class="inc-card-auteur">&#128100; '+inc.auteur+'</span>':'')+
+        '<span class="inc-badge '+badgeClass+'">'+inc.type+'</span>'+
+      '</div>'+
+      (inc.desc?'<div class="inc-card-desc">'+inc.desc+'</div>':'')+
+      '</div></div>';
+  }).join('');
+}
+
+function incLoad(){
+  var lbl=document.getElementById('inc-last-check');
+  fetch(INC_URL,{cache:'no-store'}).then(function(r){return r.json();})
+    .then(function(list){
+      if(lbl)lbl.textContent='Derniere verif. '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+      incRender(Array.isArray(list)?list:[]);
+    }).catch(function(){if(lbl)lbl.textContent='Erreur de connexion';});
+}
+function incClear(){
+  if(!confirm('Effacer tous les incidents ?'))return;
+  fetch(INC_URL,{method:'DELETE'}).then(function(){_knownIncIds={};_lastIncCount=0;incBadgeSet(0);incLoad();}).catch(function(){});
+}
+setTimeout(incLoad,2500);
+setInterval(incLoad,30000);
 </script>
-
-<!-- MODAL : Participants -->
-<div class="modal-overlay" id="modal-participants">
-  <div class="modal" style="max-width:600px;width:95%;">
-    <div class="modal-header">
-      <span>&#128100; Participants — <span id="part-jeu-label" style="font-weight:400;opacity:.6;font-size:13px;text-transform:none;letter-spacing:0;"></span></span>
-      <button class="modal-close" onclick="closeModal('modal-participants')">&#10005;</button>
-    </div>
-    <div class="modal-body" style="padding:0;flex-direction:column;gap:0;">
-      <!-- Formulaire ajout -->
-      <div style="padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.08);">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:12px;">Ajouter un participant</div>
-        <div class="form-row-2">
-          <div class="form-group"><label>Nom</label><input type="text" id="part-nom" placeholder="DUPONT"></div>
-          <div class="form-group"><label>Prenom</label><input type="text" id="part-prenom" placeholder="Jean"></div>
-        </div>
-        <div class="form-group"><label>Adresse</label><input type="text" id="part-adresse" placeholder="12 rue de la Paix, Monaco"></div>
-        <div class="form-row-2">
-          <div class="form-group"><label>Telephone</label><input type="tel" id="part-tel" placeholder="+377 xx xx xx xx"></div>
-          <div class="form-group"><label>Email</label><input type="email" id="part-email" placeholder="jean@exemple.com"></div>
-        </div>
-        <div style="margin-top:4px;">
-          <button class="ga-btn ga-btn-primary" onclick="addParticipant()">&#43; Ajouter</button>
-        </div>
-      </div>
-      <!-- Liste participants -->
-      <div style="padding:16px 24px;max-height:280px;overflow-y:auto;">
-        <div id="part-list" style="display:flex;flex-direction:column;gap:8px;"></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:rgba(255,255,255,.3);" id="part-count-label"></div>
-      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-participants')">Fermer</button></div>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
