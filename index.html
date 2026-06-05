@@ -210,6 +210,21 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .inc-notif-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:#fff;letter-spacing:.05em;text-transform:uppercase;}
 .inc-notif-body{font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;}
 
+
+
+.part-row{display:grid;grid-template-columns:180px 140px 200px 140px 200px auto;gap:10px;align-items:center;padding:10px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:7px;transition:background .15s;}
+.part-row:hover{background:rgba(255,255,255,.07);}
+.part-row-head{grid-template-columns:180px 140px 200px 140px 200px auto;background:#201e28;border-color:rgba(255,255,255,.1);}
+.part-row-head span{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);}
+.part-cell{font-family:'Inter',sans-serif;font-size:13px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.part-cell-meta{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;color:rgba(255,255,255,.35);text-transform:uppercase;}
+.part-highlight{background:rgba(245,197,24,.25);border-radius:3px;padding:0 2px;}
+
+/* PARTICIPANTS */
+.part-count{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;color:rgba(255,255,255,.4);text-transform:uppercase;}
+.part-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;background:rgba(245,197,24,.15);border:1px solid rgba(245,197,24,.3);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#F5C518;cursor:pointer;transition:all .15s;}
+.part-badge:hover{background:rgba(245,197,24,.25);}
+
 .jeu-emission-card{background:#2a2733;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;}
 .jeu-emission-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#37333E;border-bottom:3px solid #E4032E;}
 .jeu-emission-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#fff;}
@@ -315,6 +330,24 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
     </div>
   </div>
   <div id="jeu-grid" style="display:flex;flex-direction:column;gap:16px;"></div>
+
+  <!-- Liste globale des participants -->
+  <div style="margin-top:48px;">
+    <div class="ga-toolbar" style="margin-bottom:16px;">
+      <div><div class="ga-title" style="font-size:18px;">Participants</div></div>
+      <div class="ga-toolbar-right">
+        <div style="position:relative;">
+          <input type="text" id="part-search" placeholder="Rechercher un participant..."
+            oninput="partSearchRender()"
+            style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:8px 36px 8px 14px;color:#fff;font-family:'Inter',sans-serif;font-size:13px;outline:none;width:280px;">
+          <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.3);font-size:14px;">&#128269;</span>
+        </div>
+        <button class="ga-btn" onclick="exportParticipants()">&#8659; Exporter CSV</button>
+      </div>
+    </div>
+    <div id="part-global-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+  </div>
+
 </section>
 
 <section id="commercial" class="section"><div class="placeholder">[ Commercial Editor ]</div></section>
@@ -1458,10 +1491,7 @@ function renderCalendar(){
         return'<div class="gc-em-anim-chip" style="border-left:2px solid '+a.color+'">'+a.prenom+' '+a.nom.toUpperCase()+'</div>';
       }).join('')+'</div>':'');
     div.onclick=function(ev){ev.stopPropagation();openEmissionEdit(aff.id);};
-    div.ondblclick=function(ev){ev.stopPropagation();
-      affectations=affectations.filter(function(a){return a.id!==aff.id;});
-      saveAll();renderCalendar();
-    };
+
     cells[0].appendChild(div);
   });
   requestAnimationFrame(function(){updateTimeline(cal,days);});
@@ -1595,6 +1625,8 @@ function jeuRender(){
         html+='<div class="jeu-card-nom">'+j.nom+'</div>';
         if(j.gain)   html+='<div class="jeu-card-gain">&#127941; '+j.gain+'</div>';
         if(j.tirage) html+='<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(245,197,24,.6);margin-top:2px;">&#127381; '+j.tirage+'</div>';
+        var nbPart=(j.participants||[]).length;
+        html+='<div class="part-badge" style="margin-top:6px;" onclick="event.stopPropagation();openParticipants(''+dKey+'','+emId+')">&#128100; '+(nbPart||'0')+' participant'+(nbPart>1?'s':'')+'</div>';
       } else {
         html+='<div class="jeu-day-body'+(isPast?' past':'')+'" onclick="jeuOpenNew('+emId+',\''+dKey+'\')">';
         html+='<div class="jeu-empty">+</div>';
@@ -1793,10 +1825,7 @@ renderCalendar=function(){
     div.innerHTML='<div class="gc-em-title">'+nom+'</div>'+
       (aff.anims&&aff.anims.length?'<div class="gc-em-anims">'+aff.anims.map(function(a){return'<div class="gc-em-anim-chip" style="border-left:2px solid '+a.color+'">'+a.prenom+' '+a.nom.toUpperCase()+'</div>';}).join('')+'</div>':'');
     div.onclick=function(ev){ev.stopPropagation();openEmissionEdit(aff.id);};
-    div.ondblclick=function(ev){ev.stopPropagation();
-      affectations=affectations.filter(function(a){return a.id!==aff.id;});
-      saveAll();renderCalendar();
-    };
+
     cells[0].appendChild(div);
   });
   requestAnimationFrame(function(){updateTimeline(cal,days);});
@@ -2199,18 +2228,220 @@ function applyJeuToWeek(){
 /* ── Mise à jour de jeuRender pour afficher tirage ── */
 
 
-function gjDeleteRdv(rdvId){
-  if(!confirm('Supprimer ce rendez-vous ?')) return;
-  gjRdvs=gjRdvs.filter(function(r){return r.id!==rdvId;});
-  saveAll(); gjRenderCalendar();
+
+
+
+/* ═══ PARTICIPANTS ═══════════════════════════════════════════════════ */
+var _partDayKey = '';
+var _partEmId   = 0;
+
+function openParticipants(dayKey, emId){
+  _partDayKey = dayKey;
+  _partEmId   = emId;
+  /* Trouver le jeu */
+  var j = jeux.find(function(x){ return x.dayKey===dayKey && x.emissionId===emId; });
+  var label = document.getElementById('part-jeu-label');
+  if(label) label.textContent = j ? j.nom+' — '+dayKey : dayKey;
+  /* Vider le formulaire */
+  ['part-nom','part-prenom','part-adresse','part-tel','part-email'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  refreshParticipants();
+  openModal('modal-participants');
 }
 
-function jeuDelete(dayKey, emId){
-  if(!confirm('Supprimer ce jeu ?')) return;
-  jeux=jeux.filter(function(j){return !(j.dayKey===dayKey&&j.emissionId===emId);});
-  saveJeux(); jeuRender();
+function refreshParticipants(){
+  var j = jeux.find(function(x){ return x.dayKey===_partDayKey && x.emissionId===_partEmId; });
+  var list = j ? (j.participants||[]) : [];
+  var el = document.getElementById('part-list');
+  var cnt = document.getElementById('part-count-label');
+  if(cnt) cnt.textContent = list.length+' participant'+(list.length>1?'s':'');
+  if(!el) return;
+  if(!list.length){
+    el.innerHTML='<div class="list-empty">Aucun participant pour ce jeu.</div>'; return;
+  }
+  el.innerHTML = list.map(function(p,i){
+    return '<div class="anim-row" style="flex-wrap:wrap;gap:6px;">' +
+      '<div style="flex:1;min-width:200px;">' +
+        '<div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:#fff;letter-spacing:.04em;">'+p.nom+' '+p.prenom+'</div>' +
+        '<div style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;">'+(p.adresse||'')+'</div>' +
+        '<div style="display:flex;gap:12px;margin-top:3px;">' +
+          (p.tel   ? '<span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(255,255,255,.5);">&#128222; '+p.tel+'</span>' : '') +
+          (p.email ? '<span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(255,255,255,.5);">&#9993; '+p.email+'</span>' : '') +
+        '</div>' +
+      '</div>' +
+      '<button class="anim-row-edit" style="color:#f7a0a0;border-color:rgba(220,60,60,.3);" onclick="removeParticipant('+i+')">&#128465;</button>' +
+    '</div>';
+  }).join('');
 }
+
+function addParticipant(){
+  var nom    = document.getElementById('part-nom').value.trim().toUpperCase();
+  var prenom = document.getElementById('part-prenom').value.trim();
+  var adresse= document.getElementById('part-adresse').value.trim();
+  var tel    = document.getElementById('part-tel').value.trim();
+  var email  = document.getElementById('part-email').value.trim();
+  if(!nom && !prenom){ alert('Entrez au moins un nom.'); return; }
+  var j = jeux.find(function(x){ return x.dayKey===_partDayKey && x.emissionId===_partEmId; });
+  if(!j){ alert('Jeu introuvable.'); return; }
+  if(!j.participants) j.participants=[];
+  j.participants.push({nom:nom, prenom:prenom, adresse:adresse, tel:tel, email:email, addedAt:new Date().toISOString()});
+  saveJeux();
+  /* Vider le formulaire */
+  ['part-nom','part-prenom','part-adresse','part-tel','part-email'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  refreshParticipants();
+  jeuRender();
+}
+
+function removeParticipant(idx){
+  if(!confirm('Retirer ce participant ?')) return;
+  var j = jeux.find(function(x){ return x.dayKey===_partDayKey && x.emissionId===_partEmId; });
+  if(!j || !j.participants) return;
+  j.participants.splice(idx,1);
+  saveJeux();
+  refreshParticipants();
+  jeuRender();
+}
+
+
+/* ═══ LISTE GLOBALE DES PARTICIPANTS ════════════════════════════════ */
+function getAllParticipants(){
+  var all = [];
+  jeux.forEach(function(j){
+    (j.participants||[]).forEach(function(p){
+      all.push({
+        nom:       p.nom,
+        prenom:    p.prenom,
+        adresse:   p.adresse||'',
+        tel:       p.tel||'',
+        email:     p.email||'',
+        jeuNom:    j.nom||'',
+        dayKey:    j.dayKey||'',
+        emissionId:j.emissionId
+      });
+    });
+  });
+  return all;
+}
+
+function partHighlight(text, query){
+  if(!query) return text||'';
+  var re = new RegExp('('+query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+  return (text||'').replace(re,'<span class="part-highlight">$1</span>');
+}
+
+function partSearchRender(){
+  var query = (document.getElementById('part-search').value||'').trim().toLowerCase();
+  var all = getAllParticipants();
+
+  var filtered = query ? all.filter(function(p){
+    return (p.nom+' '+p.prenom+' '+p.adresse+' '+p.tel+' '+p.email+' '+p.jeuNom).toLowerCase().indexOf(query) >= 0;
+  }) : all;
+
+  var container = document.getElementById('part-global-list');
+  if(!container) return;
+
+  if(!all.length){
+    container.innerHTML='<div class="list-empty">Aucun participant enregistré.</div>'; return;
+  }
+  if(!filtered.length){
+    container.innerHTML='<div class="list-empty">Aucun résultat pour "'+query+'".</div>'; return;
+  }
+
+  var h = query;
+  /* En-tête */
+  var html = '<div class="part-row part-row-head">'+
+    '<span>Nom / Prénom</span><span>Jeu</span><span>Adresse</span><span>Téléphone</span><span>Email</span><span></span>'+
+  '</div>';
+
+  html += filtered.map(function(p){
+    return '<div class="part-row">'+
+      '<div class="part-cell"><strong>'+partHighlight(p.nom,h)+'</strong> '+partHighlight(p.prenom,h)+'</div>'+
+      '<div class="part-cell-meta">'+partHighlight(p.jeuNom,h)+'</div>'+
+      '<div class="part-cell">'+partHighlight(p.adresse,h)+'</div>'+
+      '<div class="part-cell">'+partHighlight(p.tel,h)+'</div>'+
+      '<div class="part-cell">'+partHighlight(p.email,h)+'</div>'+
+      '<div></div>'+
+    '</div>';
+  }).join('');
+
+  /* Compteur */
+  html = '<div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:rgba(255,255,255,.3);margin-bottom:8px;">'+
+    filtered.length+' participant'+(filtered.length>1?'s':'')+(query?' trouvé'+(filtered.length>1?'s':'')+'':'')+
+  '</div>' + html;
+
+  container.innerHTML = html;
+}
+
+function exportParticipants(){
+  var all = getAllParticipants();
+  if(!all.length){ alert('Aucun participant à exporter.'); return; }
+  var csv = 'Nom,Prenom,Adresse,Telephone,Email,Jeu,Date
+';
+  csv += all.map(function(p){
+    return [p.nom,p.prenom,p.adresse,p.tel,p.email,p.jeuNom,p.dayKey]
+      .map(function(v){ return '"'+(v||'').replace(/"/g,'""')+'"'; }).join(',');
+  }).join('
+');
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href   = url; a.download='participants.csv';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+/* Rafraîchir la liste quand on arrive sur l'onglet */
+var _origSS4 = showSection;
+showSection = function(id, btn){
+  _origSS4(id, btn);
+  if(id==='jeu-antenne') partSearchRender();
+};
+/* Aussi après chaque modif */
+var _origJeuRender = jeuRender;
+jeuRender = function(){
+  _origJeuRender();
+  partSearchRender();
+};
 
 </script>
+
+<!-- MODAL : Participants -->
+<div class="modal-overlay" id="modal-participants">
+  <div class="modal" style="max-width:600px;width:95%;">
+    <div class="modal-header">
+      <span>&#128100; Participants — <span id="part-jeu-label" style="font-weight:400;opacity:.6;font-size:13px;text-transform:none;letter-spacing:0;"></span></span>
+      <button class="modal-close" onclick="closeModal('modal-participants')">&#10005;</button>
+    </div>
+    <div class="modal-body" style="padding:0;flex-direction:column;gap:0;">
+      <!-- Formulaire ajout -->
+      <div style="padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.08);">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:12px;">Ajouter un participant</div>
+        <div class="form-row-2">
+          <div class="form-group"><label>Nom</label><input type="text" id="part-nom" placeholder="DUPONT"></div>
+          <div class="form-group"><label>Prenom</label><input type="text" id="part-prenom" placeholder="Jean"></div>
+        </div>
+        <div class="form-group"><label>Adresse</label><input type="text" id="part-adresse" placeholder="12 rue de la Paix, Monaco"></div>
+        <div class="form-row-2">
+          <div class="form-group"><label>Telephone</label><input type="tel" id="part-tel" placeholder="+377 xx xx xx xx"></div>
+          <div class="form-group"><label>Email</label><input type="email" id="part-email" placeholder="jean@exemple.com"></div>
+        </div>
+        <div style="margin-top:4px;">
+          <button class="ga-btn ga-btn-primary" onclick="addParticipant()">&#43; Ajouter</button>
+        </div>
+      </div>
+      <!-- Liste participants -->
+      <div style="padding:16px 24px;max-height:280px;overflow-y:auto;">
+        <div id="part-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:rgba(255,255,255,.3);" id="part-count-label"></div>
+      <div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-participants')">Fermer</button></div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
