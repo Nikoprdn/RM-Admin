@@ -1458,6 +1458,10 @@ function renderCalendar(){
         return'<div class="gc-em-anim-chip" style="border-left:2px solid '+a.color+'">'+a.prenom+' '+a.nom.toUpperCase()+'</div>';
       }).join('')+'</div>':'');
     div.onclick=function(ev){ev.stopPropagation();openEmissionEdit(aff.id);};
+    div.ondblclick=function(ev){ev.stopPropagation();
+      affectations=affectations.filter(function(a){return a.id!==aff.id;});
+      saveAll();renderCalendar();
+    };
     cells[0].appendChild(div);
   });
   requestAnimationFrame(function(){updateTimeline(cal,days);});
@@ -1696,7 +1700,7 @@ function gjRenderCards(){
       } else {
         var r=rdvs[0];
         var names=(r.journalistes||[]).map(function(j){return j.prenom+' '+j.nom.toUpperCase();}).join(', ')||'—';
-        rowsHtml+='<div class="gj-card has-rdv'+(isT?' today-col':'')+(isPast?' past':'')+'" style="--gj-color:'+r.color+'" onclick="openGjRdvEdit('+r.id+')">'+'<div class="gj-card-rdv">'+r.titre+'</div><div class="gj-card-name">'+names+'</div></div>';
+        rowsHtml+='<div class="gj-card has-rdv'+(isT?' today-col':'')+(isPast?' past':'')+'" style="--gj-color:'+r.color+'" onclick="openGjRdvEdit('+r.id+')" ondblclick="gjDeleteRdv('+r.id+')">'+'<div class="gj-card-rdv">'+r.titre+'</div><div class="gj-card-name">'+names+'</div></div>';
       }
     }
     rowsHtml+='</div>';
@@ -1789,6 +1793,10 @@ renderCalendar=function(){
     div.innerHTML='<div class="gc-em-title">'+nom+'</div>'+
       (aff.anims&&aff.anims.length?'<div class="gc-em-anims">'+aff.anims.map(function(a){return'<div class="gc-em-anim-chip" style="border-left:2px solid '+a.color+'">'+a.prenom+' '+a.nom.toUpperCase()+'</div>';}).join('')+'</div>':'');
     div.onclick=function(ev){ev.stopPropagation();openEmissionEdit(aff.id);};
+    div.ondblclick=function(ev){ev.stopPropagation();
+      affectations=affectations.filter(function(a){return a.id!==aff.id;});
+      saveAll();renderCalendar();
+    };
     cells[0].appendChild(div);
   });
   requestAnimationFrame(function(){updateTimeline(cal,days);});
@@ -2189,6 +2197,19 @@ function applyJeuToWeek(){
 }
 
 /* ── Mise à jour de jeuRender pour afficher tirage ── */
+
+
+function gjDeleteRdv(rdvId){
+  if(!confirm('Supprimer ce rendez-vous ?')) return;
+  gjRdvs=gjRdvs.filter(function(r){return r.id!==rdvId;});
+  saveAll(); gjRenderCalendar();
+}
+
+function jeuDelete(dayKey, emId){
+  if(!confirm('Supprimer ce jeu ?')) return;
+  jeux=jeux.filter(function(j){return !(j.dayKey===dayKey&&j.emissionId===emId);});
+  saveJeux(); jeuRender();
+}
 
 </script>
 </body>
