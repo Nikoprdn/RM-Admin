@@ -2020,22 +2020,21 @@ function designerGagnant(idx){
 
 /* ── DIFFUSEUR DE SECOURS — lecture Worker ── */
 function checkDiffSec(){
-  fetch('https://adminsend.nicolas7lejeune.workers.dev/diffsec', {cache:'no-store'})
+  /* Lire l'etat diffsec depuis le broadcast */
+  fetch('https://adminsend.nicolas7lejeune.workers.dev/broadcast', {cache:'no-store'})
     .then(function(r){ return r.json(); })
     .then(function(d){
       var dot   = document.getElementById('diffsec-dot');
       var label = document.getElementById('diffsec-label');
-      if(d && d.active){
-        if(dot){ dot.className='diffsec-dot-alert'; }
+      var active = d && d.diffsec && d.diffsec.active;
+      if(active){
+        if(dot)  dot.className='diffsec-dot-alert';
         if(label){ label.textContent='ACTIF'; label.style.color='#E4032E'; label.style.fontWeight='800'; }
       } else {
-        if(dot){ dot.className=''; dot.style.cssText='width:8px;height:8px;border-radius:50%;background:#2ecc71;flex-shrink:0;box-shadow:0 0 6px #2ecc71;'; }
+        if(dot)  dot.className='';dot&&(dot.style.cssText='width:8px;height:8px;border-radius:50%;background:#2ecc71;flex-shrink:0;box-shadow:0 0 6px #2ecc71;transition:background .4s;');
         if(label){ label.textContent='Normal'; label.style.color='rgba(46,204,113,.7)'; label.style.fontWeight='700'; }
       }
-    }).catch(function(){
-      var dot=document.getElementById('diffsec-dot');
-      if(dot){ dot.style.cssText='width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;'; }
-    });
+    }).catch(function(){});
 }
 
 setTimeout(checkDiffSec, 3000);
