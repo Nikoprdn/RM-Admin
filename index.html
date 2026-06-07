@@ -1610,21 +1610,35 @@ function buildBroadcastPayload(){
     return{dayIdx:dayIdx,date:date.getDate(),mois:date.getMonth(),annee:date.getFullYear(),isoDate:dKey,
       matin:{slots:slotsFor(6,12)},soir:{slots:slotsFor(16,19)}};
   });
-  /* Ajouter les sponsors actifs dans le payload */
-  var commPayload = commAffect.map(function(a){
-    var s = sponsors.find(function(x){ return x.id===a.sponsorId; });
-    var em = catalogue.find(function(x){ return x.id===a.emissionId; });
-    return s ? {
-      emissionId: a.emissionId,
-      emissionNom: em ? em.nom : '',
-      sponsorNom: s.nom,
-      sponsorDebut: s.debut,
-      sponsorFin: s.fin,
-      rdvs: a.rdvs
-    } : null;
-  }).filter(Boolean);
+  /* Ajouter les sponsors dans chaque slot du payload */
+  var RDV_LABELS_PAY = {trafic:'Info Trafic', meteo:'Météo', toph:'Top H'};
+  days.forEach(function(day){
+    ['matin','soir'].forEach(function(tranche){
+      (day[tranche].slots||[]).forEach(function(slot){
+        /* Trouver l'émission correspondante */
+        var em = catalogue.find(function(x){
+          return (x.nom||'').toLowerCase() === (slot.emission||'').toLowerCase();
+        });
+        if(!em){ slot.commercial=[]; return; }
+        /* Trouver les affectations commerciales de cette émission */
+        var affects = commAffect.filter(function(a){ return a.emissionId===em.id; });
+        slot.commercial = [];
+        affects.forEach(function(a){
+          var s = sponsors.find(function(x){ return x.id===a.sponsorId; });
+          if(!s) return;
+          (a.rdvs||[]).forEach(function(rdv){
+            slot.commercial.push({
+              nom: s.nom,
+              type: RDV_LABELS_PAY[rdv]||rdv,
+              time: ''
+            });
+          });
+        });
+      });
+    });
+  });
 
-  return{weekKey:key,publishedAt:new Date().toISOString(),days:days,commercial:commPayload};
+  return{weekKey:key,publishedAt:new Date().toISOString(),days:days};
 }
 
 async function autoPublish(){
