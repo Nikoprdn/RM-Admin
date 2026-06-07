@@ -209,6 +209,21 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 @keyframes incBlinkStripe{0%,100%{opacity:1;}50%{opacity:0;}}
 .nav-btn-incident.has-alert{animation:incBlink .6s ease-in-out infinite;color:#fff !important;}
 .nav-btn-incident.has-alert::before{animation:incBlinkStripe .6s ease-in-out infinite;background:repeating-linear-gradient(45deg,rgba(245,197,24,.5) 0px,rgba(245,197,24,.5) 10px,transparent 10px,transparent 20px);}
+
+/* COMMERCIAL EDITOR */
+.comm-sponsor-card{background:#2a2733;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;}
+.comm-sponsor-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#37333E;border-bottom:3px solid #5B8DEF;}
+.comm-sponsor-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#fff;}
+.comm-sponsor-dates{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(255,255,255,.4);}
+.comm-sponsor-body{padding:16px 20px;display:flex;flex-direction:column;gap:10px;}
+.comm-rdv-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+.comm-rdv-trafic{background:rgba(91,141,239,.2);border:1px solid rgba(91,141,239,.4);color:#7aabff;}
+.comm-rdv-meteo{background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.3);color:#2ecc71;}
+.comm-rdv-toph{background:rgba(245,197,24,.15);border:1px solid rgba(245,197,24,.3);color:#F5C518;}
+.comm-emission-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(255,255,255,.04);border-radius:6px;flex-wrap:wrap;}
+.comm-emission-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff;min-width:120px;}
+.comm-grid{display:flex;flex-direction:column;gap:12px;}
+
 .inc-card{background:#2a2733;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;display:flex;}
 .inc-card-side{width:6px;flex-shrink:0;}
 .inc-card-body{flex:1;padding:16px 20px;display:flex;flex-direction:column;gap:6px;}
@@ -323,7 +338,16 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
   </div>
 </section>
 
-<section id="commercial" class="section"><div class="placeholder">[ Commercial Editor ]</div></section>
+<section id="commercial" class="section">
+  <div class="ga-toolbar">
+    <div><div class="ga-title">Commercial Editor</div><div class="ga-sub">Gestion des sponsorings</div></div>
+    <div class="ga-toolbar-right">
+      <button class="ga-btn ga-btn-primary" onclick="openModal('modal-sponsor-list')">&#128188; Sponsors</button>
+      <button class="ga-btn" style="background:rgba(46,204,113,.2);border-color:rgba(46,204,113,.4);color:#2ecc71;" onclick="commPublish()">&#128225; Publier</button>
+    </div>
+  </div>
+  <div id="comm-grid" class="comm-grid"></div>
+</section>
 
 <section id="incidents" class="section">
   <div class="ga-toolbar">
@@ -1586,7 +1610,21 @@ function buildBroadcastPayload(){
     return{dayIdx:dayIdx,date:date.getDate(),mois:date.getMonth(),annee:date.getFullYear(),isoDate:dKey,
       matin:{slots:slotsFor(6,12)},soir:{slots:slotsFor(16,19)}};
   });
-  return{weekKey:key,publishedAt:new Date().toISOString(),days:days};
+  /* Ajouter les sponsors actifs dans le payload */
+  var commPayload = commAffect.map(function(a){
+    var s = sponsors.find(function(x){ return x.id===a.sponsorId; });
+    var em = catalogue.find(function(x){ return x.id===a.emissionId; });
+    return s ? {
+      emissionId: a.emissionId,
+      emissionNom: em ? em.nom : '',
+      sponsorNom: s.nom,
+      sponsorDebut: s.debut,
+      sponsorFin: s.fin,
+      rdvs: a.rdvs
+    } : null;
+  }).filter(Boolean);
+
+  return{weekKey:key,publishedAt:new Date().toISOString(),days:days,commercial:commPayload};
 }
 
 async function autoPublish(){
@@ -2061,6 +2099,285 @@ function checkDiffSec(){
 setTimeout(checkDiffSec, 1000);
 setInterval(checkDiffSec, 10000);
 
+/* ═══ COMMERCIAL EDITOR ══════════════════════════════════════════════
+   sponsors      = [{id, nom, debut, fin}]
+   commAffect    = [{id, emissionId, sponsorId, rdvs:[trafic|meteo|toph]}]
+═══════════════════════════════════════════════════════════════════ */
+var sponsors = [];
+var commAffect = [];
+var editingSponsorId = null;
+var editingAffectCommId = null;
+var _affectEmissionId = 0;
+
+function saveSponsors(){ localStorage.setItem('at_sponsors', JSON.stringify(sponsors)); }
+function saveCommAffect(){ localStorage.setItem('at_comm_affect', JSON.stringify(commAffect)); }
+(function(){
+  try{ var v=localStorage.getItem('at_sponsors'); if(v) sponsors=JSON.parse(v); }catch(e){}
+  try{ var v=localStorage.getItem('at_comm_affect'); if(v) commAffect=JSON.parse(v); }catch(e){}
+})();
+
+/* ── openModal override pour Commercial ── */
+var _omComm = openModal;
+openModal = function(id){
+  _omComm(id);
+  if(id==='modal-sponsor-list') refreshSponsorList();
+};
+
+/* ── Sponsors : liste ── */
+function refreshSponsorList(){
+  var el = document.getElementById('sponsor-list'); if(!el) return;
+  if(!sponsors.length){ el.innerHTML='<div class="list-empty">Aucun sponsor.</div>'; return; }
+  el.innerHTML = sponsors.map(function(s){
+    var actif = isSponsorActif(s);
+    return '<div class="em-list-item" onclick="openSponsorForm('+s.id+')">'+
+      '<div class="em-list-bar" style="background:'+(actif?'#2ecc71':'#555')+';"></div>'+
+      '<div class="em-list-info">'+
+        '<div class="em-list-title">'+s.nom+'</div>'+
+        '<div class="em-list-meta">'+s.debut+' → '+s.fin+(actif?' • <span style="color:#2ecc71;">Actif</span>':' • Expiré')+'</div>'+
+      '</div>'+
+      '<button class="anim-row-edit" onclick="event.stopPropagation();openSponsorForm('+s.id+')">&#9998;</button>'+
+    '</div>';
+  }).join('');
+}
+
+function isSponsorActif(s){
+  var now = new Date(); now.setHours(0,0,0,0);
+  var d = new Date(s.debut), f = new Date(s.fin);
+  return d <= now && now <= f;
+}
+
+/* ── Sponsors : formulaire ── */
+function openSponsorForm(sponsorId){
+  editingSponsorId = sponsorId;
+  var isNew = sponsorId === null;
+  var s = isNew ? null : sponsors.find(function(x){ return x.id===sponsorId; });
+  document.getElementById('sponsor-form-title').textContent = isNew ? 'Nouveau sponsor' : 'Modifier le sponsor';
+  document.getElementById('sponsor-nom').value   = s ? s.nom   : '';
+  document.getElementById('sponsor-debut').value = s ? s.debut : '';
+  document.getElementById('sponsor-fin').value   = s ? s.fin   : '';
+  document.getElementById('sponsor-del-btn').style.display = isNew ? 'none' : 'inline-flex';
+  closeModal('modal-sponsor-list');
+  openModal('modal-sponsor-form');
+}
+
+function saveSponsor(){
+  var nom   = document.getElementById('sponsor-nom').value.trim();
+  var debut = document.getElementById('sponsor-debut').value;
+  var fin   = document.getElementById('sponsor-fin').value;
+  if(!nom){ alert('Nom requis.'); return; }
+  if(!debut||!fin){ alert('Dates requises.'); return; }
+  if(editingSponsorId !== null){
+    var s = sponsors.find(function(x){ return x.id===editingSponsorId; });
+    if(s){ s.nom=nom; s.debut=debut; s.fin=fin; }
+  } else {
+    sponsors.push({id:Date.now(), nom:nom, debut:debut, fin:fin});
+  }
+  saveSponsors();
+  closeModal('modal-sponsor-form');
+  openModal('modal-sponsor-list');
+  commRender();
+}
+
+function deleteSponsor(){
+  if(!confirm('Supprimer ce sponsor ?')) return;
+  sponsors = sponsors.filter(function(s){ return s.id!==editingSponsorId; });
+  commAffect = commAffect.filter(function(a){ return a.sponsorId!==editingSponsorId; });
+  saveSponsors(); saveCommAffect();
+  closeModal('modal-sponsor-form');
+  openModal('modal-sponsor-list');
+  commRender();
+}
+
+/* ── Affectations : formulaire ── */
+function openAffectComm(emissionId){
+  _affectEmissionId = emissionId;
+  editingAffectCommId = null;
+  var em = catalogue.find(function(x){ return x.id===emissionId; });
+  document.getElementById('sponsor-affect-title').textContent = 'Sponsor — ' + (em?em.nom:'');
+
+  /* Pré-remplir le select sponsors */
+  var sel = document.getElementById('affect-sponsor-id');
+  sel.innerHTML = '<option value="">— Choisir —</option>' +
+    sponsors.filter(isSponsorActif).map(function(s){
+      return '<option value="'+s.id+'">'+s.nom+'</option>';
+    }).join('');
+  sel.value = '';
+
+  /* Reset checkboxes */
+  ['trafic','meteo','toph'].forEach(function(r){
+    document.getElementById('rdv-'+r).checked = false;
+  });
+
+  document.getElementById('affect-del-btn').style.display = 'none';
+  openModal('modal-sponsor-affect');
+}
+
+function editAffectComm(affectId){
+  var a = commAffect.find(function(x){ return x.id===affectId; }); if(!a) return;
+  editingAffectCommId = affectId;
+  _affectEmissionId = a.emissionId;
+  var em = catalogue.find(function(x){ return x.id===a.emissionId; });
+  document.getElementById('sponsor-affect-title').textContent = 'Modifier — ' + (em?em.nom:'');
+
+  var sel = document.getElementById('affect-sponsor-id');
+  sel.innerHTML = '<option value="">— Choisir —</option>' +
+    sponsors.map(function(s){ return '<option value="'+s.id+'">'+s.nom+'</option>'; }).join('');
+  sel.value = a.sponsorId;
+
+  ['trafic','meteo','toph'].forEach(function(r){
+    document.getElementById('rdv-'+r).checked = (a.rdvs||[]).indexOf(r) >= 0;
+  });
+
+  document.getElementById('affect-del-btn').style.display = 'inline-flex';
+  openModal('modal-sponsor-affect');
+}
+
+function saveAffectationComm(){
+  var sponsorId = parseInt(document.getElementById('affect-sponsor-id').value);
+  if(!sponsorId){ alert('Choisissez un sponsor.'); return; }
+  var rdvs = ['trafic','meteo','toph'].filter(function(r){
+    return document.getElementById('rdv-'+r).checked;
+  });
+  if(!rdvs.length){ alert('Sélectionnez au moins un rendez-vous.'); return; }
+
+  if(editingAffectCommId !== null){
+    var a = commAffect.find(function(x){ return x.id===editingAffectCommId; });
+    if(a){ a.sponsorId=sponsorId; a.rdvs=rdvs; }
+  } else {
+    commAffect.push({id:Date.now(), emissionId:_affectEmissionId, sponsorId:sponsorId, rdvs:rdvs});
+  }
+  saveCommAffect();
+  closeModal('modal-sponsor-affect');
+  commRender();
+  if(localStorage.getItem('at_worker_url')) autoPublish();
+}
+
+function deleteAffectation_comm(){
+  if(!confirm('Retirer cette affectation ?')) return;
+  commAffect = commAffect.filter(function(a){ return a.id!==editingAffectCommId; });
+  saveCommAffect();
+  closeModal('modal-sponsor-affect');
+  commRender();
+}
+
+/* ── Rendu principal ── */
+var RDV_LABELS = {trafic:'Info Trafic', meteo:'Météo', toph:'Top H'};
+var RDV_CLASS  = {trafic:'comm-rdv-trafic', meteo:'comm-rdv-meteo', toph:'comm-rdv-toph'};
+
+function commRender(){
+  var container = document.getElementById('comm-grid'); if(!container) return;
+  if(!catalogue.length){
+    container.innerHTML = '<div class="placeholder">Aucune émission dans le catalogue.</div>'; return;
+  }
+
+  container.innerHTML = catalogue.map(function(em){
+    var affects = commAffect.filter(function(a){ return a.emissionId===em.id; });
+
+    var html = '<div class="comm-sponsor-card">';
+    html += '<div class="comm-sponsor-header" style="border-bottom-color:'+(em.color||'#5B8DEF')+'">';
+    html += '<span class="comm-sponsor-name">'+em.nom+'</span>';
+    html += '<button class="ga-btn ga-btn-primary" style="font-size:11px;padding:5px 12px;" onclick="openAffectComm('+em.id+')">&#43; Sponsor</button>';
+    html += '</div>';
+    html += '<div class="comm-sponsor-body">';
+
+    if(!affects.length){
+      html += '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:12px;color:rgba(255,255,255,.25);font-style:italic;">Aucun sponsor affecté</div>';
+    } else {
+      html += affects.map(function(a){
+        var s = sponsors.find(function(x){ return x.id===a.sponsorId; });
+        if(!s) return '';
+        var actif = isSponsorActif(s);
+        return '<div class="comm-emission-row" onclick="editAffectComm('+a.id+')" style="cursor:pointer;">'+
+          '<div style="width:10px;height:10px;border-radius:50%;background:'+(actif?'#2ecc71':'#e74c3c')+';flex-shrink:0;"></div>'+
+          '<span class="comm-emission-name">'+s.nom+'</span>'+
+          '<span style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(255,255,255,.3);">'+s.debut+' → '+s.fin+'</span>'+
+          '<div style="display:flex;gap:5px;flex-wrap:wrap;">'+
+            (a.rdvs||[]).map(function(r){
+              return '<span class="comm-rdv-tag '+RDV_CLASS[r]+'">'+RDV_LABELS[r]+'</span>';
+            }).join('')+
+          '</div>'+
+        '</div>';
+      }).join('');
+    }
+
+    html += '</div></div>';
+    return html;
+  }).join('');
+}
+
+/* ── Publication ── */
+function commPublish(){
+  if(localStorage.getItem('at_worker_url')) autoPublish();
+}
+
+/* Sync showSection */
+var _origSSComm = showSection;
+showSection = function(id, btn){
+  _origSSComm(id, btn);
+  if(id === 'commercial') commRender();
+};
+
 </script>
+
+<!-- MODAL : Liste sponsors -->
+<div class="modal-overlay" id="modal-sponsor-list">
+  <div class="modal" style="max-width:540px;width:95%;">
+    <div class="modal-header"><span>&#128188; Sponsors</span><button class="modal-close" onclick="closeModal('modal-sponsor-list')">&#10005;</button></div>
+    <div class="modal-body" style="padding:16px 24px;"><div id="sponsor-list" style="display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto;"></div></div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn ga-btn-primary" onclick="openSponsorForm(null)">&#43; Nouveau sponsor</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL : Formulaire sponsor -->
+<div class="modal-overlay" id="modal-sponsor-form">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header"><span id="sponsor-form-title">Nouveau sponsor</span><button class="modal-close" onclick="closeModal('modal-sponsor-form');openModal('modal-sponsor-list')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nom du sponsor</label><input type="text" id="sponsor-nom" placeholder="Ex : Banque de Monaco"></div>
+      <div class="form-row-2">
+        <div class="form-group"><label>Date de début</label><input type="date" id="sponsor-debut"></div>
+        <div class="form-group"><label>Date de fin</label><input type="date" id="sponsor-fin"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="ga-btn ga-btn-danger" id="sponsor-del-btn" style="display:none" onclick="deleteSponsor()">&#128465; Supprimer</button>
+      <div class="modal-footer-right">
+        <button class="ga-btn" onclick="closeModal('modal-sponsor-form');openModal('modal-sponsor-list')">Annuler</button>
+        <button class="ga-btn ga-btn-primary" onclick="saveSponsor()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : Affecter sponsor à émission -->
+<div class="modal-overlay" id="modal-sponsor-affect">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-header"><span id="sponsor-affect-title">Affecter un sponsor</span><button class="modal-close" onclick="closeModal('modal-sponsor-affect')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Sponsor</label><select id="affect-sponsor-id"><option value="">— Choisir —</option></select></div>
+      <div class="form-group"><label>Rendez-vous sponsorisé</label>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#7aabff;">
+            <input type="checkbox" id="rdv-trafic" value="trafic"> INFO TRAFIC
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#2ecc71;">
+            <input type="checkbox" id="rdv-meteo" value="meteo"> MÉTÉO
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#F5C518;">
+            <input type="checkbox" id="rdv-toph" value="toph"> TOP H
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="ga-btn ga-btn-danger" id="affect-del-btn" style="display:none" onclick="deleteAffectation_comm()">&#128465; Retirer</button>
+      <div class="modal-footer-right">
+        <button class="ga-btn" onclick="closeModal('modal-sponsor-affect')">Annuler</button>
+        <button class="ga-btn ga-btn-primary" onclick="saveAffectationComm()">Affecter</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
