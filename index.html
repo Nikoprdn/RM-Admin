@@ -1593,14 +1593,7 @@ async function autoPublish(){
   var url=localStorage.getItem('at_worker_url')||CF_WORKER_URL;
   try{
     var payload=buildBroadcastPayload();
-    /* Préserver l'état diffsec existant dans le broadcast */
-    try{
-      var existing=await fetch(url,{cache:'no-store'});
-      if(existing.ok){
-        var exData=await existing.json();
-        if(exData && exData.diffsec) payload.diffsec=exData.diffsec;
-      }
-    }catch(e){}
+
     var res=await fetch(url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if(!res.ok)throw new Error('HTTP '+res.status);
     var data=await res.json();
@@ -2029,12 +2022,12 @@ function designerGagnant(idx){
 
 /* ── DIFFUSEUR DE SECOURS — lecture Worker ── */
 function checkDiffSec(){
-  fetch('https://adminsend.nicolas7lejeune.workers.dev/broadcast', {cache:'no-store'})
+  fetch('https://adminsend.nicolas7lejeune.workers.dev/diffsec', {cache:'no-store'})
     .then(function(r){ return r.json(); })
     .then(function(d){
       var dot   = document.getElementById('diffsec-dot');
       var label = document.getElementById('diffsec-label');
-      var active = !!(d && d.diffsec && d.diffsec.active);
+      var active = !!(d && d.active);
       if(dot){
         dot.style.width='8px';
         dot.style.height='8px';
