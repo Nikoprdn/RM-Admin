@@ -2020,25 +2020,44 @@ function designerGagnant(idx){
 
 /* ── DIFFUSEUR DE SECOURS — lecture Worker ── */
 function checkDiffSec(){
-  /* Lire l'etat diffsec depuis le broadcast */
   fetch('https://adminsend.nicolas7lejeune.workers.dev/broadcast', {cache:'no-store'})
     .then(function(r){ return r.json(); })
     .then(function(d){
       var dot   = document.getElementById('diffsec-dot');
       var label = document.getElementById('diffsec-label');
-      var active = d && d.diffsec && d.diffsec.active;
-      if(active){
-        if(dot)  dot.className='diffsec-dot-alert';
-        if(label){ label.textContent='ACTIF'; label.style.color='#E4032E'; label.style.fontWeight='800'; }
-      } else {
-        if(dot)  dot.className='';dot&&(dot.style.cssText='width:8px;height:8px;border-radius:50%;background:#2ecc71;flex-shrink:0;box-shadow:0 0 6px #2ecc71;transition:background .4s;');
-        if(label){ label.textContent='Normal'; label.style.color='rgba(46,204,113,.7)'; label.style.fontWeight='700'; }
+      var active = !!(d && d.diffsec && d.diffsec.active);
+      if(dot){
+        dot.style.width='8px';
+        dot.style.height='8px';
+        dot.style.borderRadius='50%';
+        dot.style.flexShrink='0';
+        dot.style.display='inline-block';
+        if(active){
+          dot.style.background='#E4032E';
+          dot.style.boxShadow='0 0 8px #E4032E';
+          dot.style.animation='diffSecPulse .5s ease-in-out infinite';
+        } else {
+          dot.style.background='#2ecc71';
+          dot.style.boxShadow='0 0 6px #2ecc71';
+          dot.style.animation='none';
+        }
+      }
+      if(label){
+        if(active){
+          label.textContent='ACTIF';
+          label.style.color='#E4032E';
+          label.style.fontWeight='800';
+        } else {
+          label.textContent='Normal';
+          label.style.color='rgba(46,204,113,.7)';
+          label.style.fontWeight='700';
+        }
       }
     }).catch(function(){});
 }
 
-setTimeout(checkDiffSec, 3000);
-setInterval(checkDiffSec, 15000);
+setTimeout(checkDiffSec, 1000);
+setInterval(checkDiffSec, 10000);
 
 </script>
 </body>
