@@ -1584,7 +1584,7 @@ function buildBroadcastPayload(){
         });
     }
     return{dayIdx:dayIdx,date:date.getDate(),mois:date.getMonth(),annee:date.getFullYear(),isoDate:dKey,
-      matin:{slots:slotsFor(6,9)},soir:{slots:slotsFor(16,19)}};
+      matin:{slots:slotsFor(6,12)},soir:{slots:slotsFor(16,19)}};
   });
   return{weekKey:key,publishedAt:new Date().toISOString(),days:days};
 }
