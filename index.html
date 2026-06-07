@@ -2198,8 +2198,9 @@ function openAffectComm(emissionId){
   /* Pré-remplir le select sponsors */
   var sel = document.getElementById('affect-sponsor-id');
   sel.innerHTML = '<option value="">— Choisir —</option>' +
-    sponsors.filter(isSponsorActif).map(function(s){
-      return '<option value="'+s.id+'">'+s.nom+'</option>';
+    sponsors.map(function(s){
+      var actif = isSponsorActif(s);
+      return '<option value="'+s.id+'">'+(actif?'':'⏸ ')+s.nom+'</option>';
     }).join('');
   sel.value = '';
 
