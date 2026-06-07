@@ -1592,7 +1592,16 @@ function buildBroadcastPayload(){
 async function autoPublish(){
   var url=localStorage.getItem('at_worker_url')||CF_WORKER_URL;
   try{
-    var res=await fetch(url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildBroadcastPayload())});
+    var payload=buildBroadcastPayload();
+    /* Préserver l'état diffsec existant dans le broadcast */
+    try{
+      var existing=await fetch(url,{cache:'no-store'});
+      if(existing.ok){
+        var exData=await existing.json();
+        if(exData && exData.diffsec) payload.diffsec=exData.diffsec;
+      }
+    }catch(e){}
+    var res=await fetch(url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if(!res.ok)throw new Error('HTTP '+res.status);
     var data=await res.json();
     setCfStatus(true,data.updatedAt||new Date().toISOString());
