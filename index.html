@@ -147,8 +147,12 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 .gc-em-anim-chip{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#fff;background:rgba(0,0,0,.3);border-radius:3px;padding:2px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
 @keyframes diffSecPulse {
-  0%,100% { opacity:1; }
-  50%      { opacity:.3; }
+  0%,100% { background:#E4032E; box-shadow:0 0 10px #E4032E; transform:scale(1.2); }
+  50%      { background:#ff6666; box-shadow:0 0 3px #E4032E; transform:scale(0.8); }
+}
+.diffsec-dot-alert {
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block;
+  animation: diffSecPulse .5s ease-in-out infinite;
 }
 
 .gc-day-past{opacity:.35;}
@@ -2022,15 +2026,15 @@ function checkDiffSec(){
       var dot   = document.getElementById('diffsec-dot');
       var label = document.getElementById('diffsec-label');
       if(d && d.active){
-        if(dot){ dot.style.background='#E4032E'; dot.style.boxShadow='0 0 8px #E4032E'; dot.style.animation='diffSecPulse .5s ease-in-out infinite'; }
-        if(label){ label.textContent='ACTIF'; label.style.color='#E4032E'; }
+        if(dot){ dot.className='diffsec-dot-alert'; }
+        if(label){ label.textContent='ACTIF'; label.style.color='#E4032E'; label.style.fontWeight='800'; }
       } else {
-        if(dot){ dot.style.background='#2ecc71'; dot.style.boxShadow='none'; dot.style.animation='none'; }
-        if(label){ label.textContent='Normal'; label.style.color='rgba(46,204,113,.7)'; }
+        if(dot){ dot.className=''; dot.style.cssText='width:8px;height:8px;border-radius:50%;background:#2ecc71;flex-shrink:0;box-shadow:0 0 6px #2ecc71;'; }
+        if(label){ label.textContent='Normal'; label.style.color='rgba(46,204,113,.7)'; label.style.fontWeight='700'; }
       }
     }).catch(function(){
       var dot=document.getElementById('diffsec-dot');
-      if(dot){ dot.style.background='#555'; dot.style.boxShadow='none'; }
+      if(dot){ dot.style.cssText='width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;'; }
     });
 }
 
