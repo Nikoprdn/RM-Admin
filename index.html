@@ -331,6 +331,7 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
             style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:8px 36px 8px 14px;color:#fff;font-family:'Inter',sans-serif;font-size:13px;outline:none;width:260px;">
           <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.3);">&#128269;</span>
         </div>
+        <button class="ga-btn ga-btn-primary" onclick="openAddParticipantGlobal()">&#43; Ajouter</button>
         <button class="ga-btn" onclick="exportParticipants()">&#8659; CSV</button>
       </div>
     </div>
@@ -1963,8 +1964,8 @@ function removeParticipant(idx){
 function getAllParticipants(){
   var all=[];
   jeux.forEach(function(j){
-    (j.participants||[]).forEach(function(p){
-      all.push({nom:p.nom,prenom:p.prenom,adresse:p.adresse||'',tel:p.tel||'',email:p.email||'',jeuNom:j.nom||'',gain:j.gain||'',dayKey:j.dayKey||''});
+    (j.participants||[]).forEach(function(p,pi){
+      all.push({nom:p.nom,prenom:p.prenom,adresse:p.adresse||'',tel:p.tel||'',email:p.email||'',jeuNom:j.nom||'',gain:j.gain||'',dayKey:j.dayKey||'',jeuId:j.id,partIdx:pi});
     });
   });
   return all;
@@ -1985,9 +1986,9 @@ function partSearchRender(){
   if(!filtered.length){container.innerHTML='<div class="list-empty">Aucun resultat pour "'+query+'".</div>';return;}
   var html='<div style="font-family:Barlow Condensed,sans-serif;font-size:12px;color:rgba(255,255,255,.3);margin-bottom:8px;">'+filtered.length+' participant'+(filtered.length>1?'s':'')+'</div>';
   var colStyle='display:grid;grid-template-columns:180px 1fr 160px 150px 200px;gap:10px;align-items:start;padding:10px 16px;border-radius:7px;';
-  var cols='display:grid;grid-template-columns:140px 120px 220px 90px 140px 180px;gap:12px;align-items:center;padding:10px 16px;border-radius:7px;';
+  var cols='display:grid;grid-template-columns:140px 120px 200px 90px 140px 170px 40px;gap:12px;align-items:center;padding:10px 16px;border-radius:7px;';
   html+='<div style="'+cols+'background:#201e28;border:1px solid rgba(255,255,255,.1);">'+
-    ['Nom','Prenom','Jeu','Date','Tel','Email'].map(function(t){return'<span style="font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);">'+t+'</span>';}).join('')+
+    ['Nom','Prenom','Jeu','Date','Tel','Email',''].map(function(t){return'<span style="font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);">'+t+'</span>';}).join('')+
   '</div>';
   html+=filtered.map(function(p){
     var h=query;
@@ -2001,9 +2002,54 @@ function partSearchRender(){
       '<div style="font-family:Share Tech Mono,monospace;font-size:11px;color:rgba(255,255,255,.35);">'+p.dayKey+'</div>'+
       '<div style="font-family:Share Tech Mono,monospace;font-size:12px;color:rgba(255,255,255,.6);white-space:nowrap;">'+partHighlight(p.tel,h)+'</div>'+
       '<div style="font-family:Inter,sans-serif;font-size:12px;color:rgba(255,255,255,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+partHighlight(p.email,h)+'</div>'+
+      '<button class="anim-row-edit" style="color:#f7a0a0;border-color:rgba(220,60,60,.3);padding:4px 8px;" onclick="removeParticipantGlobal('+p.jeuId+','+p.partIdx+')">&#128465;</button>'+
     '</div>';
   }).join('');
   container.innerHTML=html;
+}
+
+
+function removeParticipantGlobal(jeuId, partIdx){
+  if(!confirm('Retirer ce participant ?')) return;
+  var j = jeux.find(function(x){ return x.id===jeuId; });
+  if(!j || !j.participants) return;
+  j.participants.splice(partIdx, 1);
+  saveJeux();
+  partSearchRender();
+  jeuRender();
+}
+
+function openAddParticipantGlobal(){
+  /* Remplir le select des jeux existants (avec dayKey) */
+  var sel = document.getElementById('addpart-jeu');
+  if(!jeux.length){ alert('Aucun jeu programmé. Créez d\'abord un jeu dans la grille.'); return; }
+  sel.innerHTML = jeux.map(function(j){
+    var em = catalogue.find(function(x){ return x.id===j.emissionId; });
+    return '<option value="'+j.id+'">'+j.nom+' — '+(em?em.nom:'')+' ('+j.dayKey+')</option>';
+  }).join('');
+  ['addpart-nom','addpart-prenom','addpart-adresse','addpart-tel','addpart-email'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  openModal('modal-add-participant');
+}
+
+function saveAddParticipantGlobal(){
+  var jeuId = parseInt(document.getElementById('addpart-jeu').value);
+  var nom = document.getElementById('addpart-nom').value.trim().toUpperCase();
+  var prenom = document.getElementById('addpart-prenom').value.trim();
+  var adresse = document.getElementById('addpart-adresse').value.trim();
+  var tel = document.getElementById('addpart-tel').value.trim();
+  var email = document.getElementById('addpart-email').value.trim();
+  if(!jeuId){ alert('Choisissez un jeu.'); return; }
+  if(!nom && !prenom){ alert('Entrez au moins un nom.'); return; }
+  var j = jeux.find(function(x){ return x.id===jeuId; });
+  if(!j){ alert('Jeu introuvable.'); return; }
+  if(!j.participants) j.participants=[];
+  j.participants.push({nom:nom, prenom:prenom, adresse:adresse, tel:tel, email:email, addedAt:new Date().toISOString()});
+  saveJeux();
+  closeModal('modal-add-participant');
+  partSearchRender();
+  jeuRender();
 }
 
 function exportParticipants(){
@@ -2405,6 +2451,21 @@ showSection = function(id, btn){
         <button class="ga-btn ga-btn-primary" onclick="saveAffectationComm()">Affecter</button>
       </div>
     </div>
+  </div>
+</div>
+
+
+<!-- MODAL : Ajouter participant (global) -->
+<div class="modal-overlay" id="modal-add-participant">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header"><span>&#43; Ajouter un participant</span><button class="modal-close" onclick="closeModal('modal-add-participant')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Jeu</label><select id="addpart-jeu"></select></div>
+      <div class="form-row-2"><div class="form-group"><label>Nom</label><input type="text" id="addpart-nom" placeholder="DUPONT"></div><div class="form-group"><label>Prenom</label><input type="text" id="addpart-prenom" placeholder="Jean"></div></div>
+      <div class="form-group"><label>Adresse</label><input type="text" id="addpart-adresse"></div>
+      <div class="form-row-2"><div class="form-group"><label>Telephone</label><input type="tel" id="addpart-tel"></div><div class="form-group"><label>Email</label><input type="email" id="addpart-email"></div></div>
+    </div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-add-participant')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveAddParticipantGlobal()">Ajouter</button></div></div>
   </div>
 </div>
 
