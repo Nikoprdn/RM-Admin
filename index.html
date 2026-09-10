@@ -663,6 +663,22 @@ function loadAll(){
 }
 loadAll();
 
+/* Retirer Feel Good et Charly Family du catalogue et de leurs affectations */
+(function(){
+  catalogue = catalogue.filter(function(t){
+    var n = (t.nom||'').toLowerCase();
+    return n.indexOf('feel') < 0 && n.indexOf('charly') < 0;
+  });
+  affectations = affectations.filter(function(a){
+    var n = (a.nom||'').toLowerCase();
+    return n.indexOf('feel') < 0 && n.indexOf('charly') < 0;
+  });
+  if(typeof jeux !== 'undefined'){
+    /* nettoyé plus bas une fois jeux chargé */
+  }
+  saveAll();
+})();
+
 /* MODALS */
 function openModal(id){
   var el=document.getElementById(id);if(!el)return;
