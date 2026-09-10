@@ -2023,9 +2023,12 @@ function openAddParticipantGlobal(){
   /* Remplir le select des jeux existants (avec dayKey) */
   var sel = document.getElementById('addpart-jeu');
   if(!jeux.length){ alert('Aucun jeu programmé. Créez d\'abord un jeu dans la grille.'); return; }
-  sel.innerHTML = jeux.map(function(j){
+  var jeuxTries = jeux.slice().sort(function(a,b){
+    return (b.dayKey||'').localeCompare(a.dayKey||'');
+  });
+  sel.innerHTML = jeuxTries.map(function(j){
     var em = catalogue.find(function(x){ return x.id===j.emissionId; });
-    return '<option value="'+j.id+'">'+j.nom+' — '+(em?em.nom:'')+' ('+j.dayKey+')</option>';
+    return '<option value="'+j.id+'">'+j.dayKey+' — '+j.nom+(em?' ('+em.nom+')':'')+'</option>';
   }).join('');
   ['addpart-nom','addpart-prenom','addpart-adresse','addpart-tel','addpart-email'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.value='';
