@@ -2206,6 +2206,43 @@ var _affectEmissionId = 0;
 
 function saveSponsors(){ localStorage.setItem('at_sponsors', JSON.stringify(sponsors)); }
 function saveCommAffect(){ localStorage.setItem('at_comm_affect', JSON.stringify(commAffect)); }
+
+/* Référentiel des rendez-vous par émission (par nom d'émission, modifiable) */
+var commRdvsByEmission = {};
+function saveCommRdvs(){ localStorage.setItem('at_comm_rdvs', JSON.stringify(commRdvsByEmission)); }
+(function(){
+  try{ var v=localStorage.getItem('at_comm_rdvs'); if(v) commRdvsByEmission=JSON.parse(v); }catch(e){}
+  /* Valeurs par défaut si vide */
+  var defaults = {
+    'morning':        ['Top H','Météo','Infos','Tendance des marchés'],
+    'morning +':      ['Top H','Météo','Infos'],
+    'night mood':     ['Top H'],
+    'week-end change':['Top H']
+  };
+  Object.keys(defaults).forEach(function(k){
+    if(!commRdvsByEmission[k]) commRdvsByEmission[k] = defaults[k].slice();
+  });
+  saveCommRdvs();
+})();
+
+/* Récupérer les RDV d'une émission par son nom */
+function getRdvsForEmission(emissionId){
+  var em = catalogue.find(function(x){ return x.id===emissionId; });
+  if(!em) return [];
+  var key = (em.nom||'').toLowerCase().trim();
+  if(!commRdvsByEmission[key]) commRdvsByEmission[key] = [];
+  return commRdvsByEmission[key];
+}
+function addRdvToEmission(emissionId, rdvNom){
+  var em = catalogue.find(function(x){ return x.id===emissionId; });
+  if(!em) return;
+  var key = (em.nom||'').toLowerCase().trim();
+  if(!commRdvsByEmission[key]) commRdvsByEmission[key] = [];
+  if(commRdvsByEmission[key].indexOf(rdvNom) < 0){
+    commRdvsByEmission[key].push(rdvNom);
+    saveCommRdvs();
+  }
+}
 (function(){
   try{ var v=localStorage.getItem('at_sponsors'); if(v) sponsors=JSON.parse(v); }catch(e){}
   try{ var v=localStorage.getItem('at_comm_affect'); if(v) commAffect=JSON.parse(v); }catch(e){}
@@ -2284,13 +2321,15 @@ function deleteSponsor(){
 }
 
 /* ── Affectations : formulaire ── */
+var _commSelectedRdvs = [];
+
 function openAffectComm(emissionId){
   _affectEmissionId = emissionId;
   editingAffectCommId = null;
+  _commSelectedRdvs = [];
   var em = catalogue.find(function(x){ return x.id===emissionId; });
   document.getElementById('sponsor-affect-title').textContent = 'Sponsor — ' + (em?em.nom:'');
 
-  /* Pré-remplir le select sponsors */
   var sel = document.getElementById('affect-sponsor-id');
   sel.innerHTML = '<option value="">— Choisir —</option>' +
     sponsors.map(function(s){
@@ -2299,19 +2338,49 @@ function openAffectComm(emissionId){
     }).join('');
   sel.value = '';
 
-  /* Reset checkboxes */
-  ['trafic','meteo','toph'].forEach(function(r){
-    document.getElementById('rdv-'+r).checked = false;
-  });
-
   document.getElementById('affect-del-btn').style.display = 'none';
+  renderCommRdvChoices();
   openModal('modal-sponsor-affect');
+}
+
+/* Afficher les RDV de l'émission comme boutons toggle */
+function renderCommRdvChoices(){
+  var el = document.getElementById('comm-rdv-choices');
+  if(!el) return;
+  var rdvs = getRdvsForEmission(_affectEmissionId);
+  el.innerHTML = rdvs.map(function(r){
+    var sel = _commSelectedRdvs.indexOf(r) >= 0;
+    return '<button type="button" class="anim-toggle'+(sel?' selected':'')+'" '+
+      'style="'+(sel?'background:rgba(91,141,239,.3);border-color:rgba(91,141,239,.75);color:#fff;':'')+'" '+
+      'onclick="toggleCommRdv(\''+r.replace(/'/g,"\\'")+'\')">'+r+'</button>';
+  }).join('');
+  if(!rdvs.length){
+    el.innerHTML = '<span style="font-family:Inter,sans-serif;font-size:12px;color:rgba(255,255,255,.3);font-style:italic;">Aucun rendez-vous. Créez-en un ci-dessous.</span>';
+  }
+}
+
+function toggleCommRdv(rdv){
+  var idx = _commSelectedRdvs.indexOf(rdv);
+  if(idx >= 0) _commSelectedRdvs.splice(idx, 1);
+  else _commSelectedRdvs.push(rdv);
+  renderCommRdvChoices();
+}
+
+function addNewCommRdv(){
+  var inp = document.getElementById('comm-new-rdv');
+  var val = inp.value.trim();
+  if(!val) return;
+  addRdvToEmission(_affectEmissionId, val);
+  if(_commSelectedRdvs.indexOf(val) < 0) _commSelectedRdvs.push(val);
+  inp.value = '';
+  renderCommRdvChoices();
 }
 
 function editAffectComm(affectId){
   var a = commAffect.find(function(x){ return x.id===affectId; }); if(!a) return;
   editingAffectCommId = affectId;
   _affectEmissionId = a.emissionId;
+  _commSelectedRdvs = (a.rdvs||[]).slice();
   var em = catalogue.find(function(x){ return x.id===a.emissionId; });
   document.getElementById('sponsor-affect-title').textContent = 'Modifier — ' + (em?em.nom:'');
 
@@ -2320,21 +2389,16 @@ function editAffectComm(affectId){
     sponsors.map(function(s){ return '<option value="'+s.id+'">'+s.nom+'</option>'; }).join('');
   sel.value = a.sponsorId;
 
-  ['trafic','meteo','toph'].forEach(function(r){
-    document.getElementById('rdv-'+r).checked = (a.rdvs||[]).indexOf(r) >= 0;
-  });
-
   document.getElementById('affect-del-btn').style.display = 'inline-flex';
+  renderCommRdvChoices();
   openModal('modal-sponsor-affect');
 }
 
 function saveAffectationComm(){
   var sponsorId = parseInt(document.getElementById('affect-sponsor-id').value);
   if(!sponsorId){ alert('Choisissez un sponsor.'); return; }
-  var rdvs = ['trafic','meteo','toph'].filter(function(r){
-    return document.getElementById('rdv-'+r).checked;
-  });
-  if(!rdvs.length){ alert('Sélectionnez au moins un rendez-vous.'); return; }
+  if(!_commSelectedRdvs.length){ alert('Sélectionnez au moins un rendez-vous.'); return; }
+  var rdvs = _commSelectedRdvs.slice();
 
   if(editingAffectCommId !== null){
     var a = commAffect.find(function(x){ return x.id===editingAffectCommId; });
