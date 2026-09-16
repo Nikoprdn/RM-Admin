@@ -1113,14 +1113,28 @@ function applyGrilleType(){
   var yr=parseInt(document.getElementById('apply-gt-year').value);
   var replace=document.getElementById('apply-gt-replace').checked;
   if(!wk||!yr){alert('Semaine et annee requises.');return;}
-  var g=grillesType.find(function(x){return x.id===applyingGrilleId;});if(!g)return;
+  var g=grillesType.find(function(x){return x.id===applyingGrilleId;});
+  if(!g){alert('Grille introuvable.');return;}
+  if(!g.affectations||!g.affectations.length){
+    alert('Cette grille type est vide. Ouvrez-la, cliquez sur "Importer la semaine affichee" puis enregistrez.');
+    return;
+  }
   var off=getWeekOffset(wk,yr);
   var tkey=getWeekDates(off)[0].toISOString().slice(0,10);
-  if(replace)affectations=affectations.filter(function(a){return a.weekKey!==tkey;});
-  (g.affectations||[]).forEach(function(a){
-    var c=JSON.parse(JSON.stringify(a));c.id=Date.now()+Math.random();c.weekKey=tkey;affectations.push(c);
+  if(replace){
+    affectations=affectations.filter(function(a){return a.weekKey!==tkey;});
+  }
+  g.affectations.forEach(function(a){
+    var c=JSON.parse(JSON.stringify(a));
+    c.id=Date.now()+Math.random();
+    c.weekKey=tkey;
+    affectations.push(c);
   });
-  saveAll();currentWeekOffset=off;closeModal('modal-grille-apply');renderCalendar();
+  saveAll();
+  currentWeekOffset=off;
+  closeModal('modal-grille-apply');
+  renderCalendar();
+  alert(g.affectations.length+' emission(s) appliquee(s) sur la semaine.');
 }
 
 /* JOURNALISTES */
