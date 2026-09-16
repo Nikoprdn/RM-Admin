@@ -1858,7 +1858,11 @@ function openJeuApplyModal(){
   sel.innerHTML='<option value="">— Choisir un jeu —</option>'+jeuxCatalogue.map(function(j){return'<option value="'+j.id+'">'+j.nom+'</option>';}).join('');
   sel.onchange=updateJeuApplyPreview;sel.value='';
   var eSel=document.getElementById('jeu-apply-emission');
-  if(eSel){eSel.innerHTML='<option value="">— Toutes les emissions —</option>'+catalogue.map(function(t){return'<option value="'+t.id+'">'+t.nom+'</option>';}).join('');eSel.value='';}
+  if(eSel){
+    var morningEms=catalogue.filter(function(t){return (t.nom||'').toLowerCase().indexOf('morning')>=0;});
+    eSel.innerHTML='<option value="">— Tous les Morning —</option>'+morningEms.map(function(t){return'<option value="'+t.id+'">'+t.nom+'</option>';}).join('');
+    eSel.value='';
+  }
   var days=getWeekDates(jeuWeekOffset);
   var lbl=document.getElementById('jeu-apply-week-label');
   if(lbl)lbl.textContent='Du '+days[0].getDate()+' '+MOIS[days[0].getMonth()]+' au '+days[4].getDate()+' '+MOIS[days[4].getMonth()]+' '+days[4].getFullYear();
@@ -1886,7 +1890,7 @@ function applyJeuToWeek(){
   var replace=document.getElementById('jeu-apply-replace').checked;
   if(!typeId){alert('Choisissez un jeu.');return;}
   var jType=jeuxCatalogue.find(function(x){return x.id===typeId;});if(!jType)return;
-  var emTargets=emFilterId?catalogue.filter(function(t){return t.id===emFilterId;}):catalogue.slice();
+  var emTargets=emFilterId?catalogue.filter(function(t){return t.id===emFilterId;}):catalogue.filter(function(t){return (t.nom||'').toLowerCase().indexOf('morning')>=0;});
   if(!emTargets.length){alert('Aucune emission dans le catalogue.');return;}
   var days=getWeekDates(jeuWeekOffset);
   for(var i=0;i<5;i++){
