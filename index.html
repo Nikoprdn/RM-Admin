@@ -341,8 +341,9 @@ body{background:#2e2b36;color:#E8EAF0;min-height:100vh;font-family:'Barlow',sans
 
 <section id="commercial" class="section">
   <div class="ga-toolbar">
-    <div><div class="ga-title">Commercial Editor</div><div class="ga-sub">Gestion des sponsorings</div></div>
+    <div><div class="ga-title">Commercial Editor</div><div class="ga-sub">Sponsors Actifs</div></div>
     <div class="ga-toolbar-right">
+      <button class="ga-btn ga-btn-primary" onclick="openAffectCommPicker()">&#43; Affecter un sponsor</button>
       <button class="ga-btn ga-btn-primary" onclick="openModal('modal-sponsor-list')">&#128188; Sponsors</button>
       <button class="ga-btn" style="background:rgba(46,204,113,.2);border-color:rgba(46,204,113,.4);color:#2ecc71;" onclick="commPublish()">&#128225; Publier</button>
     </div>
@@ -1640,27 +1641,20 @@ function buildBroadcastPayload(){
       matin:{slots:slotsFor(6,12)},soir:{slots:slotsFor(16,19)}};
   });
   /* Ajouter les sponsors dans chaque slot du payload */
-  var RDV_LABELS_PAY = {trafic:'Info Trafic', meteo:'Météo', toph:'Top H'};
   days.forEach(function(day){
     ['matin','soir'].forEach(function(tranche){
       (day[tranche].slots||[]).forEach(function(slot){
-        /* Trouver l'émission correspondante */
         var em = catalogue.find(function(x){
           return (x.nom||'').toLowerCase() === (slot.emission||'').toLowerCase();
         });
         if(!em){ slot.commercial=[]; return; }
-        /* Trouver les affectations commerciales de cette émission */
         var affects = commAffect.filter(function(a){ return a.emissionId===em.id; });
         slot.commercial = [];
         affects.forEach(function(a){
           var s = sponsors.find(function(x){ return x.id===a.sponsorId; });
           if(!s) return;
           (a.rdvs||[]).forEach(function(rdv){
-            slot.commercial.push({
-              nom: s.nom,
-              type: RDV_LABELS_PAY[rdv]||rdv,
-              time: ''
-            });
+            slot.commercial.push({ nom: s.nom, type: rdv, time: '' });
           });
         });
       });
@@ -2421,48 +2415,84 @@ function deleteAffectation_comm(){
 }
 
 /* ── Rendu principal ── */
-var RDV_LABELS = {trafic:'Info Trafic', meteo:'Météo', toph:'Top H'};
-var RDV_CLASS  = {trafic:'comm-rdv-trafic', meteo:'comm-rdv-meteo', toph:'comm-rdv-toph'};
+function commRdvColor(rdv){
+  var r = (rdv||'').toLowerCase();
+  if(r.indexOf('trafic')>=0) return 'comm-rdv-trafic';
+  if(r.indexOf('météo')>=0||r.indexOf('meteo')>=0) return 'comm-rdv-meteo';
+  if(r.indexOf('top')>=0) return 'comm-rdv-toph';
+  return 'comm-rdv-trafic';
+}
 
 function commRender(){
   var container = document.getElementById('comm-grid'); if(!container) return;
-  if(!catalogue.length){
-    container.innerHTML = '<div class="placeholder">Aucune émission dans le catalogue.</div>'; return;
+
+  /* Construire une ligne par (affectation × rdv) */
+  var rows = [];
+  commAffect.forEach(function(a){
+    var s = sponsors.find(function(x){ return x.id===a.sponsorId; });
+    var em = catalogue.find(function(x){ return x.id===a.emissionId; });
+    if(!s) return;
+    (a.rdvs||[]).forEach(function(rdv){
+      rows.push({
+        affectId: a.id,
+        sponsorNom: s.nom,
+        debut: s.debut,
+        fin: s.fin,
+        emissionNom: em ? em.nom : '?',
+        emissionColor: em ? em.color : '#5B8DEF',
+        rdv: rdv,
+        actif: isSponsorActif(s)
+      });
+    });
+  });
+
+  if(!rows.length){
+    container.innerHTML = '<div class="placeholder">Aucun sponsor affecté. Cliquez sur "+ Affecter un sponsor".</div>';
+    return;
   }
 
-  container.innerHTML = catalogue.map(function(em){
-    var affects = commAffect.filter(function(a){ return a.emissionId===em.id; });
+  /* Trier : actifs en premier, puis par nom */
+  rows.sort(function(a,b){
+    if(a.actif !== b.actif) return a.actif ? -1 : 1;
+    return a.sponsorNom.localeCompare(b.sponsorNom);
+  });
 
-    var html = '<div class="comm-sponsor-card">';
-    html += '<div class="comm-sponsor-header" style="border-bottom-color:'+(em.color||'#5B8DEF')+'">';
-    html += '<span class="comm-sponsor-name">'+em.nom+'</span>';
-    html += '<button class="ga-btn ga-btn-primary" style="font-size:11px;padding:5px 12px;" onclick="openAffectComm('+em.id+')">&#43; Sponsor</button>';
-    html += '</div>';
-    html += '<div class="comm-sponsor-body">';
+  var cols = 'display:grid;grid-template-columns:36px 200px 130px 130px 180px 200px;gap:12px;align-items:center;padding:10px 16px;border-radius:7px;';
 
-    if(!affects.length){
-      html += '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:12px;color:rgba(255,255,255,.25);font-style:italic;">Aucun sponsor affecté</div>';
-    } else {
-      html += affects.map(function(a){
-        var s = sponsors.find(function(x){ return x.id===a.sponsorId; });
-        if(!s) return '';
-        var actif = isSponsorActif(s);
-        return '<div class="comm-emission-row" onclick="editAffectComm('+a.id+')" style="cursor:pointer;">'+
-          '<div style="width:10px;height:10px;border-radius:50%;background:'+(actif?'#2ecc71':'#e74c3c')+';flex-shrink:0;"></div>'+
-          '<span class="comm-emission-name">'+s.nom+'</span>'+
-          '<span style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(255,255,255,.3);">'+s.debut+' → '+s.fin+'</span>'+
-          '<div style="display:flex;gap:5px;flex-wrap:wrap;">'+
-            (a.rdvs||[]).map(function(r){
-              return '<span class="comm-rdv-tag '+RDV_CLASS[r]+'">'+RDV_LABELS[r]+'</span>';
-            }).join('')+
-          '</div>'+
-        '</div>';
-      }).join('');
-    }
+  var html = '<div style="'+cols+'background:#201e28;border:1px solid rgba(255,255,255,.1);">'+
+    ['','Nom','Début','Fin','Émission','RDV'].map(function(t){
+      return '<span style="font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);">'+t+'</span>';
+    }).join('')+
+  '</div>';
 
-    html += '</div></div>';
-    return html;
+  html += rows.map(function(r){
+    return '<div style="'+cols+'background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);cursor:pointer;" onclick="editAffectComm('+r.affectId+')">'+
+      '<div style="width:10px;height:10px;border-radius:50%;background:'+(r.actif?'#2ecc71':'#e74c3c')+';"></div>'+
+      '<div style="font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+r.sponsorNom+'</div>'+
+      '<div style="font-family:Share Tech Mono,monospace;font-size:12px;color:rgba(255,255,255,.6);">'+r.debut+'</div>'+
+      '<div style="font-family:Share Tech Mono,monospace;font-size:12px;color:rgba(255,255,255,.6);">'+r.fin+'</div>'+
+      '<div style="display:flex;align-items:center;gap:8px;">'+
+        '<span style="width:8px;height:8px;border-radius:2px;background:'+r.emissionColor+';flex-shrink:0;"></span>'+
+        '<span style="font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+r.emissionNom+'</span>'+
+      '</div>'+
+      '<span class="comm-rdv-tag '+commRdvColor(r.rdv)+'" style="justify-self:start;">'+r.rdv+'</span>'+
+    '</div>';
   }).join('');
+
+  container.innerHTML = html;
+}
+
+function openAffectCommPicker(){
+  if(!catalogue.length){ alert('Aucune émission dans le catalogue.'); return; }
+  var sel = document.getElementById('picker-emission-id');
+  sel.innerHTML = catalogue.map(function(t){ return '<option value="'+t.id+'">'+t.nom+'</option>'; }).join('');
+  openModal('modal-emission-picker');
+}
+function confirmEmissionPicker(){
+  var id = parseInt(document.getElementById('picker-emission-id').value);
+  if(!id) return;
+  closeModal('modal-emission-picker');
+  openAffectComm(id);
 }
 
 /* ── Publication ── */
@@ -2516,16 +2546,12 @@ showSection = function(id, btn){
     <div class="modal-body">
       <div class="form-group"><label>Sponsor</label><select id="affect-sponsor-id"><option value="">— Choisir —</option></select></div>
       <div class="form-group"><label>Rendez-vous sponsorisé</label>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;">
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#7aabff;">
-            <input type="checkbox" id="rdv-trafic" value="trafic"> INFO TRAFIC
-          </label>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#2ecc71;">
-            <input type="checkbox" id="rdv-meteo" value="meteo"> MÉTÉO
-          </label>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#F5C518;">
-            <input type="checkbox" id="rdv-toph" value="toph"> TOP H
-          </label>
+        <div id="comm-rdv-choices" style="display:flex;gap:8px;flex-wrap:wrap;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;min-height:44px;align-items:center;"></div>
+      </div>
+      <div class="form-group"><label>Nouveau rendez-vous</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="comm-new-rdv" placeholder="Ex : Chronique culturelle" style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();addNewCommRdv();}">
+          <button class="ga-btn" onclick="addNewCommRdv()">&#43; Créer</button>
         </div>
       </div>
     </div>
@@ -2551,6 +2577,21 @@ showSection = function(id, btn){
       <div class="form-row-2"><div class="form-group"><label>Telephone</label><input type="tel" id="addpart-tel"></div><div class="form-group"><label>Email</label><input type="email" id="addpart-email"></div></div>
     </div>
     <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="ga-btn" onclick="closeModal('modal-add-participant')">Annuler</button><button class="ga-btn ga-btn-primary" onclick="saveAddParticipantGlobal()">Ajouter</button></div></div>
+  </div>
+</div>
+
+
+<!-- MODAL : Choisir émission pour affecter sponsor -->
+<div class="modal-overlay" id="modal-emission-picker">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header"><span>Choisir une émission</span><button class="modal-close" onclick="closeModal('modal-emission-picker')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Émission</label><select id="picker-emission-id"></select></div>
+    </div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right">
+      <button class="ga-btn" onclick="closeModal('modal-emission-picker')">Annuler</button>
+      <button class="ga-btn ga-btn-primary" onclick="confirmEmissionPicker()">Continuer</button>
+    </div></div>
   </div>
 </div>
 
