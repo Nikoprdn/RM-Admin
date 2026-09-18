@@ -728,6 +728,11 @@ function buildHourOptions(){
 var ef=document.getElementById('em-hfin');if(ef)ef.value='1';
 
 /* SEMAINE */
+/* Date -> "YYYY-MM-DD" en heure LOCALE (toISOString() convertit en UTC et
+   peut décaler d'un jour selon le fuseau horaire — bug corrigé ici). */
+function localISODate(d){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
 function getWeekDates(offset){
   var now=new Date(),day=now.getDay();
   var mon=new Date(now);
@@ -737,7 +742,7 @@ function getWeekDates(offset){
   for(var i=0;i<7;i++){var d=new Date(mon);d.setDate(mon.getDate()+i);days.push(d);}
   return days;
 }
-function getMondayKey(offset){return getWeekDates(offset)[0].toISOString().slice(0,10);}
+function getMondayKey(offset){return localISODate(getWeekDates(offset)[0]);}
 function changeWeek(dir){
   if(dir===0)currentWeekOffset=0;else currentWeekOffset+=dir;
   renderCalendar();gjRenderCalendar();
@@ -1121,7 +1126,7 @@ function applyGrilleType(){
     return;
   }
   var off=getWeekOffset(wk,yr);
-  var tkey=getWeekDates(off)[0].toISOString().slice(0,10);
+  var tkey=localISODate(getWeekDates(off)[0]);
   if(replace){
     affectations=affectations.filter(function(a){return a.weekKey!==tkey;});
   }
@@ -1392,7 +1397,7 @@ function gjApplyGrilleType(){
   if(!wk||!yr){alert('Semaine et annee requises.');return;}
   var g=gjGrillesType.find(function(x){return x.id===gjApplyingGrilleId;});if(!g)return;
   var off=getWeekOffset(wk,yr);
-  var tkey=getWeekDates(off)[0].toISOString().slice(0,10);
+  var tkey=localISODate(getWeekDates(off)[0]);
   if(replace)gjRdvs=gjRdvs.filter(function(r){return r.weekKey!==tkey;});
   (g.rdvs||[]).forEach(function(r){var c=JSON.parse(JSON.stringify(r));c.id=Date.now()+Math.random();c.weekKey=tkey;gjRdvs.push(c);});
   saveAll();currentWeekOffset=off;closeModal('modal-gj-grille-apply');gjRenderCalendar();
@@ -1621,7 +1626,7 @@ function buildBroadcastPayload(){
   var key=getMondayKey(currentWeekOffset);
   var weekDates=getWeekDates(currentWeekOffset);
   var days=weekDates.map(function(date,dayIdx){
-    var dKey=date.toISOString().slice(0,10);
+    var dKey=localISODate(date);
     function slotsFor(hS,hE){
       return affectations.filter(function(a){return(!a.weekKey||a.weekKey===key)&&a.jour===dayIdx&&a.hdebut>=hS&&a.hdebut<hE;})
         .sort(function(a,b){return a.hdebut-b.hdebut;})
@@ -1733,7 +1738,7 @@ function jeuRender(){
   container.innerHTML=catalogue.map(function(em){
     var html='<div class="jeu-emission-card"><div class="jeu-emission-header" style="border-bottom-color:'+(em.color||'#E4032E')+'"><span class="jeu-emission-name">'+em.nom+'</span>'+(em.desc?'<span class="jeu-emission-tranche">'+em.desc+'</span>':'')+'</div><div class="jeu-week-grid">';
     for(var i=0;i<5;i++){
-      var d=days[i],dKey=d.toISOString().slice(0,10);
+      var d=days[i],dKey=localISODate(d);
       var isToday=d.getTime()===today.getTime(),isPast=d.getTime()<today.getTime();
       var emId=em.id;
       var j=jeux.find(function(x){return x.emissionId===emId&&x.dayKey===dKey;});
@@ -1902,7 +1907,7 @@ function applyJeuToWeek(){
   if(!emTargets.length){alert('Aucune emission dans le catalogue.');return;}
   var days=getWeekDates(jeuWeekOffset);
   for(var i=0;i<5;i++){
-    var dKey=days[i].toISOString().slice(0,10);
+    var dKey=localISODate(days[i]);
     emTargets.forEach(function(em){
       if(replace)jeux=jeux.filter(function(j){return!(j.emissionId===em.id&&j.dayKey===dKey);});
       jeux.push({id:Date.now()+Math.random(),nom:jType.nom,desc:jType.desc,gain:jType.gain,tirage:jType.tirage,heure:null,emissionId:em.id,dayKey:dKey,jeuTypeId:typeId,participants:[]});
