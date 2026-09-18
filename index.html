@@ -1638,7 +1638,7 @@ function buildBroadcastPayload(){
         });
     }
     return{dayIdx:dayIdx,date:date.getDate(),mois:date.getMonth(),annee:date.getFullYear(),isoDate:dKey,
-      matin:{slots:slotsFor(6,12)},soir:{slots:slotsFor(16,19)}};
+      matin:{slots:slotsFor(0,12)},soir:{slots:slotsFor(12,24)}};
   });
   /* Ajouter les sponsors dans chaque slot du payload */
   days.forEach(function(day){
